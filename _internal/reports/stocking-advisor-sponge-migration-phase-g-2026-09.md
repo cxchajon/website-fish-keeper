@@ -450,22 +450,28 @@ filters are added through the real picker: select hygger Double Sponge S once, *
 | permanent sentence | `[data-role="filtration-status-note"]` visible, exactly "Filtration supports your livestock but does not increase stocking capacity." |
 | no duplicate | no `#stock-warnings [data-warning-id^="filtration."]` |
 | Stocking Load | DOM load equal to the same stock before any filter; engine load equal to the no-filter computation |
-| remove one instance | card follows without reload: `below-rating`, still `warn`, one row `Sponge filter: rated 10–40 gal` carrying the **remaining** instance id, no redundancy line, permanent sentence, no `80` / `GPH` |
+| saved v2, both sponges | `ttg.stocking.filters.v2` has `v: 2` and exactly two identity-only entries `{instanceId, source: "product", productId: "hygger-double-sponge-s", type: "SPONGE", capacityMethod: "manufacturer_rating"}`; the two saved instance ids differ and equal the chips' / card rows' ids, in order; no `gph`, `rated_gph`, `gphRated` or `legacyGph`; `ttg.stocking.filters.v1` absent |
+| reload with both present | page reloaded, same 55 gal + 8 neons re-entered, filters **not** re-added: exactly two hygger chips with the same two instance ids (same order, no new ids) |
+| card after reload | every pair-state check above repeated: one visible card, `warn`, `likely-multi-sponge`, `filtration.likely_multi_sponge`, headline, `Sponge 1` / `Sponge 2: rated 10–40 gal` rows carrying the same two instance ids, `Tank: 55 gal`, no `80` / combined claim, no GPH / × / turnover, redundancy line, permanent sentence, no `#stock-warnings` filtration strip, Stocking Load equal to the no-filter load |
+| saved v2 after reload | the same two identity-only entries; v1 still absent |
+| remove one instance (after the reload checks) | by its exact instance id; card follows without reload: `below-rating`, still `warn`, one row `Sponge filter: rated 10–40 gal` carrying the **surviving** instance id, no redundancy line, permanent sentence, no `80` / `GPH`; saved v2 = exactly `[identity(surviving id)]`, v1 absent |
 | errors | no page errors, no site-script console errors |
 
 Validation (local static servers only; **not run against production**, which is still phase F):
 
 | Target | Result |
 | --- | --- |
-| branch, new test alone | 3 / 3 passes |
+| branch, new test alone (with the saved-v2 / reload checks) | **3 / 3** passes |
 | branch, full permanent live suite | **19 / 19** (`stocking-advisor-saved-filters.live.ts` 14, `stocking-advisor.live.ts` 5) |
-| `main` (phase F) application code, full suite | 18 passed, 1 failed — the new test, at its first card assertion (`card` count 1), as intended |
+| clean current `main` (`61bdc39`, phase F) application code, full suite | 18 passed, 1 failed — the new test, at its first card assertion (`card` count 1: the card doesn't exist), as intended |
 | mutation: an "Combined rating: 80 gal." sentence added to the multi-sponge explanation | fails (`/\b80\b/`) |
 | mutation: "Their total capacity is enough for this tank." added | fails (combined / total-capacity check) |
 | mutation: sponge rows collapsed to one | fails (two sponge rows) |
 
+The mutation rows were measured on the first version of the test; the saved-v2 / reload checks were
+added afterwards (second review follow-up) without changing or weakening any earlier assertion.
 Mutations were applied temporarily to `status-view.js` and reverted; no application code changed in
-this follow-up. **Run the live-verify workflow only after phase G is merged and deployed**: this test
+either follow-up. **Run the live-verify workflow only after phase G is merged and deployed**: this test
 fails against phase F production by design (the other 18 tests pass on both).
 
 ## Files changed
