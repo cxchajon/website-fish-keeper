@@ -83,7 +83,7 @@ async function snapshot(page: Page) {
       level: root?.dataset.level ?? null,
       warningIds: (root?.dataset.warningIds ?? '').split(' ').filter(Boolean),
       heading: clean(root?.querySelector('h3')?.textContent),
-      headline: clean(root?.querySelector('[data-role="filtration-status-headline"] .filtration-status__headline-text')?.textContent),
+      headline: clean(root?.querySelector('[data-role="filtration-status-headline-text"]')?.textContent),
       headlineFull: clean(root?.querySelector('[data-role="filtration-status-headline"]')?.textContent),
       rows: Array.from(root?.querySelectorAll<HTMLElement>('[data-role="filtration-status-paths"] li') ?? []).map((li) => ({
         kind: li.dataset.rowKind, path: li.dataset.path, text: clean(li.textContent), instanceId: li.dataset.instanceId ?? null,

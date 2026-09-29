@@ -5,11 +5,13 @@
  * (stocking-advisor.html, [data-role="filtration-status-card"]). It reads computed.filtering only
  * and computes nothing: the verdict, tone and every figure come from the engine.
  *
- * Stable selectors (tests use these, not class names):
+ * Stable selectors (tests and the stylesheet use these; the card has no feature class names):
  *   [data-role="filtration-status-card"]        root; data-state (good|warn|bad|neutral), data-level,
  *                                               data-card-state, data-warning-ids (the engine's
  *                                               filtration warning ids, space-separated)
- *   [data-role="filtration-status-headline"]    the overall status (a polite status region)
+ *   [data-role="filtration-status-title"]       the "Filtration" heading
+ *   [data-role="filtration-status-headline"]    the overall status (a polite status region), holding
+ *                                               …-icon (aria-hidden) and …-headline-text
  *   [data-role="filtration-status-paths"]       one <li data-row-kind data-path> per line
  *   [data-role="filtration-status-explanation"] short explanatory sentences
  *   [data-role="filtration-status-redundancy"]  qualitative backup line (2+ biological filters)
@@ -35,23 +37,22 @@ function signatureOf(model) {
 
 function buildContent(root, model) {
   const titleId = 'filtration-status-title';
-  const title = el('h3', { id: titleId, class: 'filtration-status__title' }, 'Filtration');
+  const title = el('h3', { id: titleId, 'data-role': 'filtration-status-title' }, 'Filtration');
   root.setAttribute('aria-labelledby', titleId);
 
   // The headline is the only live part of the card: one short polite announcement per change.
-  const headline = el('p', { class: 'filtration-status__headline', 'data-role': 'filtration-status-headline', role: 'status' });
-  const icon = el('span', { class: 'filtration-status__icon', 'aria-hidden': 'true' }, model.headline.icon);
+  const headline = el('p', { 'data-role': 'filtration-status-headline', role: 'status' });
+  const icon = el('span', { 'data-role': 'filtration-status-icon', 'aria-hidden': 'true' }, model.headline.icon);
   const label = el('span', { class: 'sr-only' }, `${model.headline.iconLabel}: `);
-  const text = el('span', { class: 'filtration-status__headline-text' }, model.headline.text);
+  const text = el('span', { 'data-role': 'filtration-status-headline-text' }, model.headline.text);
   headline.append(icon, label, text);
 
   const parts = [title, headline];
 
   if (model.rows.length) {
-    const list = el('ul', { class: 'filtration-status__paths', 'data-role': 'filtration-status-paths' });
+    const list = el('ul', { 'data-role': 'filtration-status-paths' });
     model.rows.forEach((line) => {
       const item = el('li', {
-        class: 'filtration-status__row',
         'data-row-kind': line.kind,
         'data-path': line.path,
         'data-row-status': line.status ?? null,
@@ -63,16 +64,16 @@ function buildContent(root, model) {
   }
 
   if (model.explanation.length) {
-    const explanation = el('div', { class: 'filtration-status__explanation', 'data-role': 'filtration-status-explanation' });
+    const explanation = el('div', { 'data-role': 'filtration-status-explanation' });
     model.explanation.forEach((sentence) => explanation.appendChild(el('p', {}, sentence)));
     parts.push(explanation);
   }
 
   if (model.redundancy) {
-    parts.push(el('p', { class: 'filtration-status__redundancy', 'data-role': 'filtration-status-redundancy' }, model.redundancy));
+    parts.push(el('p', { 'data-role': 'filtration-status-redundancy' }, model.redundancy));
   }
 
-  parts.push(el('p', { class: 'filtration-status__note', 'data-role': 'filtration-status-note' }, model.note));
+  parts.push(el('p', { 'data-role': 'filtration-status-note' }, model.note));
   root.replaceChildren(...parts);
 }
 

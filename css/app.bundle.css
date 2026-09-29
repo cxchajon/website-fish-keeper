@@ -11857,8 +11857,10 @@ body.prototype-stock-page .chip {
    Part of the filter setup area: the same tones as the warning strips
    (good / warn / bad; neutral = the plain card line colour), status in words
    and an icon as well as colour, long lines wrap, nothing clips on phones.
+   Styled through the card's stable data-role / data-state / data-row-kind
+   attributes (no feature class names).
    ========================================================================== */
-#stocking-page .filtration-status {
+#stocking-page [data-role="filtration-status-card"] {
   margin: 12px 0 0;
   padding: 12px 14px;
   border: 1px solid var(--line);
@@ -11872,26 +11874,26 @@ body.prototype-stock-page .chip {
   overflow-wrap: anywhere;
 }
 
-#stocking-page .filtration-status[hidden] {
+#stocking-page [data-role="filtration-status-card"][hidden] {
   display: none;
 }
 
-#stocking-page .filtration-status[data-state="good"] {
+#stocking-page [data-role="filtration-status-card"][data-state="good"] {
   border-color: var(--ok);
   background: linear-gradient(0deg, rgba(18, 194, 120, 0.1), rgba(18, 194, 120, 0.1)), var(--card-raised);
 }
 
-#stocking-page .filtration-status[data-state="warn"] {
+#stocking-page [data-role="filtration-status-card"][data-state="warn"] {
   border-color: var(--warn);
   background: linear-gradient(0deg, rgba(244, 180, 0, 0.1), rgba(244, 180, 0, 0.1)), var(--card-raised);
 }
 
-#stocking-page .filtration-status[data-state="bad"] {
+#stocking-page [data-role="filtration-status-card"][data-state="bad"] {
   border-color: var(--bad);
   background: linear-gradient(0deg, rgba(255, 100, 92, 0.12), rgba(255, 100, 92, 0.12)), var(--card-raised);
 }
 
-#stocking-page .filtration-status__title {
+#stocking-page [data-role="filtration-status-title"] {
   margin: 0;
   font-size: 0.8rem;
   font-weight: 700;
@@ -11900,7 +11902,7 @@ body.prototype-stock-page .chip {
   color: var(--muted);
 }
 
-#stocking-page .filtration-status__headline {
+#stocking-page [data-role="filtration-status-headline"] {
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -11910,27 +11912,27 @@ body.prototype-stock-page .chip {
   line-height: 1.35;
 }
 
-#stocking-page .filtration-status__icon {
+#stocking-page [data-role="filtration-status-icon"] {
   flex: 0 0 auto;
 }
 
-#stocking-page .filtration-status__headline-text {
+#stocking-page [data-role="filtration-status-headline-text"] {
   min-width: 0;
 }
 
-#stocking-page .filtration-status[data-state="good"] .filtration-status__icon {
+#stocking-page [data-role="filtration-status-card"][data-state="good"] [data-role="filtration-status-icon"] {
   color: var(--ok);
 }
 
-#stocking-page .filtration-status[data-state="warn"] .filtration-status__icon {
+#stocking-page [data-role="filtration-status-card"][data-state="warn"] [data-role="filtration-status-icon"] {
   color: var(--chip-warn-text);
 }
 
-#stocking-page .filtration-status[data-state="bad"] .filtration-status__icon {
+#stocking-page [data-role="filtration-status-card"][data-state="bad"] [data-role="filtration-status-icon"] {
   color: var(--chip-bad-text);
 }
 
-#stocking-page .filtration-status__paths {
+#stocking-page [data-role="filtration-status-paths"] {
   list-style: none;
   margin: 8px 0 0;
   padding: 0;
@@ -11941,25 +11943,25 @@ body.prototype-stock-page .chip {
   line-height: 1.4;
 }
 
-#stocking-page .filtration-status__row[data-row-kind="supplemental"],
-#stocking-page .filtration-status__row[data-row-kind="legacy"],
-#stocking-page .filtration-status__row[data-row-kind="fact"] {
+#stocking-page [data-role="filtration-status-paths"] > [data-row-kind="supplemental"],
+#stocking-page [data-role="filtration-status-paths"] > [data-row-kind="legacy"],
+#stocking-page [data-role="filtration-status-paths"] > [data-row-kind="fact"] {
   color: var(--muted);
 }
 
-#stocking-page .filtration-status__row[data-row-kind="legacy"] {
+#stocking-page [data-role="filtration-status-paths"] > [data-row-kind="legacy"] {
   padding-left: 12px;
   font-size: 0.9rem;
 }
 
-#stocking-page .filtration-status__explanation p,
-#stocking-page .filtration-status__redundancy {
+#stocking-page [data-role="filtration-status-explanation"] p,
+#stocking-page [data-role="filtration-status-redundancy"] {
   margin: 8px 0 0;
   font-size: 0.93rem;
   line-height: 1.4;
 }
 
-#stocking-page .filtration-status__note {
+#stocking-page [data-role="filtration-status-note"] {
   margin: 10px 0 0;
   padding-top: 8px;
   border-top: 1px solid var(--line);

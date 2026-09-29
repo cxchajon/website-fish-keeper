@@ -62,12 +62,12 @@ the compact summary (`#filter-turnover`), **before** the Heads-up note (moved fr
 `#filter-turnover` to directly after the card; text unchanged) and before the Current Stock card.
 
 ```html
-<section class="filtration-status" data-role="filtration-status-card" aria-labelledby="filtration-status-title"
+<section data-role="filtration-status-card" aria-labelledby="filtration-status-title"
          data-state="warn" data-level="likely-multi-sponge" data-card-state="likely-multi-sponge"
          data-warning-ids="filtration.likely_multi_sponge" data-turnover="none">
-  <h3 id="filtration-status-title">Filtration</h3>
+  <h3 id="filtration-status-title" data-role="filtration-status-title">Filtration</h3>
   <p data-role="filtration-status-headline" role="status">
-    <span aria-hidden="true">⚠</span><span class="sr-only">Warning: </span><span>Likely adequate — multiple sponge filters</span></p>
+    <span data-role="filtration-status-icon" aria-hidden="true">⚠</span><span class="sr-only">Warning: </span><span data-role="filtration-status-headline-text">Likely adequate — multiple sponge filters</span></p>
   <ul data-role="filtration-status-paths">
     <li data-row-kind="path" data-path="sponge" data-instance-id="f-…">Sponge 1: rated 10–40 gal</li>
     <li data-row-kind="path" data-path="sponge" data-instance-id="f-…">Sponge 2: rated 10–40 gal</li>
@@ -87,6 +87,10 @@ Code:
   passingPaths }`. Imports only `math.js`; no DOM; unit-tested in Node.
 - `js/stocking-advisor/filtration/status-card.js` (new) — renderer; rebuilds the card only when its
   content signature changes.
+- Styling (`css/app.bundle.css`) uses only the card's stable attributes — `data-role` (card, title,
+  headline, icon, headline text, paths, explanation, redundancy, note), `data-state` for the tone and
+  `data-row-kind` for supplemental / legacy / fact rows. The card has no feature class names (only the
+  site's shared `sr-only`), so it adds no Stylelint violations (section 25).
 - `js/stocking.js` — `renderAll` renders the card (both the tank and the no-tank branches), so every
   recompute (filter / tank / stock change) updates it.
 
@@ -256,7 +260,8 @@ Pixel 5 project (393 px): no page overflow, card and rows never clipped, long li
 visible, text ≥ 14 px (asserted; note measured 14.4 px), chip remove buttons still usable (browser test).
 Card heights, desktop / mobile: powered 150 / 186 px; powered + sponge + powerhead 231 / 329;
 rated sponge 204 / 261; likely-multi 260 / 379; review 235 / 353; rating needed 178 / 258;
-UGF compatible 178 / 279; UGF not listed 233 / 397; powerhead only 199 / 256.
+UGF compatible 178 / 279; UGF not listed 233 / 376 (397 before the shortened explanation, section 22);
+powerhead only 199 / 256.
 
 ## 17. Common-case matrix (design 4.5, browser, desktop + mobile)
 
@@ -333,7 +338,7 @@ and the 3,120-scenario differential.
 | permanent live files, locally against the branch (`BASE_URL` = local static server) | **18 / 18** (`stocking-advisor-saved-filters.live.ts` 13, `stocking-advisor.live.ts` 5). A first run made while the full gate was running in parallel had one setup timeout (species row not shown in time, before any filtration step) and one real assertion ("20 High" forbidden in filter text, now allowed only as `Current tank: 20 High`); after that fix, run without the parallel gate: 18 / 18 |
 | permanent live files, locally against `main` (updated tests) | **18 / 18** — the updated live tests still pass against pre-G code |
 | `guard:live`, `audit:controls` | pass |
-| stylelint `css/app.bundle.css` | 3,285 problems on `main` → 3,308 (+23, all `selector-class-pattern`, the same prototype-prefix rule the existing phase 2E block trips; the bundle already fails it) |
+| Stylelint (`npm run lint:css`) | `main` 14,060 problems → branch 14,060: **Phase G delta 0** (bundle alone: 3,285 → 3,285). The repository still carries this historical debt; see section 25 |
 
 Existing tests changed — presentation assertions only (the engine assertions are untouched):
 
@@ -390,6 +395,47 @@ before and after the phase G deploy.
 - Design section 16 open items are unchanged (powered 2× floor questions, unverified Penn-Plax source,
   "and up" sponge products, `flowAdjustment` export estimate).
 
+## 25. Review follow-up: no new Stylelint debt
+
+Review blocker: the first pass styled the card with feature classes (`filtration-status`,
+`filtration-status__title`, `__headline`, `__icon`, `__headline-text`, `__paths`, `__row`,
+`__explanation`, `__redundancy`, `__note`). The project's `selector-class-pattern` only approves the
+`proto-home` / `btn` / `u-` / `is-` / `has-` prefixes, so the block added 23 violations
+(`npm run lint:css`: `main` 14,060 → 14,083; bundle alone 3,285 → 3,308).
+
+Fix (selectors / markup only — no wording, tone, status, row, redundancy, warning-suppression,
+accessibility, layout, Stocking Load or turnover change):
+
+- the card CSS now selects the existing stable attributes: `[data-role="filtration-status-card"]` with
+  `[data-state="good|warn|bad"]` and `[hidden]`; `[data-role="filtration-status-title"]`,
+  `…-headline`, `…-icon`, `…-headline-text`, `…-paths` (rows by `> [data-row-kind="supplemental|legacy|fact"]`),
+  `…-explanation`, `…-redundancy`, `…-note`. Attribute selectors carry the same specificity as the
+  classes they replace, so the cascade is unchanged;
+- every Phase G class was removed: `class="filtration-status"` from the static root in
+  `stocking-advisor.html`, and all ten classes from the generated elements in `status-card.js` (the
+  title, icon and headline text got `data-role`s instead); the shared `sr-only` stays;
+- the phase G browser spec reads the headline text by `data-role` instead of a class.
+
+| Stylelint (`npm run lint:css`, whole repository) | Problems |
+| --- | --- |
+| `main` (`61bdc39`) | 14,060 |
+| phase G first pass (`9ff98f9`) | 14,083 (+23) |
+| **phase G final** | **14,060 (delta 0)** |
+
+The violation list with line numbers removed is identical to `main`'s, and no error falls inside the
+card's CSS block. No `stylelint-disable` directive was added (none exists in the bundle).
+
+Visual regression: the same 9 states × desktop and mobile were rendered from the first-pass commit and
+from the fix. The computed styles (margin, padding, borders, radius, background, colour, font size /
+weight, line height, letter spacing, text transform, display, gap, list style, alignment) and the
+position and size of every card element are byte-identical in all 18 scenes; 15 / 18 area screenshots
+are pixel-identical, the other 3 differ only outside the card (chip row / a 1 px taller capture area,
+changing between runs). No overflow; the permanent note and redundancy line keep their styling.
+
+Functional regression after the fix: unit 307 / 307; gate (with the phase G spec, 48 / 48) 247 passed, 0 failed, 27 skipped;
+extended 105 pairs / 0 failures; permanent live locally against the branch 18 / 18; 3,120-scenario differential
+0 differences.
+
 ## Files changed
 
 - `js/stocking-advisor/filtration/status-view.js` (new) — pure card view model.
@@ -398,7 +444,7 @@ before and after the phase G deploy.
 - `js/stocking-advisor/filtration/controller.js` — compact summary: no zero turnover without powered biological flow.
 - `js/logic/envRecommend.js` — env-card turnover caption "—" without powered biological flow.
 - `stocking-advisor.html` — card container, Heads-up note moved after it, initial summary text, stylesheet version.
-- `css/app.bundle.css` — card styles.
+- `css/app.bundle.css` — card styles (data-attribute selectors).
 - `data/stocking-advisor/FILTRATION_MODEL.md` — §3.1 filtration status card.
 - Tests: `tests/unit/filtration-status-card-phase-g.test.mjs` (new), `tests/stocking-advisor-filtration-card-phase-g.spec.ts` (new), `playwright.stocking-gate.config.ts`, and the updates in section 21.
 - `_internal/reports/stocking-advisor-sponge-migration-phase-g-2026-09.md` (this report).
