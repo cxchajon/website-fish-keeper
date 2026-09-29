@@ -4,12 +4,23 @@ import {
   effectiveCapacityMethod,
   getTotalGPH,
   hasUnsupportedCapacityMethod,
+  isCompatibilityBasedUgf,
+  isKnownUgfProductId,
   isRatingBasedSponge,
   isSpongeFilter,
+  isUndergravelFilter,
   normalizeFilters,
   pickPassthroughFields,
   resolveCapacityMethod,
+  sanitizeCompatibleTanks,
 } from './math.js';
+import {
+  UGF_ITEM_LABEL,
+  buildUgfProductItem,
+  restoreUgfItem,
+  ugfChipBadge,
+  ugfOptionDetails,
+} from './ugf-items.js';
 import { readSavedFilters, writeSavedFilters } from './saved-state.js';
 import { duplicatePositions, findInstance, removeInstance, replaceInstance, withUniqueInstanceIds } from './instances.js';
 import {
@@ -103,6 +114,7 @@ const SPONGE_MANUAL_NOTE = 'Rated for up to ___ gallons: enter the tank size the
 const SPONGE_RATING_ERROR = 'Enter the tank size this sponge is rated for: a whole number of gallons from 1 to 999.';
 const FLOW_ERROR = 'Select a filter type and enter a positive flow value (GPH).';
 const UGF_ALREADY_ADDED = 'Already added. An undergravel filter is one plate set per tank.';
+const UGF_NOT_LISTED_FOR_TANK = 'This undergravel filter isn’t listed for this tank size.';
 
 const catalogMeta = {
   source: CATALOG_SOURCES.FALLBACK,
@@ -271,6 +283,10 @@ function formatProductOption(item) {
   if (isSpongeFilter(item)) {
     return label ? `${label} • ${spongeOptionDetails(item)}` : spongeOptionDetails(item);
   }
+  // An undergravel filter shows the tank presets it is listed for (phase F): no GPH, no gallon range.
+  if (isUndergravelFilter(item)) {
+    return label ? `${label} • ${ugfOptionDetails(item)}` : ugfOptionDetails(item);
+  }
   const details = [];
   if (Number.isFinite(item?.gphRated) && item.gphRated > 0) {
     details.push(`${formatGph(item.gphRated)} GPH`);
@@ -325,8 +341,10 @@ function resolveEfficiencyType(rawType) {
   return canonicalizeFilterType(rawType);
 }
 
+// A UGF by type, or by a known UGF product id whatever type stale data carries (phase F).
 function isUndergravelProduct(product) {
-  return canonicalizeFilterType(product?.type ?? '') === 'UGF';
+  return canonicalizeFilterType(product?.type ?? '') === 'UGF'
+    || isKnownUgfProductId(product?.productId ?? product?.id);
 }
 
 function hasProductInstance(product) {
@@ -334,13 +352,23 @@ function hasProductInstance(product) {
 }
 
 // Phase D: the same catalog product may be added again; each Add Selected is one more physical
-// filter with its own instanceId. Undergravel plates stay one set per tank (design D11; their
-// catalog GPH is not a measured flow, so a second copy must not double it).
+// filter with its own instanceId. Undergravel plates stay one set per tank (design D11: a UGF is
+// the plate set under the whole gravel bed).
 function canAddProduct(product) {
   if (!product || !product.id) {
     return false;
   }
-  return !(isUndergravelProduct(product) && hasProductInstance(product));
+  return !undergravelBlock(product);
+}
+
+// Why an undergravel product can't be added now: one plate set per tank (phase D), and only on a
+// tank preset it lists (phase F picker eligibility, also when the selection is stale after a tank
+// change). null for every other product.
+function undergravelBlock(product) {
+  if (!isUndergravelProduct(product)) return null;
+  if (hasProductInstance(product)) return UGF_ALREADY_ADDED;
+  const listed = sanitizeCompatibleTanks(product.compatibleTanks);
+  return listed && listed.includes(getTankId()) ? null : UGF_NOT_LISTED_FOR_TANK;
 }
 
 // Powered / circulation types need a positive GPH; a sponge needs its rated tank size instead.
@@ -378,14 +406,19 @@ function isSpongeItem(item) {
   return isSpongeFilter({ type: canonicalizeFilterType(item?.type ?? 'HOB') });
 }
 
+function isUgfItem(item) {
+  return isUndergravelFilter({ type: canonicalizeFilterType(item?.type ?? 'HOB') });
+}
+
 function toAppFilter(item) {
   const source = normalizeSource(item?.source);
   const baseType = item?.type ?? (source === FILTER_SOURCES.PRODUCT ? item?.type : 'HOB');
   const type = canonicalizeFilterType(baseType);
   const efficiencyType = resolveEfficiencyType(item?.efficiencyType ?? baseType);
-  // A sponge carries no flow, whatever its item holds.
+  // A sponge or a UGF carries no flow, whatever its item holds.
   const sponge = isSpongeFilter({ type });
-  const gph = sponge ? null : clampGph(item?.gph);
+  const ugf = isUndergravelFilter({ type });
+  const gph = sponge || ugf ? null : clampGph(item?.gph);
   const appFilter = {
     id: typeof item?.id === 'string' && item.id ? item.id : null,
     type,
@@ -394,8 +427,8 @@ function toAppFilter(item) {
     source,
     ...capacityFields(item),
   };
-  // The engine names each sponge in its rating messages.
-  if (sponge && typeof item?.label === 'string' && item.label) {
+  // The engine names each sponge / UGF in its rating messages.
+  if ((sponge || ugf) && typeof item?.label === 'string' && item.label) {
     appFilter.label = item.label;
   }
   return appFilter;
@@ -438,9 +471,11 @@ function computeFilterStats(appFilters, { gallons = state.tankGallons } = {}) {
     circulationGph: totals.circulation,
     turnover: totals.rated > 0 && hasVolume ? computeTurnover(totals.biological, volume) : null,
     totalTurnover: totals.rated > 0 && hasVolume ? computeTurnover(totals.rated, volume) : null,
-    // Sponges are counted, never measured in GPH.
+    // Sponges and undergravel filters are counted, never measured in GPH.
     spongeCount: normalizedFilters.filter((entry) => isRatingBasedSponge(entry)).length,
-    poweredCount: normalizedFilters.filter((entry) => entry.role === 'biological' && !isRatingBasedSponge(entry)).length,
+    ugfCount: normalizedFilters.filter((entry) => isCompatibilityBasedUgf(entry)).length,
+    poweredCount: normalizedFilters.filter((entry) => entry.role === 'biological'
+      && !isRatingBasedSponge(entry) && !isCompatibilityBasedUgf(entry)).length,
     normalizedFilters: normalizedFilters.map((entry) => ({ ...entry })),
   };
 }
@@ -468,8 +503,8 @@ function applyFiltersToApp() {
   if (primaryProduct) {
     appState.filterId = primaryProduct.id ?? null;
     appState.filterType = canonicalizeFilterType(primaryProduct.type ?? 'HOB');
-    // A sponge has no rated flow: its legacy catalog GPH is never handed to the calculator.
-    appState.ratedGph = isSpongeItem(primaryProduct) ? null : clampGph(primaryProduct.gph);
+    // A sponge or a UGF has no rated flow: no GPH is handed to the calculator for it.
+    appState.ratedGph = isSpongeItem(primaryProduct) || isUgfItem(primaryProduct) ? null : clampGph(primaryProduct.gph);
   } else {
     appState.filterId = null;
     appState.filterType = null;
@@ -501,6 +536,17 @@ function getTankGallons() {
     return Number(direct);
   }
   return 0;
+}
+
+// The canonical tank preset id (phase F), from the same tank store as the gallons. Undergravel
+// picker eligibility needs the preset itself: 20h and 20l are both 20 gallons.
+function getTankId() {
+  const snapshot = getTankSnapshot();
+  if (snapshot) {
+    return typeof snapshot.id === 'string' && snapshot.id ? snapshot.id : null;
+  }
+  const id = window.appState?.tank?.id;
+  return typeof id === 'string' && id ? id : null;
 }
 
 function ensureRefs() {
@@ -556,9 +602,13 @@ function ensureRefs() {
 
 function updateProductLabel(productItem) {
   productDebugVisible = Boolean(productItem);
-  productDebugText = productItem
-    ? `${productItem.label} • ${isSpongeItem(productItem) ? spongeChipBadge(productItem) : `${formatGph(productItem.gph)} GPH`}`
-    : '';
+  let badge = '';
+  if (productItem) {
+    if (isSpongeItem(productItem)) badge = spongeChipBadge(productItem);
+    else if (isUgfItem(productItem)) badge = ugfChipBadge(productItem);
+    else badge = `${formatGph(productItem.gph)} GPH`;
+  }
+  productDebugText = productItem ? `${productItem.label} • ${badge}` : '';
   syncProductDebug();
 }
 
@@ -726,6 +776,17 @@ function renderChips() {
         rate.setAttribute('aria-label', `Add the manufacturer tank rating for ${spokenLabel}`);
         rate.style.cssText = 'flex:0 0 auto;width:auto;min-width:0;min-height:0;height:auto;margin:0;white-space:nowrap;border:1px solid currentColor;background:transparent;color:inherit;border-radius:6px;font-size:12px;line-height:1.2;padding:2px 6px;cursor:pointer;';
       }
+    } else if (isUgfItem(item)) {
+      // An undergravel filter shows the tank presets it is listed for (phase F), never a GPH.
+      // data-rating says how that list relates to the selected tank; the chip stays visible either way.
+      const badge = ugfChipBadge(item);
+      const listed = sanitizeCompatibleTanks(item.compatibleTanks);
+      const tankId = getTankId();
+      gph.textContent = badge;
+      gph.dataset.rating = !listed ? 'needed' : listed.includes(tankId) ? 'compatible' : 'not-listed';
+      gph.removeAttribute('aria-hidden');
+      label.setAttribute('title', `${item.label} — ${badge}`);
+      remove.setAttribute('aria-label', `Remove ${spokenLabel} (${badge})`);
     } else {
       gph.innerHTML = `${formatGph(item.gph)}&nbsp;GPH`;
     }
@@ -754,24 +815,34 @@ function currentStats() {
 
 // "Filtration: 150 GPH • 5.2×/h" counts filters only; powerheads are listed as circulation.
 // Sponges (phase B) are listed by count: they are rated by tank size and have no flow or turnover.
+// Undergravel filters (phase F) likewise: rated by listed tank sizes, no flow or turnover.
 function formatSummary(stats) {
   const spongeCount = stats.spongeCount ?? 0;
-  const sponges = `${spongeCount} sponge filter${spongeCount === 1 ? '' : 's'} (rated by tank size)`;
+  const ugfCount = stats.ugfCount ?? 0;
+  const zeroFlow = [];
+  if (spongeCount > 0) zeroFlow.push(`${spongeCount} sponge filter${spongeCount === 1 ? '' : 's'} (rated by tank size)`);
+  if (ugfCount > 0) zeroFlow.push(`${ugfCount} undergravel filter${ugfCount === 1 ? '' : 's'} (rated for listed tanks)`);
   const flow = `${formatGph(stats.biologicalGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
   let base = `Filtration: ${flow}`;
-  if (spongeCount > 0) {
-    base = (stats.poweredCount ?? 0) > 0 ? `Filtration: ${flow} + ${sponges}` : `Filtration: ${sponges}`;
+  if (zeroFlow.length) {
+    base = (stats.poweredCount ?? 0) > 0 ? `Filtration: ${flow} + ${zeroFlow.join(' + ')}` : `Filtration: ${zeroFlow.join(' + ')}`;
   }
   return stats.circulationGph > 0 ? `${base} (+${formatGph(stats.circulationGph)} GPH circulation only)` : base;
 }
 
 const SUMMARY_TITLE = 'Powered filters: rated flow through filter media (GPH) and turnover per hour. Sponge filters: checked by the manufacturer tank-size rating; no flow or turnover is estimated. Powerheads add circulation only. Filtration does not change Stocking Load.';
+const UGF_SUMMARY_TITLE = ' Undergravel filters: checked by the tank sizes the manufacturer lists; no flow or turnover is estimated.';
+
+// The undergravel sentence is added only when a UGF is in the list, so other plans keep their title.
+function summaryTitle(stats) {
+  return (stats?.ugfCount ?? 0) > 0 ? `${SUMMARY_TITLE}${UGF_SUMMARY_TITLE}` : SUMMARY_TITLE;
+}
 
 function renderSummary() {
   if (!refs.summary) return;
   const stats = currentStats();
   refs.summary.textContent = formatSummary(stats);
-  refs.summary.setAttribute('title', SUMMARY_TITLE);
+  refs.summary.setAttribute('title', summaryTitle(stats));
 }
 
 function syncSelectValue() {
@@ -846,11 +917,12 @@ function setFilters(nextFilters) {
     const source = normalizeSource(raw.source);
     const inputType = raw.type ?? (source === FILTER_SOURCES.PRODUCT ? raw.type : 'HOB');
     const type = canonicalizeFilterType(inputType);
-    // A sponge is kept with zero flow (it is rated by tank size); its stored GPH is never read.
-    // Powered filters still need a positive GPH.
+    // A sponge is kept with zero flow (it is rated by tank size); its stored GPH is never read. So is
+    // a UGF (phase F: checked by its listed tank presets). Powered filters still need a positive GPH.
     const sponge = isSpongeFilter({ type });
-    const gph = sponge ? 0 : clampGph(raw.gph ?? raw.rated_gph ?? raw.gphRated);
-    if (!sponge && (!Number.isFinite(gph) || gph <= 0)) {
+    const ugf = isUndergravelFilter({ type });
+    const gph = sponge || ugf ? 0 : clampGph(raw.gph ?? raw.rated_gph ?? raw.gphRated);
+    if (!sponge && !ugf && (!Number.isFinite(gph) || gph <= 0)) {
       return;
     }
     let id = typeof raw.id === 'string' && raw.id ? raw.id : null;
@@ -858,9 +930,11 @@ function setFilters(nextFilters) {
       id = `manual-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
     }
     const efficiencyType = resolveEfficiencyType(raw.efficiencyType ?? inputType);
-    // Custom labels are generated, so a custom sponge's old "Sponge 120 GPH" label is replaced.
-    const label = source !== FILTER_SOURCES.PRODUCT && sponge
-      ? SPONGE_ITEM_LABEL
+    // Custom labels are generated, so a custom sponge's old "Sponge 120 GPH" label is replaced, and
+    // an old custom UGF's "Undergravel 150 GPH" too.
+    const customZeroFlowLabel = sponge ? SPONGE_ITEM_LABEL : ugf ? UGF_ITEM_LABEL : null;
+    const label = source !== FILTER_SOURCES.PRODUCT && customZeroFlowLabel
+      ? customZeroFlowLabel
       : typeof raw.label === 'string' && raw.label
         ? raw.label
         : source === FILTER_SOURCES.PRODUCT
@@ -870,6 +944,8 @@ function setFilters(nextFilters) {
     // AquaClear 70s are two filters. The stable per-instance id is the identity; a missing,
     // malformed or repeated one (damaged saved state) is re-issued and the filter is kept.
     const fields = capacityFields(raw);
+    // Compatible tanks come only from a catalog record (phase F): never kept on a custom UGF.
+    if (source !== FILTER_SOURCES.PRODUCT) delete fields.compatibleTanks;
     const productId = source === FILTER_SOURCES.PRODUCT ? id : fields.productId;
     sanitized.push({
       id,
@@ -893,6 +969,10 @@ function createProductFilter(product) {
   // A catalog sponge carries its catalog rating, never its legacy catalog GPH (phase B).
   if (isSpongeFilter({ type: canonicalizeFilterType(product.type ?? 'HOB') })) {
     return buildSpongeProductItem(product);
+  }
+  // A catalog UGF carries its listed tank presets, never a GPH (phase F).
+  if (isUndergravelProduct(product)) {
+    return buildUgfProductItem(product);
   }
   const rated = clampGph(product.rated_gph ?? product.ratedGph ?? product.gphRated);
   if (!rated) {
@@ -989,7 +1069,7 @@ window.renderFiltration = function renderFiltration() {
   const chipbar = document.querySelector('.filtration-chipbar');
   if (chipbar) {
     chipbar.dataset.total = formatSummary(stats).replace(/^Filtration: /, '');
-    chipbar.setAttribute('title', SUMMARY_TITLE);
+    chipbar.setAttribute('title', summaryTitle(stats));
   }
 };
 
@@ -1051,12 +1131,16 @@ function renderProductOptions() {
   const tankGallons = Number.isFinite(state.tankGallons) && state.tankGallons > 0
     ? state.tankGallons
     : getTankGallons();
-  // Sponges are offered on every tank (their legacy GPH-bucket range is ignored, phase B). The
-  // fall-back to the whole catalog still depends on powered products only, as before.
-  const filteredForTank = filterCatalogByTank(catalogItems, tankGallons);
+  // Sponges are offered on every tank (their legacy GPH-bucket range is ignored, phase B). An
+  // undergravel filter only on a tank preset it lists (phase F), by preset id, never by gallons —
+  // also in the whole-catalog fall-back. That fall-back still depends on powered products only.
+  const tankId = getTankId();
+  const filteredForTank = filterCatalogByTank(catalogItems, tankGallons, tankId);
   const matchCount = filteredForTank.length;
-  const poweredMatches = filteredForTank.filter((item) => !isSpongeFilter(item)).length;
-  const items = poweredMatches ? filteredForTank : catalogItems.slice();
+  const poweredMatches = filteredForTank.filter((item) => !isSpongeFilter(item) && !isUndergravelFilter(item)).length;
+  const items = poweredMatches
+    ? filteredForTank
+    : catalogItems.filter((item) => !isUndergravelFilter(item) || filteredForTank.includes(item));
   updateCatalogDebug({ matchedCount: matchCount, totalCount: catalogItems.length });
   if (!items.length) {
     showProductDropdownUnavailable('Filters unavailable');
@@ -1080,6 +1164,12 @@ function renderProductOptions() {
         // No GPH and no GPH-bucket range for a sponge: only its rating state.
         dataset.filterType = item.type;
         dataset.ratingStatus = spongeChipBadge(item) === 'Rating needed' ? 'needed' : 'verified';
+        return { value: item.id, label: formatProductOption(item), dataset };
+      }
+      if (isUndergravelFilter(item)) {
+        // No GPH and no generic gallon range for a UGF: its type and the presets it is listed for.
+        dataset.filterType = item.type;
+        dataset.compatibleTanks = (sanitizeCompatibleTanks(item.compatibleTanks) ?? []).join(' ');
         return { value: item.id, label: formatProductOption(item), dataset };
       }
       if (Number.isFinite(item.minGallons)) {
@@ -1136,7 +1226,7 @@ async function handleProductChange(value) {
   }
   updateProductAddButton();
   if (!canAddProduct(item)) {
-    showProductStatus(UGF_ALREADY_ADDED, { duration: 0 });
+    showProductStatus(undergravelBlock(item), { duration: 0 });
   } else if (hasProductInstance(item)) {
     showProductStatus('Already in your list. Click Add Selected to add another one.', { duration: 0 });
   } else {
@@ -1159,7 +1249,7 @@ async function tryAddProduct() {
     return;
   }
   if (!canAddProduct(item)) {
-    showProductStatus(UGF_ALREADY_ADDED, { duration: 2200 });
+    showProductStatus(undergravelBlock(item), { duration: 2200 });
     updateProductAddButton();
     return;
   }
@@ -1224,6 +1314,9 @@ function restoreProductItem(product, entry) {
   if (isSpongeFilter({ type: canonicalizeFilterType(product?.type ?? 'HOB') })) {
     return restoreSpongeItem(entry, product);
   }
+  if (isUndergravelProduct(product)) {
+    return restoreUgfItem(entry, product);
+  }
   const productItem = createProductFilter(product);
   if (!productItem) return null;
   const saved = pickPassthroughFields(entry);
@@ -1274,6 +1367,14 @@ function hydrateFromAppState() {
         if (!item.id) item.id = newManualId();
         next.push(item);
       }
+      return;
+    }
+    // Phase F: a saved UGF the catalog can't resolve (known id offline, or an old custom UGF) is a
+    // zero-flow UGF with no compatible tanks: shown, "not evaluated", never scored by its old GPH.
+    if (kind === RESTORE_KINDS.UGF) {
+      const item = restoreUgfItem(entry, null);
+      if (!item.id) item.id = newManualId();
+      next.push(item);
       return;
     }
     const gph = clampGph(entry?.rated_gph ?? entry?.gphRated ?? entry?.gph);

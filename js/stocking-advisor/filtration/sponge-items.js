@@ -17,7 +17,9 @@ import {
   formatSpongeRating,
   hasUnsupportedCapacityMethod,
   isKnownSpongeProductId,
+  isKnownUgfProductId,
   isSpongeFilter,
+  isUndergravelFilter,
   pickPassthroughFields,
   resolveSpongeRating,
 } from './math.js';
@@ -135,6 +137,7 @@ export function restoreSpongeItem(entry, product) {
 export const RESTORE_KINDS = Object.freeze({
   PRODUCT: 'product', // rebuilt from the current catalog record (its type, GPH, rating)
   SPONGE: 'sponge', // restoreSpongeItem without a catalog record: custom, or unresolved product id
+  UGF: 'ugf', // ugf-items restoreUgfItem without a catalog record: custom, or unresolved product id
   FLOW: 'flow', // custom / unresolved powered filter at its stored GPH (still needs GPH > 0)
   DROP: 'drop',
 });
@@ -146,6 +149,8 @@ export const RESTORE_KINDS = Object.freeze({
  *      saved type, capacityMethod, GPH and rating, in both directions;
  *   3. otherwise a sponge (saved type SPONGE, or a known catalog sponge id) is a rating sponge whose
  *      stored GPH is never scored;
+ *   3b. otherwise a UGF (saved type UGF, or a known catalog UGF id, phase F) is a zero-flow
+ *      tank_compatibility filter whose stored GPH is never scored;
  *   4. otherwise a powered filter keeps its stored GPH (legacy behaviour).
  * @param {object} entry  saved entry in app-filter shape ({id, type, rated_gph, productId, …})
  * @param {object|null} product  the current catalog record for its id, when found
@@ -153,10 +158,13 @@ export const RESTORE_KINDS = Object.freeze({
 export function restoreKind(entry, product) {
   if (!entry || typeof entry !== 'object' || hasUnsupportedCapacityMethod(entry)) return RESTORE_KINDS.DROP;
   if (product) return RESTORE_KINDS.PRODUCT;
-  if (isSpongeFilter({ type: canonicalizeFilterType(entry.type ?? 'HOB') })
-    || isKnownSpongeProductId(entry.productId ?? entry.id)) {
-    return RESTORE_KINDS.SPONGE;
-  }
+  // A known product id decides before the saved type (a known UGF saved as "SPONGE" is a UGF).
+  const knownId = entry.productId ?? entry.id;
+  if (isKnownUgfProductId(knownId)) return RESTORE_KINDS.UGF;
+  if (isKnownSpongeProductId(knownId)) return RESTORE_KINDS.SPONGE;
+  const type = canonicalizeFilterType(entry.type ?? 'HOB');
+  if (isSpongeFilter({ type })) return RESTORE_KINDS.SPONGE;
+  if (isUndergravelFilter({ type })) return RESTORE_KINDS.UGF;
   return RESTORE_KINDS.FLOW;
 }
 

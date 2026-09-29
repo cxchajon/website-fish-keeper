@@ -4,7 +4,7 @@
 //   loader emits no gphRated / rated_gph / minGallons / maxGallons for a sponge.
 //   HISTORICAL data (old caches, old saved plans, old custom sponges) keeps its fake GPH in the
 //   fixtures below on purpose: the phase B / C protections must still neutralise it.
-//   Cache: current key ttg.gear.catalog.v3; ttg.gear.catalog.v2 is never read or written. The stale-record
+//   Cache: current key ttg.gear.catalog.v4 since phase F (v3 in phase E); ttg.gear.catalog.v2 is never read or written. The stale-record
 //   tests feed old-shaped records through the key the loader reads, so the sanitiser stays covered.
 //   Saved filters: current saves write ttg.stocking.filters.v2 only (v1 mirror retired); historical
 //   v1 is still read and migrated when v2 is missing or unreadable.
@@ -24,6 +24,7 @@ const compute = await import('../../js/logic/compute.js');
 const math = await import('../../js/stocking-advisor/filtration/math.js');
 const saved = await import('../../js/stocking-advisor/filtration/saved-state.js');
 const items = await import('../../js/stocking-advisor/filtration/sponge-items.js');
+const ugfItems = await import('../../js/stocking-advisor/filtration/ugf-items.js');
 const instances = await import('../../js/stocking-advisor/filtration/instances.js');
 const { getGearData, filterGearByTank, sortGearItems } = await import('../../js/gear-data.js');
 const { getTankById, TANK_SIZES } = await import('../../js/utils.js');
@@ -47,8 +48,9 @@ const TETRA = 'tetra-whisper-iq-45';
 const UGF = 'penn-plax-ugf-20-29';
 const V1 = saved.FILTER_STORAGE_KEY_V1;
 const V2 = saved.FILTER_STORAGE_KEY_V2;
-// Current catalog cache generation (phase E) and the retired phases B–D generation.
-const CACHE_KEY = 'ttg.gear.catalog.v3';
+// Current catalog cache generation (v3 in phase E, v4 since phase F: the loader reads and writes
+// only this key) and the retired phases B–D generation.
+const CACHE_KEY = 'ttg.gear.catalog.v4';
 const OLD_CACHE_KEY = 'ttg.gear.catalog.v2';
 
 // Every legacy flow / bucket key a sponge record could carry.
@@ -88,6 +90,8 @@ const v2Storage = (filters) => storageWith({ [V2]: JSON.stringify({ v: 2, filter
 // --- controller model (createProductFilter / hydrateFromAppState → setFilters), as in phases C / D ---
 function productItem(product) {
   if (math.isSpongeFilter(product)) return items.buildSpongeProductItem(product);
+  // Phase F: a catalog UGF carries compatibleTanks and no GPH (controller createProductFilter).
+  if (math.isUndergravelFilter(product)) return ugfItems.buildUgfProductItem(product);
   return { id: product.id, source: 'product', label: product.name, type: product.type, gph: Math.round(product.gphRated),
     productId: product.id, capacityMethod: 'flow' };
 }
@@ -99,13 +103,18 @@ function controllerRestore(filters, catalogById = CATALOG_BY_ID) {
     const kind = items.restoreKind(entry, product);
     if (kind === items.RESTORE_KINDS.DROP) continue;
     if (kind === items.RESTORE_KINDS.PRODUCT) {
-      const item = math.isSpongeFilter(product) ? items.restoreSpongeItem(entry, product) : productItem(product);
+      const item = math.isSpongeFilter(product) ? items.restoreSpongeItem(entry, product)
+        : math.isUndergravelFilter(product) ? ugfItems.restoreUgfItem(entry, product) : productItem(product);
       const fields = math.pickPassthroughFields(entry);
       out.push(fields.instanceId ? { ...item, instanceId: fields.instanceId } : item);
       continue;
     }
     if (kind === items.RESTORE_KINDS.SPONGE) {
       out.push(items.restoreSpongeItem(entry, null));
+      continue;
+    }
+    if (kind === items.RESTORE_KINDS.UGF) {
+      out.push(ugfItems.restoreUgfItem(entry, null));
       continue;
     }
     const gph = Math.min(Math.round(Number(entry.rated_gph ?? entry.gph) || 0), 1500);
@@ -221,13 +230,12 @@ test('current catalog: manufacturer rating metadata is exactly as phase B locked
   }
 });
 
-test('current catalog: powered records and the UGF keep their GPH and tank range (unchanged in phase E)', () => {
+test('current catalog: powered records keep their GPH and tank range (unchanged in phase E; the UGF changed in phase F)', () => {
   const expected = {
     [TETRA]: ['HOB', 215, 40, 75],
     [AC70]: ['HOB', 300, 40, 70],
     'fluval-307': ['CANISTER', 303, 40, 70],
     'eheim-2213': ['CANISTER', 116, 21, 66],
-    [UGF]: ['UGF', 150, 20, 40],
   };
   for (const [id, [type, gph, min, max]] of Object.entries(expected)) {
     const record = RAW.find((item) => item.id === id);
@@ -235,8 +243,9 @@ test('current catalog: powered records and the UGF keep their GPH and tank range
     const loaded = CATALOG_BY_ID.get(id);
     assert.deepEqual([loaded.type, loaded.gphRated, loaded.rated_gph, loaded.minGallons, loaded.maxGallons], [type, gph, gph, min, max], `${id} loaded`);
   }
-  // Every non-sponge record still has a positive GPH and a tank range.
-  for (const record of RAW.filter((item) => item.type !== 'SPONGE')) {
+  // Every powered record still has a positive GPH and a tank range (the UGF has neither since
+  // phase F: filter-ugf-phase-f.test.mjs).
+  for (const record of RAW.filter((item) => item.type !== 'SPONGE' && item.type !== 'UGF')) {
     assert.ok(record.gphRated > 0, record.id);
     assert.ok(Number.isFinite(record.minGallons) && Number.isFinite(record.maxGallons), record.id);
   }
@@ -254,7 +263,7 @@ test('loader: a current sponge record is identity + rating metadata only (no syn
   }
 });
 
-test('current catalog cache is ttg.gear.catalog.v3: network writes v3 (never v2); sponges clean, powered unchanged; re-read', async () => {
+test('current catalog cache (ttg.gear.catalog.v4 since phase F): network writes it (never v2); sponges clean, powered unchanged; re-read', async () => {
   try {
     const { gear, store } = await freshGearData({});
     assert.equal(gear.CATALOG_CACHE_KEY, CACHE_KEY);
@@ -368,7 +377,7 @@ test('stale-shaped cache records, phase B–D shape (fake GPH + bucket + rating 
   }
 });
 
-test('an old ttg.gear.catalog.v2 is never the current cache: online the network catalog is used and v3 written; v2 left untouched', async () => {
+test('an old ttg.gear.catalog.v2 is never the current cache: online the network catalog is used and the current key written; v2 left untouched', async () => {
   // Exactly what the phases B–D loader cached: rating metadata plus fake GPH / bucket fields — and a
   // tampered verified rating that must not surface if v2 were read.
   const LEGACY = { [HYGGER_S]: [80, 0, 20], [AQUANEAT_MIDDLE]: [120, 0, 20], [POWKOO]: [150, 20, 40] };
@@ -463,16 +472,19 @@ test('picker: all seven sponges offered on every tank size without generic bucke
   for (const gallons of sample) {
     const offered = filterGearByTank(CATALOG, gallons);
     assert.deepEqual(offered.filter((item) => item.type === 'SPONGE').map((item) => item.id).sort(), [...SPONGE_IDS].sort(), `${gallons} gal`);
+    // The UGF is offered by tank preset id only since phase F (never by gallons): absent here.
+    assert.equal(offered.some((item) => item.type === 'UGF'), false, `${gallons} gal UGF`);
     const powered = offered.filter((item) => item.type !== 'SPONGE').map((item) => item.id);
-    const expected = CATALOG.filter((item) => item.type !== 'SPONGE' && gallons >= item.minGallons && gallons <= item.maxGallons).map((item) => item.id);
+    const expected = CATALOG.filter((item) => item.type !== 'SPONGE' && item.type !== 'UGF' && gallons >= item.minGallons && gallons <= item.maxGallons).map((item) => item.id);
     assert.deepEqual(powered, expected, `${gallons} gal powered`);
   }
-  // No usable tank size: the whole list, sponges included.
-  assert.equal(filterGearByTank(CATALOG, 0).length, CATALOG.length);
-  assert.equal(filterGearByTank(CATALOG, NaN).length, CATALOG.length);
+  // No usable tank size: the whole list, sponges included (the UGF only with a listed preset id).
+  assert.equal(filterGearByTank(CATALOG, 0).length, CATALOG.length - 1);
+  assert.equal(filterGearByTank(CATALOG, NaN).length, CATALOG.length - 1);
+  assert.equal(filterGearByTank(CATALOG, 0, '29g').length, CATALOG.length);
   // The controller's whole-catalog fallback counts powered matches only; every preset has one.
   for (const tank of TANK_SIZES) {
-    assert.ok(filterGearByTank(CATALOG, tank.gallons).some((item) => item.type !== 'SPONGE'), tank.id);
+    assert.ok(filterGearByTank(CATALOG, tank.gallons).some((item) => item.type !== 'SPONGE' && item.type !== 'UGF'), tank.id);
   }
 });
 
@@ -559,13 +571,15 @@ test('powered filters score as before: Tetra IQ 45 215, AquaClear 70 300, Fluval
   }
 });
 
-test('UGF unchanged in phase E: flow-scored at its legacy 150 GPH, offered on its 20–40 gal range', () => {
+test('UGF (unchanged in phase E; phase F model): not a sponge, tank_compatibility, offered on 20 Long / 29 only', () => {
+  // Through phase E: flow-scored at 150 GPH on a 20–40 gal range. Phase F contract in detail:
+  // filter-ugf-phase-f.test.mjs.
   const ugf = CATALOG_BY_ID.get(UGF);
   assert.equal(math.isSpongeFilter(ugf), false);
-  assert.equal(math.effectiveCapacityMethod(ugf), 'flow');
-  assert.deepEqual(TANK_SIZES.filter((tank) => filterGearByTank([ugf], tank.gallons).length).map((tank) => tank.id), ['20h', '20l', '29g', '40b']);
+  assert.equal(math.effectiveCapacityMethod(ugf), 'tank_compatibility');
+  assert.deepEqual(TANK_SIZES.filter((tank) => filterGearByTank([ugf], tank.gallons, tank.id).length).map((tank) => tank.id), ['20l', '29g']);
   const computed = computeFor('29g', addProduct([], UGF));
-  assert.deepEqual([computed.filtering.gphTotal, computed.filtering.level], [150, 'adequate']);
+  assert.deepEqual([computed.filtering.gphTotal, computed.filtering.level], [0, 'adequate']);
 });
 
 // ---------------------------------------------------------------------------------------------

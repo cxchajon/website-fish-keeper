@@ -27,7 +27,7 @@ have, and it would tell beginners that buying a bigger filter makes a crowded ta
 | Input | Source | Treated as |
 | --- | --- | --- |
 | Device type | catalog `type` or the custom "Filter type" menu | role only (below) |
-| Rated GPH | catalog `gphRated` or the custom GPH field | manufacturer's estimate; an upper bound on real flow |
+| Rated GPH | catalog `gphRated` or the custom GPH field (powered filters and powerheads; not sponges or undergravel filters, §6) | manufacturer's estimate; an upper bound on real flow |
 | Tank gallons | the selected tank's nominal gallons | turnover denominator |
 | Species flow preference | species `flow` (low / moderate / high) | **not used** by the filtration check (§3) |
 
@@ -114,6 +114,15 @@ guidance only.
   former sponge GPH figures (60–200) were tank-size marketing, not measured flow, and were removed in
   sponge migration phase E. Sponges are checked by the manufacturer's tank-size rating instead
   (`_internal/reports/stocking-advisor-sponge-migration-phase-b-2026-09.md`).
+- Undergravel filters (UGF) are not scored from GPH either: plates under the gravel are sized by tank
+  footprint, so the former catalog 150 GPH and its generic 20–40 gal range were removed in sponge
+  migration phase F. A UGF is biological filtration with 0 GPH and no turnover, checked only against the
+  tank presets its maker lists (`compatibleTanks`). The Penn-Plax plates (two 14" × 11.1") are listed for
+  the **20 Long** and **29 Gallon** presets (each listed preset is named; compatibility is never shown as a range); a **20 High** does not pass just because it is also 20
+  gallons, and no other preset passes by gallon count. On a preset that isn't listed the filter is shown
+  as "Rating needed — this undergravel filter isn't listed for this tank size" (not evaluated, not a
+  failure). Filtration, including a UGF, never changes Stocking Load
+  (`_internal/reports/stocking-advisor-sponge-migration-phase-f-2026-09.md`).
 - There is no circulation or current-strength check; species flow preference is left to the
   environment guidance.
 - Media quantity, maintenance, clogging and maturity are unknown and not modelled.

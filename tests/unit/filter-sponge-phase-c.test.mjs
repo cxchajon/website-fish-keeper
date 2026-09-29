@@ -17,6 +17,7 @@ const compute = await import('../../js/logic/compute.js');
 const math = await import('../../js/stocking-advisor/filtration/math.js');
 const saved = await import('../../js/stocking-advisor/filtration/saved-state.js');
 const items = await import('../../js/stocking-advisor/filtration/sponge-items.js');
+const ugfItems = await import('../../js/stocking-advisor/filtration/ugf-items.js');
 const { getGearData, CATALOG_CACHE_KEY } = await import('../../js/gear-data.js');
 const { getTankById } = await import('../../js/utils.js');
 
@@ -58,6 +59,9 @@ function controllerRestore(filters, catalogById = CATALOG_BY_ID) {
     if (kind === items.RESTORE_KINDS.PRODUCT) {
       if (math.isSpongeFilter(product)) {
         out.push(items.restoreSpongeItem(entry, product));
+      } else if (math.isUndergravelFilter(product)) {
+        // Phase F: a catalog UGF is restored by compatibility, never by GPH.
+        out.push(ugfItems.restoreUgfItem(entry, product));
       } else {
         out.push({ id: product.id, source: 'product', label: product.name, type: product.type, gph: Math.round(product.gphRated),
           productId: product.id, capacityMethod: 'flow', ...(entry.instanceId ? { instanceId: entry.instanceId } : {}) });
@@ -66,6 +70,10 @@ function controllerRestore(filters, catalogById = CATALOG_BY_ID) {
     }
     if (kind === items.RESTORE_KINDS.SPONGE) {
       out.push(items.restoreSpongeItem(entry, null));
+      continue;
+    }
+    if (kind === items.RESTORE_KINDS.UGF) {
+      out.push(ugfItems.restoreUgfItem(entry, null));
       continue;
     }
     const gph = Math.min(Math.round(Number(entry.rated_gph ?? entry.gph) || 0), 1500);

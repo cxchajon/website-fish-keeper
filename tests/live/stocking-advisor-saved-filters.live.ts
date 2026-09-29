@@ -2,12 +2,13 @@
 // phase C stale-data fallback and phase D duplicate filter instances against production. Each test runs in a fresh browser context, so it
 // only touches its own throwaway localStorage. Phase E contract: current saves write
 // ttg.stocking.filters.v2 only (no v1 mirror; a historical v1 plan is still read, migrated and then
-// removed) and the catalog cache is ttg.gear.catalog.v3.
+// removed). Phase F contract: the catalog cache is ttg.gear.catalog.v4 (v3 in phase E), and the
+// undergravel filter is evaluated by its listed tank presets (20 Long and 29 Gallon), never by GPH.
 import { test, expect, type Page } from '@playwright/test';
 
 const V1 = 'ttg.stocking.filters.v1';
 const V2 = 'ttg.stocking.filters.v2';
-const CATALOG_CACHE = 'ttg.gear.catalog.v3';
+const CATALOG_CACHE = 'ttg.gear.catalog.v4';
 const ASSET_PATH = /\/(js|data|assets\/data)\//;
 
 type Errors = { page: string[]; console: string[] };
@@ -124,17 +125,19 @@ async function reloadWithStock(page: Page, tankId: string) {
 
 const filtrationWarningIds = (state: Snapshot) => state.warnings.filter((id: string) => id.startsWith('filtration.'));
 
-test('phases B–E are deployed: saved-state (rating model, no v1 mirror) and catalog cache v3 are served', async ({ request }) => {
+test('phases B–F are deployed: saved-state (rating model, no v1 mirror) and catalog cache v4 are served', async ({ request }) => {
   const response = await request.get('/js/stocking-advisor/filtration/saved-state.js');
   expect(response.status()).toBe(200);
   const body = await response.text();
   expect(body).toContain("'ttg.stocking.filters.v2'");
   expect(body).toContain('CAPACITY_METHODS.MANUFACTURER_RATING');
-  // Phase E: the v1 mirror serializer is retired and the catalog cache generation is v3.
+  // Phase E: the v1 mirror serializer is retired. Phase F: UGF entries are tank_compatibility and the
+  // catalog cache generation is v4.
   expect(body).not.toContain('toV1Mirror');
+  expect(body).toContain('CAPACITY_METHODS.TANK_COMPATIBILITY');
   const gear = await request.get('/js/gear-data.js');
   expect(gear.status()).toBe(200);
-  expect(await gear.text()).toContain("'ttg.gear.catalog.v3'");
+  expect(await gear.text()).toContain("'ttg.gear.catalog.v4'");
 });
 
 test('powered catalog filter (Tetra IQ 45): 215 GPH, load unchanged, v2 written (no v1 mirror), identical after reload', async ({ page }) => {
@@ -443,10 +446,11 @@ test('phase C: catalog unavailable — a known sponge id saved as a 900 GPH HOB 
     catalogRequests += 1;
     return route.abort('failed');
   });
-  // Fresh context: there is no cached catalog (current ttg.gear.catalog.v3, or an old v2 / v1) to fall back on either.
+  // Fresh context: there is no cached catalog (current ttg.gear.catalog.v4, or an old v3 / v2 / v1) to fall back on either.
   await page.addInitScript(() => {
     if (sessionStorage.getItem('__phaseC_seeded')) return;
     sessionStorage.setItem('__phaseC_seeded', '1');
+    localStorage.removeItem('ttg.gear.catalog.v4');
     localStorage.removeItem('ttg.gear.catalog.v3');
     localStorage.removeItem('ttg.gear.catalog.v2');
     localStorage.removeItem('ttg.gear.catalog.v1');
@@ -642,5 +646,166 @@ test('regression: 44 species, Tetra IQ 45 at 215 GPH in the live catalog, no err
     return catalog.find((item: { id: string }) => item.id === 'tetra-whisper-iq-45');
   });
   expect(iq45).toMatchObject({ type: 'HOB', gphRated: 215, minGallons: 40, maxGallons: 75 });
+  expect(errors).toEqual({ page: [], console: [] });
+});
+
+// Phase F: the dedicated undergravel filter model. penn-plax-ugf-20-29 is listed for the 20 Long and
+// 29 Gallon presets only; it is never scored by GPH. 20 High is also 20 gallons and must not pass.
+const UGF = 'penn-plax-ugf-20-29';
+const UGF_CHIP = 'Rated: 20 Long and 29 Gallon';
+const UGF_RATED = 'Undergravel filter rated for this tank';
+const UGF_NOT_LISTED = 'Rating needed — this undergravel filter isn\'t listed for this tank size';
+const UGF_FORBIDDEN = /150|GPH|20g–40g|20–40|20 High/;
+
+async function ugfState(page: Page) {
+  return page.evaluate(async () => {
+    const compute = await import('/js/logic/compute.js');
+    const appState = (window as unknown as { appState: Record<string, unknown> & { filters?: Array<Record<string, unknown>> } }).appState;
+    const computed = compute.buildComputedState(appState);
+    const withoutFilters = compute.buildComputedState({ ...appState, filters: [] });
+    const load = (c: { bioload: Record<string, unknown> }) => [c.bioload.currentPercent, c.bioload.proposedPercent, c.bioload.text, c.bioload.severity];
+    const { assessment } = computed.filtering;
+    const node = document.querySelector<HTMLElement>('[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id="penn-plax-ugf-20-29"]');
+    return {
+      tankId: assessment.tankId ?? null,
+      level: computed.filtering.level,
+      adequateBy: assessment.adequateBy,
+      passingPaths: assessment.passingPaths ?? null,
+      statusText: computed.filtering.status?.text ?? null,
+      hasBiologicalFiltration: assessment.hasBiologicalFiltration,
+      // Optional chaining: before phase F there is no ugf section, and the test must fail on a UGF
+      // assertion rather than inside this helper.
+      ugf: [assessment.ugf?.count ?? null, assessment.ugf?.status ?? null, assessment.ugf?.rated ?? null, assessment.ugf?.gph ?? null],
+      compatibilityText: assessment.ugf?.entries?.[0]?.compatibilityText ?? null,
+      gph: [computed.filtering.gphTotal, computed.filtering.biologicalGph, computed.filtering.circulationGph],
+      turnover: [computed.filtering.turnover, computed.filtering.totalTurnover],
+      filters: (appState.filters ?? []).map((filter) => [filter.productId ?? filter.id, filter.type, filter.rated_gph, filter.capacityMethod]),
+      filtrationWarnings: (computed.filtering.warnings ?? []).map((warning: { id: string; severity: string }) => [warning.id, warning.severity]),
+      chipCount: document.querySelectorAll('[data-role="proto-filter-chips"] .proto-filter-chip').length,
+      chipInstance: node?.dataset.instanceId ?? null,
+      chipBadge: node?.querySelector<HTMLElement>('.proto-filter-chip__gph')?.textContent?.trim() ?? null,
+      chipRating: node?.querySelector<HTMLElement>('.proto-filter-chip__gph')?.dataset.rating ?? null,
+      offered: Boolean(document.querySelector('#filter-product option[value="penn-plax-ugf-20-29"]')),
+      load: load(computed),
+      loadWithoutFilters: load(withoutFilters),
+      loadText: document.querySelector('[data-role="bioload-percent"]')?.textContent?.trim() ?? '',
+      filterText: ['[data-role="proto-filter-chips"]', '[data-role="proto-filter-summary"]', '#stock-warnings']
+        .map((selector) => document.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim() ?? '').join(' \n '),
+    };
+  });
+}
+
+async function switchTank(page: Page, tankId: string) {
+  await page.selectOption('#tank-size', tankId);
+  await settle(page);
+}
+
+function expectUgfPasses(state: Awaited<ReturnType<typeof ugfState>>, tankId: string, instanceId: string) {
+  expect(state.tankId).toBe(tankId);
+  expect(state.level).toBe('adequate');
+  expect(state.adequateBy).toBe('ugf');
+  expect(state.passingPaths).toEqual(['ugf']);
+  expect(state.statusText).toBe(UGF_RATED);
+  expect(state.hasBiologicalFiltration).toBe(true);
+  expect(state.ugf).toEqual([1, 'compatible', true, 0]);
+  expect(state.compatibilityText).toBe('20 Long and 29 Gallon');
+  expect(state.gph).toEqual([0, 0, 0]);
+  expect(state.turnover).toEqual([0, 0]);
+  expect(state.filters).toEqual([[UGF, 'UGF', 0, 'tank_compatibility']]);
+  // Only the neutral "rated for this tank" note: no inadequacy warning.
+  expect(state.filtrationWarnings).toEqual([['filtration.ugf_rated', 'info']]);
+  expect([state.chipCount, state.chipInstance, state.chipBadge, state.chipRating]).toEqual([1, instanceId, UGF_CHIP, 'compatible']);
+  expect(state.load).toEqual(state.loadWithoutFilters);
+  expect(state.filterText).toContain(`✓ ${UGF_RATED}`);
+  expect(state.filterText).not.toMatch(UGF_FORBIDDEN);
+}
+
+async function expectIdentityOnlyV2(page: Page, instanceId: string | null) {
+  const v2 = await storedJson(page, V2);
+  expect(v2.v).toBe(2);
+  expect(v2.filters).toHaveLength(1);
+  const [entry] = v2.filters;
+  expect(Object.keys(entry).sort()).toEqual(['capacityMethod', 'instanceId', 'productId', 'source', 'type']);
+  expect(entry).toMatchObject({ source: 'product', productId: UGF, type: 'UGF', capacityMethod: 'tank_compatibility' });
+  expect(entry.instanceId).toMatch(/^f-/);
+  if (instanceId) expect(entry.instanceId).toBe(instanceId);
+  expect(JSON.stringify(v2)).not.toMatch(/150|gph|minGallons|maxGallons|compatibleTanks/i);
+  expect(await stored(page, V1)).toBeNull();
+  return entry.instanceId as string;
+}
+
+test('phase F: Penn-Plax UGF by tank compatibility — passes on 29 and 20 Long, not on 20 High (same instance, 0 GPH, load unchanged)', async ({ page }) => {
+  const errors = trackErrors(page);
+  await openAdvisor(page);
+  await setUp(page, '29g');
+  await settle(page);
+  const baseline = await ugfState(page);
+  expect(baseline.chipCount).toBe(0);
+
+  // 29 Gallon: offered through the real picker with compatibility wording, no GPH or range.
+  await expect.poll(() => page.locator(`#filter-product option[value="${UGF}"]`).count(), { timeout: 20000 }).toBe(1);
+  const option = (await page.locator(`#filter-product option[value="${UGF}"]`).textContent()) ?? '';
+  expect(option).toContain('Undergravel • 20 Long and 29 Gallon');
+  const optionName = await page.evaluate(async (id) => {
+    const catalog = await (await fetch('/assets/data/gearCatalog.json', { cache: 'no-store' })).json();
+    return catalog.find((item: { id: string }) => item.id === id);
+  }, UGF);
+  // The compatibility part (after the manufacturer's own product title) names the presets only.
+  expect(option.slice(String(optionName.name).length)).not.toMatch(UGF_FORBIDDEN);
+
+  // Current catalog contract (phase F): v4 cache, UGF record by compatibility only.
+  expect(optionName).toMatchObject({ type: 'UGF', capacityMethod: 'tank_compatibility', compatibleTanks: ['20l', '29g'] });
+  for (const key of ['gphRated', 'rated_gph', 'minGallons', 'maxGallons']) expect(key in optionName, key).toBe(false);
+  const cached = (await storedJson(page, CATALOG_CACHE) as Array<Record<string, unknown>>).find((item) => item.id === UGF) as Record<string, unknown>;
+  expect(cached).toMatchObject({ type: 'UGF', capacityMethod: 'tank_compatibility', compatibleTanks: ['20l', '29g'] });
+  for (const key of ['gphRated', 'rated_gph', 'minGallons', 'maxGallons']) expect(key in cached, `cache ${key}`).toBe(false);
+
+  await addProduct(page, UGF);
+  await settle(page);
+  const onTwentyNine = await ugfState(page);
+  const instanceId = onTwentyNine.chipInstance as string;
+  expect(instanceId).toMatch(/^f-/);
+  expectUgfPasses(onTwentyNine, '29g', instanceId);
+  expect(onTwentyNine.loadText).toBe(baseline.loadText);
+  await expect(page.locator('#filter-product-add')).toBeDisabled(); // one plate set per tank
+  await expectIdentityOnlyV2(page, instanceId);
+
+  // Reload on 29: same instance, same result.
+  await reloadWithStock(page, '29g');
+  expectUgfPasses(await ugfState(page), '29g', instanceId);
+  await expectIdentityOnlyV2(page, instanceId);
+
+  // 20 High (also 20 gallons): not listed — kept, neutral, never adequate, not offered.
+  await switchTank(page, '20h');
+  const onTwentyHigh = await ugfState(page);
+  expect(onTwentyHigh.tankId).toBe('20h');
+  expect(onTwentyHigh.level).toBe('not-evaluated');
+  expect(onTwentyHigh.adequateBy).toBeNull();
+  expect(onTwentyHigh.passingPaths).toEqual([]);
+  expect(onTwentyHigh.statusText).toBe(UGF_NOT_LISTED);
+  expect(onTwentyHigh.hasBiologicalFiltration).toBe(true);
+  expect(onTwentyHigh.ugf).toEqual([1, 'not-listed', false, 0]);
+  expect(onTwentyHigh.compatibilityText).toBe('20 Long and 29 Gallon');
+  expect(onTwentyHigh.gph).toEqual([0, 0, 0]);
+  expect(onTwentyHigh.turnover).toEqual([0, 0]);
+  expect(onTwentyHigh.filtrationWarnings).toEqual([['filtration.rating_needed', 'info']]);
+  expect([onTwentyHigh.chipCount, onTwentyHigh.chipInstance, onTwentyHigh.chipBadge, onTwentyHigh.chipRating]).toEqual([1, instanceId, UGF_CHIP, 'not-listed']);
+  expect(onTwentyHigh.offered).toBe(false);
+  expect(onTwentyHigh.load).toEqual(onTwentyHigh.loadWithoutFilters);
+  expect(onTwentyHigh.filterText).toContain(UGF_NOT_LISTED);
+  expect(onTwentyHigh.filterText).not.toMatch(/No biological filter|150|GPH|20 High|20–40/);
+  await expectIdentityOnlyV2(page, instanceId);
+
+  // 20 Long (same 20 gallons): listed — adequate again, same instance.
+  await switchTank(page, '20l');
+  const onTwentyLong = await ugfState(page);
+  expectUgfPasses(onTwentyLong, '20l', instanceId);
+  expect(onTwentyLong.offered).toBe(true);
+  expect(onTwentyHigh.level).not.toBe(onTwentyLong.level);
+
+  // Reload on 20 Long.
+  await reloadWithStock(page, '20l');
+  expectUgfPasses(await ugfState(page), '20l', instanceId);
+  await expectIdentityOnlyV2(page, instanceId);
   expect(errors).toEqual({ page: [], console: [] });
 });

@@ -6,9 +6,9 @@ import { test, expect, type Page } from '@playwright/test';
 
 const V1 = 'ttg.stocking.filters.v1';
 const V2 = 'ttg.stocking.filters.v2';
-// Current catalog cache key (phase E). Stale-shaped records are fed through it so the loader's
-// historical-record sanitising stays covered; the retired v2 / v1 generations must stay unused.
-const CATALOG_CURRENT = 'ttg.gear.catalog.v3';
+// Current catalog cache key (v3 in phase E, v4 since phase F). Stale-shaped records are fed through
+// it so the loader's historical-record sanitising stays covered; retired generations must stay unused.
+const CATALOG_CURRENT = 'ttg.gear.catalog.v4';
 const CATALOG_V2 = 'ttg.gear.catalog.v2';
 const CATALOG_V1 = 'ttg.gear.catalog.v1';
 const HYGGER_S = 'hygger-double-sponge-s';

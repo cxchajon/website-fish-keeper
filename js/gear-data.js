@@ -1,13 +1,25 @@
-import { hasUnsupportedCapacityMethod, isKnownSpongeProductId, isSpongeFilter, pickPassthroughFields } from './stocking-advisor/filtration/math.js';
+import {
+  CAPACITY_METHODS,
+  hasUnsupportedCapacityMethod,
+  isKnownSpongeProductId,
+  isKnownUgfProductId,
+  isSpongeFilter,
+  isUndergravelFilter,
+  pickPassthroughFields,
+  sanitizeCompatibleTanks,
+  cleanTankPresetId,
+} from './stocking-advisor/filtration/math.js';
 
 const DATA_URL = '/assets/data/gearCatalog.json';
-// v3 since sponge migration phase E: the sponge records lost their legacy GPH / GPH-bucket fields, so
-// the phase E catalog starts from a clean cache generation. ttg.gear.catalog.v2 (phases B–D, whose
-// sponge records may still hold gphRated / minGallons / maxGallons) and ttg.gear.catalog.v1 are never
-// read or written here; tabs still running older code keep their own keys. New code is safe with a
-// stale record anyway: sanitizeItem drops sponge flow / bucket fields and a SPONGE without a verified
-// rating is "Rating needed", never scored by an old GPH (filtration/math.js effectiveCapacityMethod).
-const STORAGE_KEY = 'ttg.gear.catalog.v3';
+// v4 since sponge migration phase F: the undergravel record lost its unsupported 150 GPH and its
+// generic 20–40 gal bucket and gained compatibleTanks, so the phase F catalog starts from a clean
+// cache generation. (v3 was phase E: sponge records without legacy GPH / buckets.) Older keys —
+// ttg.gear.catalog.v3 (whose UGF record still holds gphRated 150 / minGallons 20 / maxGallons 40),
+// v2 and v1 — are never read, written or deleted here; tabs still running older code keep their own
+// keys. New code is safe with a stale record anyway: sanitizeItem drops sponge and UGF flow / bucket
+// fields, a SPONGE without a verified rating is "Rating needed" and a UGF without compatibleTanks
+// is "not evaluated", never scored by an old GPH (filtration/math.js effectiveCapacityMethod).
+const STORAGE_KEY = 'ttg.gear.catalog.v4';
 export const CATALOG_CACHE_KEY = STORAGE_KEY;
 const STORAGE_TIMESTAMP_KEY = 'ttg.gear.catalog.timestamp';
 
@@ -73,8 +85,9 @@ function sanitizeItem(raw) {
   }
   const brand = typeof raw.brand === 'string' ? raw.brand.trim() : '';
   const name = typeof raw.name === 'string' ? raw.name.trim() : '';
-  // A known sponge product is a sponge even in a stale or damaged cached record (phase C).
-  const type = isKnownSpongeProductId(id) ? 'SPONGE' : normalizeType(raw.type);
+  // A known sponge product is a sponge, and a known undergravel product a UGF, even in a stale or
+  // damaged cached record (phases C / F).
+  const type = isKnownSpongeProductId(id) ? 'SPONGE' : isKnownUgfProductId(id) ? 'UGF' : normalizeType(raw.type);
   // A capacity method this code doesn't support is never offered as a flow-rated product.
   if (hasUnsupportedCapacityMethod(raw)) {
     return null;
@@ -84,7 +97,9 @@ function sanitizeItem(raw) {
   // the catalog stores no GPH and no GPH-bucket minGallons / maxGallons for sponges and the loader
   // emits none: an old cached record's gphRated / rated_gph / ratedGph / minGallons / maxGallons are
   // dropped, so there is no synthetic 0 GPH or bucket range for any code to read as a real value.
-  if (!isSpongeFilter({ type })) {
+  // Phase F: the same for a UGF, which is evaluated by its listed tank presets (compatibleTanks).
+  const ugf = isUndergravelFilter({ type });
+  if (!isSpongeFilter({ type }) && !ugf) {
     const gphRatedRaw = toNumber(raw.gphRated ?? raw.rated_gph ?? raw.ratedGph, NaN);
     if (!(Number.isFinite(gphRatedRaw) && gphRatedRaw > 0)) {
       return null;
@@ -106,6 +121,15 @@ function sanitizeItem(raw) {
   // restored filter takes it from the current catalog. The seven sponge records have it (phase B);
   // review-only evidence fields (ratingEvidence, ratingSource, …) are not copied.
   const capacity = pickPassthroughFields(raw);
+  if (ugf) {
+    // A UGF carries only its method and its sanitised compatibleTanks: no manufacturer gallon rating
+    // (it is not a sponge) and no generic range. A stale record (flow, 150 GPH, 20–40 bucket) is
+    // reduced to identity + tank_compatibility, with no compatibleTanks unless it states valid ones.
+    entry.capacityMethod = CAPACITY_METHODS.TANK_COMPATIBILITY;
+    const compatibleTanks = sanitizeCompatibleTanks(raw.compatibleTanks);
+    if (compatibleTanks) entry.compatibleTanks = compatibleTanks;
+    return entry;
+  }
   ['capacityMethod', 'manufacturerMaxGallons', 'manufacturerMinGallons', 'ratingStatus'].forEach((key) => {
     if (capacity[key] !== undefined) {
       entry[key] = capacity[key];
@@ -115,14 +139,23 @@ function sanitizeItem(raw) {
 }
 
 // Within a brand, smaller products first: powered filters by rated GPH; sponges (no GPH since phase
-// E) by the catalog's manufacturer maximum, which keeps the order the legacy sponge GPH gave. This
-// only orders the picker; it is never a rating (math.js resolveSpongeRating decides what scores).
+// E) by the catalog's manufacturer maximum, which keeps the order the legacy sponge GPH gave. A UGF
+// (no GPH since phase F) sorts as 0. This only orders the picker; it is never a rating (math.js
+// resolveSpongeRating decides what scores).
 function sizeSortKey(item) {
   if (isSpongeFilter(item)) {
     const max = Number(item?.manufacturerMaxGallons);
     return Number.isFinite(max) && max > 0 ? max : 0;
   }
   return item?.gphRated ?? 0;
+}
+
+// Picker eligibility of an undergravel filter (phase F): only on a tank preset its catalog record
+// lists. Keyed on the canonical preset id, never on gallons (20h and 20l are both 20 gallons).
+export function isUndergravelEligibleForTank(item, tankId) {
+  const preset = cleanTankPresetId(tankId);
+  const compatibleTanks = sanitizeCompatibleTanks(item?.compatibleTanks);
+  return Boolean(preset && compatibleTanks && compatibleTanks.includes(preset));
 }
 
 function sortByTypeBrandGphInternal(items) {
@@ -266,14 +299,21 @@ export function sortGearItems(items) {
   return sortByTypeBrandGphInternal(items);
 }
 
-export function filterGearByTank(items, gallons) {
+// tankId (phase F, optional): the canonical tank preset id. It decides undergravel filters only: a
+// UGF is offered only when its compatibleTanks list that preset (with or without gallons), and never
+// without a preset id. Every other product is filtered by gallons exactly as before.
+export function filterGearByTank(items, gallons, tankId = null) {
   const list = Array.isArray(items) ? items : [];
+  const eligibleUgf = (item) => !isUndergravelFilter(item) || isUndergravelEligibleForTank(item, tankId);
   const g = Number(gallons);
   const canFilter = Number.isFinite(g) && g > 0;
   if (!canFilter) {
-    return list.slice();
+    return list.filter(eligibleUgf);
   }
   return list.filter((item) => {
+    if (isUndergravelFilter(item)) {
+      return isUndergravelEligibleForTank(item, tankId);
+    }
     // Sponges stay selectable on every tank: an undersized sponge is valid as one of several
     // (phase B). They carry no GPH-bucket minGallons / maxGallons since phase E, and an old cached
     // record's bucket values are never used as a tank range (or as a rating).

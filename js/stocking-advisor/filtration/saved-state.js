@@ -30,6 +30,16 @@
  *
  * Duplicates (phase D): each entry is one physical filter with its own instanceId; productId may
  * repeat and nothing here de-duplicates by it.
+ *
+ * Undergravel filters (phase F, type wins as for sponges): every UGF entry is written and read as
+ * capacityMethod "tank_compatibility" and never carries gph, a gallon range or compatibleTanks.
+ *   catalog UGF  {instanceId, source:"product", productId, type:"UGF", capacityMethod}
+ *                identity only; compatibleTanks are re-resolved from the current catalog.
+ *   custom UGF   {instanceId, source:"custom", label, legacyId, type:"UGF", capacityMethod}
+ *                only from old plans (there is no custom UGF input); its old GPH is dropped and no
+ *                compatible tanks are invented, so it stays "not evaluated".
+ * A known UGF product id is a UGF whatever type old data stored. One plate set per tank is enforced
+ * where filters are restored (controller), not here.
  */
 import { canonicalizeFilterType } from '../../utils.js';
 import {
@@ -38,7 +48,9 @@ import {
   RATING_STATUSES,
   hasUnsupportedCapacityMethod,
   isKnownSpongeProductId,
+  isKnownUgfProductId,
   isSpongeFilter,
+  isUndergravelFilter,
   pickPassthroughFields,
   resolveCapacityMethod,
   resolveSpongeRating,
@@ -55,6 +67,7 @@ export const SAVED_FILTER_SOURCES = Object.freeze({
 
 const MANUAL_ID_PREFIX = 'manual-';
 const SPONGE_TYPE = 'SPONGE';
+const UGF_TYPE = 'UGF';
 const MAX_LABEL_LENGTH = 120;
 
 function clampGph(value) {
@@ -129,10 +142,16 @@ function buildEntry(filter, { typeValue, gphValue }) {
     const legacyId = cleanString(filter?.id, 128);
     if (isManualId(legacyId)) entry.legacyId = legacyId;
   }
-  // A known catalog sponge id stays a sponge whatever type old data stored (phase C).
-  entry.type = productId && isKnownSpongeProductId(productId) ? SPONGE_TYPE : canonicalizeFilterType(typeValue);
+  // A known catalog sponge id stays a sponge (phase C), and a known UGF id a UGF (phase F), whatever
+  // type old data stored.
+  if (productId && isKnownSpongeProductId(productId)) entry.type = SPONGE_TYPE;
+  else if (productId && isKnownUgfProductId(productId)) entry.type = UGF_TYPE;
+  else entry.type = canonicalizeFilterType(typeValue);
   if (isSpongeFilter({ type: entry.type })) {
     return buildSpongeEntry(entry, extra, gph);
+  }
+  if (isUndergravelFilter({ type: entry.type })) {
+    return buildUgfEntry(entry);
   }
   entry.capacityMethod = resolveCapacityMethod(filter);
   if (gph > 0) entry.gph = gph;
@@ -172,6 +191,15 @@ function buildSpongeEntry(entry, extra, gph) {
     entry.legacyGph = Math.min(Math.round(legacyGph), MAX_DEVICE_GPH);
   }
   // A custom sponge is kept even with no numbers at all: it is still a biological filter.
+  return entry;
+}
+
+// Type wins (phase F): a UGF is a tank_compatibility entry with no gph, whatever capacityMethod /
+// gph / range the input carried. Catalog UGF: identity only (the current catalog supplies
+// compatibleTanks). Custom UGF (old plans only): kept as a biological filter with no numbers; its
+// stored GPH is not kept (it is never scored or shown) and no compatible tanks are stored for it.
+function buildUgfEntry(entry) {
+  entry.capacityMethod = CAPACITY_METHODS.TANK_COMPATIBILITY;
   return entry;
 }
 

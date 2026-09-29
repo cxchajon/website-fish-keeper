@@ -1,14 +1,16 @@
 // Sponge migration phase E on the real page (desktop and mobile): the current catalog no longer
 // carries legacy sponge GPH or GPH-bucket min/max fields. Sponge options, chips and scoring stay
-// rating based; powered filters and the UGF are unchanged. The catalog cache is ttg.gear.catalog.v3 (an
-// old v2 cache is ignored) and current saves write ttg.stocking.filters.v2 only (no v1 mirror). Part of the Stocking Advisor gate (`npm run test:e2e:stocking-gate`).
+// rating based; powered filters are unchanged (the UGF changed in phase F: see
+// stocking-advisor-ugf-phase-f.spec.ts). The current catalog cache is ttg.gear.catalog.v4 since phase F
+// (v3 in phase E; an old v2 cache is ignored) and current saves write ttg.stocking.filters.v2 only (no v1 mirror). Part of the Stocking Advisor gate (`npm run test:e2e:stocking-gate`).
 // Report: _internal/reports/stocking-advisor-sponge-migration-phase-e-2026-09.md
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 const V1 = 'ttg.stocking.filters.v1';
 const V2 = 'ttg.stocking.filters.v2';
-const CATALOG_CURRENT = 'ttg.gear.catalog.v3';
+// The current catalog cache generation (v3 in phase E, v4 since phase F).
+const CATALOG_CURRENT = 'ttg.gear.catalog.v4';
 const CATALOG_V2 = 'ttg.gear.catalog.v2';
 const HYGGER_S = 'hygger-double-sponge-s';
 const HYGGER_M = 'hygger-double-sponge-m';
@@ -147,7 +149,7 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
         expect(option.data).toEqual({ filterType: 'SPONGE', ratingStatus: EXPECTED_DETAILS[option.id].includes('Rated') ? 'verified' : 'needed' });
       }
     }
-    // The current catalog cache (v3) holds no legacy sponge fields; v2 is not written.
+    // The current catalog cache (v4 since phase F) holds no legacy sponge fields; v2 is not written.
     expect(await stored(page, CATALOG_V2)).toBeNull();
     const cache = JSON.parse((await stored(page, CATALOG_CURRENT)) as string) as Array<Record<string, unknown>>;
     for (const id of SPONGE_IDS) {
@@ -215,7 +217,7 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
     expect(await stored(page, V1)).toBeNull();
   });
 
-  test('H: UGF unchanged — 150 GPH, offered on its 20–40 gal range, one plate set per tank', async ({ page }) => {
+  test('H: UGF (phase F model) — tank compatibility, not offered on 55, no GPH, one plate set per tank', async ({ page }) => {
     await seedStorage(page, {});
     await openAdvisor(page);
     await setUpTank(page, '55g');
@@ -223,9 +225,10 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
     await page.selectOption('#tank-size', '29g');
     await settle(page);
     const ugf = (await productOptions(page)).find((option) => option.id === UGF);
-    expect(ugf?.text).toBe(`${nameOf(UGF)} • 150 GPH • UGF • 20g–40g`);
+    // Through phase E: "… • 150 GPH • UGF • 20g–40g" and a "150 GPH" chip.
+    expect(ugf?.text).toBe(`${nameOf(UGF)} • Undergravel • 20 Long and 29 Gallon`);
     await addProductTimes(page, UGF, 1);
-    await expect(productChips(page, UGF).locator('.proto-filter-chip__gph')).toHaveText('150 GPH');
+    await expect(productChips(page, UGF).locator('.proto-filter-chip__gph')).toHaveText('Rated: 20 Long and 29 Gallon');
     await expect(addSelected(page)).toBeDisabled();
     await page.selectOption('#filter-product', '');
     await page.selectOption('#filter-product', UGF);
@@ -233,11 +236,11 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
     await expect(addSelected(page)).toBeDisabled();
     await settle(page);
     const state = await expectLoadUnchanged(page);
-    expect(state.gph).toEqual([150, 150, 0]);
+    expect(state.gph).toEqual([0, 0, 0]);
     expect(state.level).toBe('adequate');
   });
 
-  test('an old ttg.gear.catalog.v2 (legacy sponge GPH / buckets, tampered rating) is ignored: network catalog used, v3 written clean', async ({ page }) => {
+  test('an old ttg.gear.catalog.v2 (legacy sponge GPH / buckets, tampered rating) is ignored: network catalog used, current cache written clean', async ({ page }) => {
     // What the phases B–D loader cached, plus a tampered verified rating that must not surface.
     const LEGACY: Record<string, [number, number, number]> = {
       [AQUANEAT_SMALL]: [60, 0, 20], [AQUANEAT_MIDDLE]: [120, 0, 20], [AQUANEAT_LARGE]: [200, 20, 40],
@@ -272,11 +275,11 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
     expect(state.gph).toEqual([0, 0, 0]);
     expect([state.level, state.adequateBy]).toEqual(['adequate', 'sponge']);
     expect(await filtrationText(page)).not.toMatch(/GPH|\b(60|80|120|150|200|500)\b/);
-    // v2 is left for tabs still running older code; the current generation is v3, clean.
+    // v2 is left for tabs still running older code; the current generation (v4 since phase F) is clean.
     expect(await stored(page, CATALOG_V2)).toBe(oldJson);
-    const v3 = JSON.parse((await stored(page, CATALOG_CURRENT)) as string) as Array<Record<string, unknown>>;
+    const current = JSON.parse((await stored(page, CATALOG_CURRENT)) as string) as Array<Record<string, unknown>>;
     for (const id of SPONGE_IDS) {
-      for (const key of LEGACY_KEYS) expect(key in (v3.find((item) => item.id === id) as object), `${id}: ${key}`).toBe(false);
+      for (const key of LEGACY_KEYS) expect(key in (current.find((item) => item.id === id) as object), `${id}: ${key}`).toBe(false);
     }
   });
 
