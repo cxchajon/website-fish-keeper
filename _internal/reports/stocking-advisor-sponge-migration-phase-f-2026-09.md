@@ -196,14 +196,13 @@ Structured output (step 31–32):
 
 20 Long / 29: level `adequate`, `adequateBy 'ugf'`, status `✓ Undergravel filter rated for this tank`
 (tone good; new `FILTRATION_STATUS.UGF_RATED`). Neutral info note `filtration.ugf_rated`:
-"Rated for: 20 Long–29 gal tanks · Tank: 29 gal. Undergravel filters are checked by the tank sizes the
+"Rated for: 20 Long and 29 Gallon tanks · Tank: 29 gal. Undergravel filters are checked by the tank sizes the
 manufacturer lists; water flow isn't estimated. Filtration supports your livestock but does not increase
 stocking capacity." No GPH, turnover, 150, or "sponge" anywhere. Filtration chip: none (as for a rated
 sponge).
 
-"20 Long–29 gal" (`formatCompatibleTanks`): presets adjacent in the preset list form a run
-"first–last"; 20h precedes 20l in `TANK_SIZES`, so it is never inside the run. Non-adjacent presets are
-comma-separated ("20 High, 29 gal").
+Compatibility text (`formatCompatibleTanks`, revised in review — section 27): each listed preset is
+named explicitly, "20 Long and 29 Gallon"; never a dash or range.
 
 ## 14. Non-compatible status
 
@@ -211,7 +210,7 @@ Any preset not listed: level `not-evaluated` (neutral), status text carried by t
 (step 33: no new global level) — `○ Rating needed — this undergravel filter isn't listed for this tank
 size` (`FILTRATION_STATUS.UGF_NOT_LISTED`, used when UGFs are the only unevaluated devices; the generic
 "Not evaluated — rating needed" stays for sponge-only cases). Info note `filtration.rating_needed`:
-"<name> is rated for 20 Long–29 gal tanks, and this tank size isn't listed, so it isn't evaluated here.
+"<name> is rated for 20 Long and 29 Gallon tanks, and this tank size isn't listed, so it isn't evaluated here.
 Filtration isn't evaluated — not adequate, not unsafe." Never red, never the chip, never "Below
 manufacturer rating".
 
@@ -223,7 +222,7 @@ with or without gallons; never without a preset id. All other products are filte
 (unit-tested on all presets and 19 gallon values). The controller passes the tank store's preset id,
 excludes an ineligible UGF from its whole-catalog fallback too, and `canAddProduct` also refuses a stale
 selection of the UGF on an unlisted preset ("This undergravel filter isn't listed for this tank size.").
-Result: offered on **20l, 29g only**. Option text: `<name> • Undergravel • 20 Long–29 gal`
+Result: offered on **20l, 29g only**. Option text: `<name> • Undergravel • 20 Long and 29 Gallon`
 (`data-filter-type="UGF"`, `data-compatible-tanks="20l 29g"`; no `data-gph` / min / max).
 
 ## 16. Saved-state behaviour
@@ -373,7 +372,7 @@ duplicate paths, and — after this branch — asserts v4 is served, but nothing
 regressing to GPH scoring or 20h passing. Because the 20h / 20l distinction is the reason this model
 exists, one permanent test is worthwhile:
 
-> 29 gal: Penn-Plax UGF offered and added through the real picker; option / chip show "20 Long–29 gal",
+> 29 gal: Penn-Plax UGF offered and added through the real picker; option / chip show "20 Long and 29 Gallon",
 > no "150" / "GPH"; v2 entry `tank_compatibility` without `gph`; level adequate, "Undergravel filter
 > rated for this tank", 0 GPH; reload keeps the instance; Stocking Load unchanged. Then 20 High: option
 > absent, the saved UGF stays, level not evaluated.
@@ -386,10 +385,34 @@ design). **Run the live-verify workflow only after phase F is deployed**: the up
 
 Not started. Phase G can render from `assessment.passingPaths`, `assessment.ugf` (per-entry
 `compatibilityText`, `status`, `tankId`) and the existing warnings: the per-path lines ("Undergravel
-filter: rated for 20 Long–29 gal"), supplemental lines for a UGF next to another passing path, and the
+filter: rated for 20 Long and 29 Gallon"), supplemental lines for a UGF next to another passing path, and the
 design §12 UGF card. Also open, outside phase F: a verified manufacturer source for the Penn-Plax claim
 (currently product title, grade C, as the design recorded), and the legacy type-multiplier
 `flowAdjustment` export estimate (pre-existing for every type, including sponges).
+
+## 27. Review follow-up: explicit compatibility wording
+
+Review blocker: the first pass compressed presets that are neighbours in `TANK_SIZES` into a dash run,
+so `["20l", "29g"]` displayed as **"20 Long–29 gal"** — which reads as a range and could be taken to
+include 20 High. UGF compatibility is an explicit set of listed presets, not an interval.
+
+New rule (`math.formatCompatibleTanks`): format the sanitised set literally, in preset order, one name
+per preset — "20 Long", "20 High", "40 Breeder", otherwise "<gallons> Gallon" (from the preset label);
+one → "A", two → "A and B", three or more → "A, B, and C". No dashes, no ranges, no adjacency logic,
+nothing unlisted implied.
+
+| Place | Before | After |
+| --- | --- | --- |
+| option | `<name> • Undergravel • 20 Long–29 gal` | `<name> • Undergravel • 20 Long and 29 Gallon` |
+| chip | `Rated: 20 Long–29 gal` | `Rated: 20 Long and 29 Gallon` |
+| passing note | `Rated for: 20 Long–29 gal tanks · Tank: 29 gal.` | `Rated for: 20 Long and 29 Gallon tanks · Tank: 29 gal.` |
+| not-listed note | `… is rated for 20 Long–29 gal tanks, and this tank size isn't listed …` | `… is rated for 20 Long and 29 Gallon tanks, and this tank size isn't listed …` |
+
+The catalog product name keeps the manufacturer's title ("for 20 (Long) - 29 Gallon Tanks"); only our
+compatibility display changed. Summary text ("1 undergravel filter (rated for listed tanks)") had no
+range and is unchanged. Display-only: no evaluation, picker, saved-state or calculation change (20l /
+29g adequate, 20h and every other preset not evaluated, 0 GPH, Stocking Load unchanged). Tests assert
+the exact strings, and that the compatibility text contains no "20 High" and no dash.
 
 ## Files changed
 

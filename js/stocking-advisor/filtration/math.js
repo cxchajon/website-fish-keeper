@@ -219,38 +219,25 @@ export function sanitizeCompatibleTanks(value) {
   return ordered.length ? ordered : null;
 }
 
-// Short names for compatibility text: "20 Long", "29 gal". The preset label is the source; the
-// qualifier (High / Long / Breeder) is kept because it is what separates same-gallon presets.
+// Names for compatibility text: "20 Long", "20 High", "40 Breeder", "29 Gallon". The preset label is
+// the source; the qualifier (High / Long / Breeder) is kept because it is what separates same-gallon
+// presets.
 const TANK_SHORT_NAMES = Object.freeze(Object.fromEntries(TANK_SIZES.map((tank) => {
   const qualifier = /Gallon (High|Long|Breeder)\b/.exec(tank.label ?? '')?.[1];
-  return [tank.id, qualifier ? `${tank.gallons} ${qualifier}` : `${tank.gallons} gal`];
+  return [tank.id, qualifier ? `${tank.gallons} ${qualifier}` : `${tank.gallons} Gallon`];
 })));
 
-// "20 Long–29 gal" for the Penn-Plax plates. Presets that are neighbours in the preset list are
-// written as a run "first–last" (20l and 29g are adjacent; 20h comes before 20l, so it is not inside
-// the run; "5–15 gal" when both ends are plain gallons); separate runs are joined with ", ".
-// null without usable metadata.
+// The listed presets, each named explicitly (phase F review): compatibility is a set of presets,
+// never a range, so no dash / interval is ever built and nothing unlisted is implied.
+//   ["20l"] → "20 Long"; ["20l", "29g"] → "20 Long and 29 Gallon"; three or more → "A, B, and C".
+// Order is preset order (sanitizeCompatibleTanks). null without usable metadata.
 export function formatCompatibleTanks(value) {
   const ids = sanitizeCompatibleTanks(value);
   if (!ids) return null;
-  const runs = [];
-  ids.forEach((id) => {
-    const index = TANK_PRESET_IDS.indexOf(id);
-    const last = runs[runs.length - 1];
-    if (last && last.end + 1 === index) {
-      last.end = index;
-      last.ids.push(id);
-    } else {
-      runs.push({ end: index, ids: [id] });
-    }
-  });
-  return runs.map((run) => {
-    const first = TANK_SHORT_NAMES[run.ids[0]];
-    const lastName = TANK_SHORT_NAMES[run.ids[run.ids.length - 1]];
-    if (run.ids.length === 1) return first;
-    const plain = / gal$/;
-    return plain.test(first) && plain.test(lastName) ? `${first.replace(plain, '')}–${lastName}` : `${first}–${lastName}`;
-  }).join(', ');
+  const names = ids.map((id) => TANK_SHORT_NAMES[id]);
+  if (names.length === 1) return names[0];
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
 }
 
 // TYPE WINS (phase B): a SPONGE is always evaluated by its manufacturer tank rating, even when

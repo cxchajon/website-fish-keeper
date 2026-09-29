@@ -226,9 +226,9 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
     await settle(page);
     const ugf = (await productOptions(page)).find((option) => option.id === UGF);
     // Through phase E: "… • 150 GPH • UGF • 20g–40g" and a "150 GPH" chip.
-    expect(ugf?.text).toBe(`${nameOf(UGF)} • Undergravel • 20 Long–29 gal`);
+    expect(ugf?.text).toBe(`${nameOf(UGF)} • Undergravel • 20 Long and 29 Gallon`);
     await addProductTimes(page, UGF, 1);
-    await expect(productChips(page, UGF).locator('.proto-filter-chip__gph')).toHaveText('Rated: 20 Long–29 gal');
+    await expect(productChips(page, UGF).locator('.proto-filter-chip__gph')).toHaveText('Rated: 20 Long and 29 Gallon');
     await expect(addSelected(page)).toBeDisabled();
     await page.selectOption('#filter-product', '');
     await page.selectOption('#filter-product', UGF);

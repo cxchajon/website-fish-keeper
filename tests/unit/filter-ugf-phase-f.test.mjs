@@ -242,13 +242,24 @@ test('compatibleTanks sanitiser: array of recognised preset ids only, trimmed, d
   assert.equal(math.cleanTankPresetId(' 20l '), '20l');
 });
 
-test('compatibility text: "20 Long–29 gal"; 20 High is never inside it', () => {
-  assert.equal(math.formatCompatibleTanks(['20l', '29g']), '20 Long–29 gal');
-  assert.equal(math.formatCompatibleTanks(['29g', '20l']), '20 Long–29 gal');
-  assert.equal(math.formatCompatibleTanks(['20h', '29g']), '20 High, 29 gal');
+test('compatibility text names each listed preset explicitly: "20 Long and 29 Gallon"; never a range; 20 High never in it', () => {
+  assert.equal(math.formatCompatibleTanks(['20l', '29g']), '20 Long and 29 Gallon');
+  assert.equal(math.formatCompatibleTanks(['29g', '20l']), '20 Long and 29 Gallon');
+  assert.equal(math.formatCompatibleTanks(['20l']), '20 Long');
+  assert.equal(math.formatCompatibleTanks(['29g']), '29 Gallon');
+  assert.equal(math.formatCompatibleTanks(['20h']), '20 High');
+  assert.equal(math.formatCompatibleTanks(['40b']), '40 Breeder');
+  // Adjacent presets are not compressed into a run; three or more use a serial list.
+  assert.equal(math.formatCompatibleTanks(['5g', '10g', '15g']), '5 Gallon, 10 Gallon, and 15 Gallon');
+  assert.equal(math.formatCompatibleTanks(['20l', '29g', '40b']), '20 Long, 29 Gallon, and 40 Breeder');
+  const text = math.formatCompatibleTanks(RAW.find((item) => item.id === UGF).compatibleTanks);
+  assert.equal(text, '20 Long and 29 Gallon');
+  assert.doesNotMatch(text, /20 High|High/);
+  assert.doesNotMatch(text, /[–—-]/, 'no dash / range');
+  assert.doesNotMatch(text, /20–29|20 Long–|gal\b/);
   assert.equal(math.formatCompatibleTanks(null), null);
-  assert.equal(ugfItems.ugfOptionDetails(CATALOG_BY_ID.get(UGF)), 'Undergravel • 20 Long–29 gal');
-  assert.equal(ugfItems.ugfChipBadge(productItem(CATALOG_BY_ID.get(UGF))), 'Rated: 20 Long–29 gal');
+  assert.equal(ugfItems.ugfOptionDetails(CATALOG_BY_ID.get(UGF)), 'Undergravel • 20 Long and 29 Gallon');
+  assert.equal(ugfItems.ugfChipBadge(productItem(CATALOG_BY_ID.get(UGF))), 'Rated: 20 Long and 29 Gallon');
   assert.equal(ugfItems.ugfChipBadge({ type: 'UGF' }), 'Rating needed');
   for (const text of [ugfItems.ugfOptionDetails(CATALOG_BY_ID.get(UGF)), ugfItems.ugfChipBadge(productItem(CATALOG_BY_ID.get(UGF)))]) {
     assert.doesNotMatch(text, UGF_TEXT_FORBIDDEN);
@@ -384,11 +395,12 @@ test('20 Long and 29: compatible → adequate, "Undergravel filter rated for thi
     assert.deepEqual([ugf.count, ugf.status, ugf.rated, ugf.gph, ugf.tankId, ugf.capacityMethod], [1, 'compatible', true, 0, id, 'tank_compatibility'], id);
     const [entry] = ugf.entries;
     assert.deepEqual([entry.productId, entry.compatibleTanks, entry.tankId, entry.compatible, entry.compatibilityKnown, entry.status, entry.gph, entry.compatibilityText],
-      [UGF, COMPATIBLE, id, true, true, 'compatible', 0, '20 Long–29 gal'], id);
+      [UGF, COMPATIBLE, id, true, true, 'compatible', 0, '20 Long and 29 Gallon'], id);
     const note = warnings(computed).find((w) => w.id === 'filtration.ugf_rated');
     assert.equal(note.severity, 'info', id);
     assert.equal(note.title, PASSING_TEXT, id);
-    assert.match(note.message, /^Rated for: 20 Long–29 gal tanks · Tank: (20|29) gal\./, id);
+    assert.match(note.message, /^Rated for: 20 Long and 29 Gallon tanks · Tank: (20|29) gal\./, id);
+    assert.doesNotMatch(note.message, /20 High|–/, id);
     assert.doesNotMatch(note.text, UGF_TEXT_FORBIDDEN, id);
     assert.doesNotMatch(note.text, /Sponge|sponge/, id);
     assert.deepEqual(warningIds(computed), ['filtration.ugf_rated'], id);
@@ -429,7 +441,8 @@ test('every preset not listed (5, 10, 15, 20 High, 40 Breeder, 55, 75, 125): not
     const [warning] = warnings(computed);
     assert.equal(warning.severity, 'info', id);
     assert.equal(warning.title, `○ ${NOT_LISTED_TEXT}`, id);
-    assert.match(warning.message, /is rated for 20 Long–29 gal tanks, and this tank size isn't listed/, id);
+    assert.match(warning.message, /is rated for 20 Long and 29 Gallon tanks, and this tank size isn't listed/, id);
+    assert.doesNotMatch(warning.message, /20 High|Long–/, id);
     assert.match(warning.message, /not adequate, not unsafe/, id);
     assert.doesNotMatch(warning.text, /Below manufacturer rating|No biological filter|No filter added/, id);
     assert.doesNotMatch(warning.text, UGF_TEXT_FORBIDDEN, id);

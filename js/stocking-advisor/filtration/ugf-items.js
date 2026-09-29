@@ -68,13 +68,13 @@ export function restoreUgfItem(entry, product) {
   return item;
 }
 
-// Chip badge: "Rated: 20 Long–29 gal" from the listed presets, else "Rating needed". Never a GPH.
+// Chip badge: "Rated: 20 Long and 29 Gallon" (each listed preset named), else "Rating needed". Never a GPH.
 export function ugfChipBadge(item) {
   const text = formatCompatibleTanks(item?.compatibleTanks);
   return text ? `Rated: ${text}` : 'Rating needed';
 }
 
-// Product dropdown details: "Undergravel • 20 Long–29 gal". No GPH and no generic gallon range.
+// Product dropdown details: "Undergravel • 20 Long and 29 Gallon". No GPH, no range of any kind.
 export function ugfOptionDetails(product) {
   const text = formatCompatibleTanks(product?.compatibleTanks);
   return `Undergravel • ${text ?? 'Rating needed'}`;

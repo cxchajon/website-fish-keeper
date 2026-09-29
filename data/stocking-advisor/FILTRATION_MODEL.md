@@ -118,7 +118,7 @@ guidance only.
   footprint, so the former catalog 150 GPH and its generic 20–40 gal range were removed in sponge
   migration phase F. A UGF is biological filtration with 0 GPH and no turnover, checked only against the
   tank presets its maker lists (`compatibleTanks`). The Penn-Plax plates (two 14" × 11.1") are listed for
-  the **20 Long** and **29 gallon** presets; a **20 High** does not pass just because it is also 20
+  the **20 Long** and **29 Gallon** presets (each listed preset is named; compatibility is never shown as a range); a **20 High** does not pass just because it is also 20
   gallons, and no other preset passes by gallon count. On a preset that isn't listed the filter is shown
   as "Rating needed — this undergravel filter isn't listed for this tank size" (not evaluated, not a
   failure). Filtration, including a UGF, never changes Stocking Load

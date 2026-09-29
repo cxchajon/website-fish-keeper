@@ -14,8 +14,8 @@ const UGF = 'penn-plax-ugf-20-29';
 const TETRA = 'tetra-whisper-iq-45';
 const CATALOG: Array<Record<string, unknown>> = JSON.parse(readFileSync('assets/data/gearCatalog.json', 'utf8'));
 const nameOf = (id: string) => CATALOG.find((item) => item.id === id)?.name as string;
-const OPTION_TEXT = `${nameOf(UGF)} • Undergravel • 20 Long–29 gal`;
-const CHIP_TEXT = 'Rated: 20 Long–29 gal';
+const OPTION_TEXT = `${nameOf(UGF)} • Undergravel • 20 Long and 29 Gallon`;
+const CHIP_TEXT = 'Rated: 20 Long and 29 Gallon';
 const PASSING = '✓ Undergravel filter rated for this tank';
 const NOT_LISTED = 'Rating needed — this undergravel filter isn\'t listed for this tank size';
 // The UGF must never show a GPH, its old 150 GPH, the generic 20–40 bucket or a turnover.
@@ -125,7 +125,7 @@ async function expectPassing(page: Page, tankId: string) {
   await expect(ugfChip(page).locator('.proto-filter-chip__gph')).toHaveText(CHIP_TEXT);
   await expect(ugfChip(page).locator('.proto-filter-chip__gph')).toHaveAttribute('data-rating', 'compatible');
   await expect(warning(page, 'filtration.ugf_rated')).toContainText(PASSING);
-  await expect(warning(page, 'filtration.ugf_rated')).toContainText('Rated for: 20 Long–29 gal tanks');
+  await expect(warning(page, 'filtration.ugf_rated')).toContainText('Rated for: 20 Long and 29 Gallon tanks');
   await expect(summary(page)).toContainText('1 undergravel filter (rated for listed tanks)');
   const state = await expectLoadUnchanged(page);
   expect(state.tankId).toBe(tankId);
@@ -138,6 +138,8 @@ async function expectPassing(page: Page, tankId: string) {
   expect([state.ugf.count, state.ugf.status, state.ugf.gph]).toEqual([1, 'compatible', 0]);
   expect(state.filters).toEqual([[UGF, 'UGF', 0, 'tank_compatibility']]);
   expect(await filtrationText(page)).not.toMatch(FORBIDDEN_UGF_TEXT);
+  // Compatibility is named preset by preset: never a range, never anything implying 20 High.
+  expect(await filtrationText(page)).not.toMatch(/20 High|Long–|20–29/);
   return state;
 }
 
@@ -166,6 +168,8 @@ test.describe('phase F: undergravel filter by tank compatibility', () => {
     await setUpTank(page, '20l');
     const option = (await productOptions(page)).find((item) => item.id === UGF);
     expect(option?.text).toBe(OPTION_TEXT);
+    // The compatibility part of the option (after the catalog name) names 20 Long and 29 Gallon only.
+    expect(option?.text.slice(nameOf(UGF).length)).not.toMatch(/High|–/);
     expect(option?.data).toEqual({ filterType: 'UGF', compatibleTanks: '20l 29g' });
     await addUgf(page);
     await settle(page);
