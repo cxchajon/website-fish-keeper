@@ -4,6 +4,9 @@
 // ttg.stocking.filters.v2 only (no v1 mirror; a historical v1 plan is still read, migrated and then
 // removed). Phase F contract: the catalog cache is ttg.gear.catalog.v4 (v3 in phase E), and the
 // undergravel filter is evaluated by its listed tank presets (20 Long and 29 Gallon), never by GPH.
+// Phase G contract: the filtration status card ([data-role="filtration-status-card"]) shows the
+// result once, one row per physical sponge, never a combined capacity (its test needs the phase G
+// deploy; the other filtration checks accept the pre-G strip or the card).
 import { test, expect, type Page } from '@playwright/test';
 
 const V1 = 'ttg.stocking.filters.v1';
@@ -96,6 +99,7 @@ async function snapshot(page: Page) {
         ...text('[data-role="proto-filter-chips"]'),
         ...text('[data-role="proto-filter-summary"]'),
         ...text('#stock-warnings'),
+        ...text('[data-role="filtration-status-card"]'),
       ].join(' \n '),
       bodyText: document.body.innerText,
     };
@@ -122,6 +126,13 @@ async function reloadWithStock(page: Page, tankId: string) {
   await setUp(page, tankId);
   await settle(page);
 }
+
+// Where a filtration warning is shown: since phase G, once, in the filtration status card (which
+// lists the engine's filtration warning ids); before phase G, a #stock-warnings strip. Either
+// matches, so this suite passes against production both before and after the phase G deploy.
+const filtrationSignal = (page: Page, id: string) => page.locator(
+  `#stock-warnings .status-strip[data-warning-id="${id}"], [data-role="filtration-status-card"][data-warning-ids~="${id}"]`,
+).first();
 
 const filtrationWarningIds = (state: Snapshot) => state.warnings.filter((id: string) => id.startsWith('filtration.'));
 
@@ -314,7 +325,7 @@ test('verified sponge (hygger Double Sponge S) on 29 gal: Rated 10–40 gal, 0 G
   expect(before.spongeStatus).toBe('rated');
   expect(before.status).toEqual({ tone: 'good', text: 'Rated for this tank' });
   expect(before.filtrationWarnings).toEqual([['filtration.sponge_rated', 'info']]);
-  await expect(page.locator('#stock-warnings .status-strip[data-warning-id="filtration.sponge_rated"]')).toContainText('Rated for this tank');
+  await expect(filtrationSignal(page, 'filtration.sponge_rated')).toContainText('Rated for this tank');
   expect(before.summary).toBe('Filtration: 1 sponge filter (rated by tank size)');
   expect(before.filterText).not.toMatch(/80\s*GPH|×\/h/);
   expect(before.load).toBe(noFilter.load);
@@ -348,10 +359,11 @@ test('verified sponge (hygger Double Sponge S) on 55 gal: below manufacturer rat
   expect(state.spongeStatus).toBe('below-rating');
   expect(state.status).toEqual({ tone: 'warn', text: 'Below manufacturer rating' });
   expect(state.filtrationWarnings).toEqual([['filtration.below_rating', 'warn']]);
-  const strip = page.locator('#stock-warnings .status-strip[data-warning-id="filtration.below_rating"]');
+  const strip = filtrationSignal(page, 'filtration.below_rating');
   await expect(strip).toHaveAttribute('data-state', 'warn');
-  await expect(strip).toContainText('Filter rating: 10–40 gal · Tank: 55 gal.');
-  await expect(page.locator('#stock-warnings .status-strip[data-state="bad"][data-warning-id^="filtration."]')).toHaveCount(0);
+  await expect(strip).toContainText('10–40 gal');
+  await expect(strip).toContainText('55 gal');
+  await expect(page.locator('#stock-warnings .status-strip[data-state="bad"][data-warning-id^="filtration."], [data-role="filtration-status-card"][data-state="bad"]')).toHaveCount(0);
   expect(state.filterText).not.toMatch(/80\s*GPH|×\/h/);
   expect(state.load).toBe(noFilter.load);
   expect(errors).toEqual({ page: [], console: [] });
@@ -587,7 +599,7 @@ test('phase D: hygger Double Sponge S added twice on 55 gal: two instances, like
   expect(pair.spongeStatus).toBe('likely-multi');
   expect(pair.status).toEqual({ tone: 'warn', text: 'Likely adequate — multiple sponge filters' });
   expect(pair.filtrationWarnings).toEqual([['filtration.likely_multi_sponge', 'warn']]);
-  const multi = page.locator('#stock-warnings .status-strip[data-warning-id="filtration.likely_multi_sponge"]');
+  const multi = filtrationSignal(page, 'filtration.likely_multi_sponge');
   await expect(multi).toHaveAttribute('data-state', 'warn');
   await expect(multi).toContainText('Likely adequate — multiple sponge filters');
   expect(pair.summary).toBe('Filtration: 2 sponge filters (rated by tank size)');
@@ -633,6 +645,152 @@ test('phase D: hygger Double Sponge S added twice on 55 gal: two instances, like
   expect((await storedJson(page, V2)).filters).toEqual([identity(second)]);
   expect(await stored(page, V1)).toBeNull();
   await expectLoadUnchanged(remaining, noFilter.load);
+  expect(errors).toEqual({ page: [], console: [] });
+});
+
+// Phase G: the filtration status card. Requires the phase G deploy (the card doesn't exist on phase F
+// production, so this test fails there by design). The card is read through its stable data-role /
+// data-* attributes only, never CSS classes.
+test('phase G: filtration card for 55 gal + 2 × hygger Double Sponge S — amber likely-multi, one row per physical sponge, no combined capacity; saved and identical after reload', async ({ page }) => {
+  const HYGGER_S = 'hygger-double-sponge-s';
+  const PERMANENT = 'Filtration supports your livestock but does not increase stocking capacity.';
+  // The one sentence that may mention combined capacity: it says the combined capacity is NOT verified.
+  const NOT_VERIFIED = 'No single sponge is rated for this tank. Several sponges add media and backup, but their combined capacity isn\'t verified.';
+  const errors = trackErrors(page);
+  const card = page.locator('[data-role="filtration-status-card"]');
+  const spongeRows = card.locator('[data-role="filtration-status-paths"] li[data-path="sponge"]');
+  const hyggerChips = chip(page, HYGGER_S);
+  const chipInstanceIds = () => hyggerChips.evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.instanceId ?? ''));
+  const rowInstanceIds = () => spongeRows.evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.instanceId ?? ''));
+  const cardText = async () => ((await card.textContent()) ?? '').replace(/\s+/g, ' ').trim();
+  const engine = () => page.evaluate(async () => {
+    const compute = await import('/js/logic/compute.js');
+    const appState = (window as unknown as { appState: Record<string, unknown> }).appState;
+    const computed = compute.buildComputedState(appState);
+    const load = (c: { bioload: Record<string, unknown> }) => [c.bioload.currentPercent, c.bioload.proposedPercent, c.bioload.text, c.bioload.severity];
+    return {
+      level: computed.filtering.level as string,
+      status: computed.filtering.assessment.status as { tone: string; text: string },
+      warningIds: (computed.filtering.warnings as Array<{ id: string }>).map((warning) => warning.id),
+      load: load(computed),
+      loadWithoutFilters: load(compute.buildComputedState({ ...appState, filters: [] })),
+    };
+  });
+
+  await openAdvisor(page);
+  await setUp(page, '55g');
+  await settle(page);
+  const noFilter = await snapshot(page);
+  // Stock without a filter: the card already shows the existing amber "No filter added" state.
+  await expect(card).toHaveCount(1);
+  await expect(card).toHaveAttribute('data-level', 'none');
+
+  // Real UI, phase D duplicate path: select once, Add Selected twice.
+  await expect.poll(() => page.locator(`#filter-product option[value="${HYGGER_S}"]`).count(), { timeout: 20000 }).toBe(1);
+  await page.selectOption('#filter-product', HYGGER_S);
+  const add = page.locator('#filter-product-add');
+  await expect(add).toBeEnabled();
+  await add.click();
+  await expect(hyggerChips).toHaveCount(1);
+  await expect(add).toBeEnabled();
+  await add.click();
+  await expect(hyggerChips).toHaveCount(2);
+  await settle(page);
+
+  // Everything the card must show while both sponges are present (checked before and after reload).
+  const expectPairCard = async () => {
+    // The card: exactly one, visible, with the engine's state.
+    await expect(card).toHaveCount(1);
+    await expect(card).toBeVisible();
+    await expect(card).toHaveAttribute('data-state', 'warn');
+    await expect(card).toHaveAttribute('data-level', 'likely-multi-sponge');
+    await expect(card).toHaveAttribute('data-warning-ids', /(^|\s)filtration\.likely_multi_sponge(\s|$)/);
+    await expect(card.locator('[data-role="filtration-status-headline"]')).toContainText('Likely adequate — multiple sponge filters');
+    const state = await engine();
+    expect(state.level).toBe('likely-multi-sponge');
+    expect(state.status).toEqual({ icon: '⚠', text: 'Likely adequate — multiple sponge filters', tone: 'warn' });
+    expect(state.warningIds).toEqual(['filtration.likely_multi_sponge']);
+
+    // Two physical sponges: two rows, each with its own instance id (the chips' ids), never merged.
+    await expect(spongeRows).toHaveCount(2);
+    await expect(spongeRows).toHaveText(['Sponge 1: rated 10–40 gal', 'Sponge 2: rated 10–40 gal']);
+    const chipIds = await chipInstanceIds();
+    const rowIds = await rowInstanceIds();
+    expect(rowIds[0]).toBeTruthy();
+    expect(rowIds[1]).toBeTruthy();
+    expect(rowIds[0]).not.toBe(rowIds[1]);
+    expect(rowIds).toEqual(chipIds);
+    await expect(card.locator('[data-role="filtration-status-paths"] li[data-path="tank"]')).toHaveText('Tank: 55 gal');
+
+    // HARD REGRESSION: no combined capacity. 10–40 + 10–40 is never shown as 80 gallons, and the only
+    // mention of combined capacity is the sentence saying it isn't verified.
+    const text = await cardText();
+    await expect(card.locator('[data-role="filtration-status-explanation"]')).toContainText(NOT_VERIFIED);
+    expect(text).not.toMatch(/\b80\b/);
+    expect(text).not.toMatch(/80\s*gal/i);
+    const claims = text.replace(NOT_VERIFIED, '').replace(PERMANENT, '');
+    expect(claims).not.toMatch(/combined|total (capacity|rating|gallons)|capacity bonus|extra (stocking )?capacity|double|twice/i);
+    // Sponges carry no flow: no GPH or turnover anywhere on the card.
+    expect(text).not.toMatch(/GPH|×|turnover/i);
+
+    // Qualitative redundancy (no capacity claim) and the permanent Stocking Load sentence.
+    await expect(card.locator('[data-role="filtration-status-redundancy"]')).toHaveText('Redundancy: 2 biological filters provide backup during maintenance.');
+    await expect(card.locator('[data-role="filtration-status-note"]')).toBeVisible();
+    await expect(card.locator('[data-role="filtration-status-note"]')).toHaveText(PERMANENT);
+
+    // Shown once: the filtration warning is not repeated as a #stock-warnings strip.
+    await expect(page.locator('#stock-warnings [data-warning-id^="filtration."]')).toHaveCount(0);
+
+    // Filtration never changes Stocking Load.
+    const pair = await snapshot(page);
+    expect(pair.load).toBe(noFilter.load);
+    expect(state.load).toEqual(state.loadWithoutFilters);
+    return rowIds;
+  };
+
+  const [first, second] = await expectPairCard();
+
+  // Saved v2 with both sponges: two identity-only catalog entries, one per physical instance
+  // (the chips' / rows' instance ids); no GPH of any kind; no v1 key.
+  const identity = (instanceId: string) => ({ instanceId, source: 'product', productId: HYGGER_S, type: 'SPONGE', capacityMethod: 'manufacturer_rating' });
+  const expectSavedPair = async () => {
+    const saved = await storedJson(page, V2);
+    expect(saved.v).toBe(2);
+    expect(saved.filters).toHaveLength(2);
+    expect(saved.filters).toEqual([identity(first), identity(second)]);
+    expect(saved.filters[0].instanceId).not.toBe(saved.filters[1].instanceId);
+    for (const entry of saved.filters) {
+      for (const key of ['gph', 'rated_gph', 'gphRated', 'legacyGph']) expect(entry).not.toHaveProperty(key);
+    }
+    expect(await stored(page, V1)).toBeNull();
+  };
+  await expectSavedPair();
+
+  // Reload with both sponges still present: same tank and stock, filters restore by themselves
+  // (not re-added), with the same instance ids, and the card comes back unchanged.
+  await reloadWithStock(page, '55g');
+  await expect(hyggerChips).toHaveCount(2);
+  expect(await chipInstanceIds()).toEqual([first, second]);
+  expect(await expectPairCard()).toEqual([first, second]);
+  await expectSavedPair();
+
+  // Remove one instance: the card follows immediately — one sponge row, the remaining instance.
+  await page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-instance-id="${first}"] [data-remove-filter]`).click();
+  await expect(hyggerChips).toHaveCount(1);
+  await expect(card).toHaveAttribute('data-level', 'below-rating');
+  await expect(card).toHaveAttribute('data-state', 'warn');
+  await expect(spongeRows).toHaveCount(1);
+  await expect(spongeRows).toHaveText('Sponge filter: rated 10–40 gal');
+  expect(await rowInstanceIds()).toEqual([second]);
+  await expect(card.locator('[data-role="filtration-status-redundancy"]')).toHaveCount(0);
+  await expect(card.locator('[data-role="filtration-status-note"]')).toHaveText(PERMANENT);
+  expect(await cardText()).not.toMatch(/\b80\b|GPH/);
+  // Saved v2 now holds exactly the surviving instance.
+  await settle(page);
+  const afterRemove = await storedJson(page, V2);
+  expect(afterRemove.v).toBe(2);
+  expect(afterRemove.filters).toEqual([identity(second)]);
+  expect(await stored(page, V1)).toBeNull();
   expect(errors).toEqual({ page: [], console: [] });
 });
 
@@ -689,7 +847,7 @@ async function ugfState(page: Page) {
       load: load(computed),
       loadWithoutFilters: load(withoutFilters),
       loadText: document.querySelector('[data-role="bioload-percent"]')?.textContent?.trim() ?? '',
-      filterText: ['[data-role="proto-filter-chips"]', '[data-role="proto-filter-summary"]', '#stock-warnings']
+      filterText: ['[data-role="proto-filter-chips"]', '[data-role="proto-filter-summary"]', '#stock-warnings', '[data-role="filtration-status-card"]']
         .map((selector) => document.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim() ?? '').join(' \n '),
     };
   });
@@ -716,7 +874,8 @@ function expectUgfPasses(state: Awaited<ReturnType<typeof ugfState>>, tankId: st
   expect(state.filtrationWarnings).toEqual([['filtration.ugf_rated', 'info']]);
   expect([state.chipCount, state.chipInstance, state.chipBadge, state.chipRating]).toEqual([1, instanceId, UGF_CHIP, 'compatible']);
   expect(state.load).toEqual(state.loadWithoutFilters);
-  expect(state.filterText).toContain(`✓ ${UGF_RATED}`);
+  // Pre-phase-G strip: "✓ <status>"; phase G card: icon and status in separate elements.
+  expect(state.filterText).toContain(UGF_RATED);
   expect(state.filterText).not.toMatch(UGF_FORBIDDEN);
 }
 
@@ -793,7 +952,9 @@ test('phase F: Penn-Plax UGF by tank compatibility — passes on 29 and 20 Long,
   expect(onTwentyHigh.offered).toBe(false);
   expect(onTwentyHigh.load).toEqual(onTwentyHigh.loadWithoutFilters);
   expect(onTwentyHigh.filterText).toContain(UGF_NOT_LISTED);
-  expect(onTwentyHigh.filterText).not.toMatch(/No biological filter|150|GPH|20 High|20–40/);
+  // "20 High" is never part of the compatibility text. The phase G card names the selected tank on its
+  // own line ("Current tank: 20 High"), which is the only place it may appear.
+  expect(onTwentyHigh.filterText.replace('Current tank: 20 High', '')).not.toMatch(/No biological filter|150|GPH|20 High|20–40/);
   await expectIdentityOnlyV2(page, instanceId);
 
   // 20 Long (same 20 gallons): listed — adequate again, same instance.

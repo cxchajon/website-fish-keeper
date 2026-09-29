@@ -87,7 +87,9 @@ async function filtrationText(page: Page) {
     document.querySelector('.filter-flow-meta')?.textContent ?? '',
     document.querySelector('#stock-warnings')?.textContent ?? '',
     document.querySelector('.filtration-chipbar')?.getAttribute('data-total') ?? '',
-  ].join(' ').replace(/\s+/g, ' '));
+  ].join(' ').replace(/\s+/g, ' ')
+    // Phase G: the card's one permitted mention of an old custom sponge's GPH (design 12), never scored.
+    .replace(/Old value: \d+ GPH — not used for sponge filters\./g, ''));
 }
 
 const stored = (page: Page, key: string) => page.evaluate((k) => localStorage.getItem(k), key);

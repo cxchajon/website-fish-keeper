@@ -52,7 +52,12 @@ async function setUpTank(page: Page, tankId: string) {
 const chips = (page: Page) => page.locator('[data-role="proto-filter-chips"] .proto-filter-chip');
 const productChips = (page: Page, id: string) => page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id="${id}"]`);
 const instanceChip = (page: Page, instanceId: string) => page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-instance-id="${instanceId}"]`);
-const warning = (page: Page, id: string) => page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`);
+// Phase G: filtration warnings are shown once, in the filtration status card (which lists the engine's
+// filtration warning ids in data-warning-ids); every other warning stays a #stock-warnings strip.
+const FILTRATION_CARD = '[data-role="filtration-status-card"]';
+const warning = (page: Page, id: string) => (id.startsWith('filtration.')
+  ? page.locator(`${FILTRATION_CARD}[data-warning-ids~="${id}"]`)
+  : page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`));
 const productNote = (page: Page) => page.locator('#filter-product-note');
 const addSelected = (page: Page) => page.locator('#filter-product-add');
 
@@ -116,8 +121,11 @@ async function filtrationText(page: Page) {
     document.querySelector('[data-role="proto-filter-summary"]')?.textContent ?? '',
     document.querySelector('.filter-flow-meta')?.textContent ?? '',
     document.querySelector('#stock-warnings')?.textContent ?? '',
+    document.querySelector('[data-role="filtration-status-card"]')?.textContent ?? '',
     document.querySelector('.filtration-chipbar')?.getAttribute('data-total') ?? '',
-  ].join(' ').replace(/\s+/g, ' '));
+  ].join(' ').replace(/\s+/g, ' ')
+    // Phase G: the card's one permitted mention of an old custom sponge's GPH (design 12), never scored.
+    .replace(/Old value: \d+ GPH — not used for sponge filters\./g, ''));
 }
 
 const stored = (page: Page, key: string) => page.evaluate((k) => localStorage.getItem(k), key);
@@ -201,8 +209,9 @@ test.describe('phase D: duplicate filter instances', () => {
     const multi = warning(page, 'filtration.likely_multi_sponge');
     await expect(multi).toHaveAttribute('data-state', 'warn');
     await expect(multi).toContainText('Likely adequate — multiple sponge filters');
-    await expect(multi).toContainText('(S) 1: rated 10–40 gal');
-    await expect(multi).toContainText('(S) 2: rated 10–40 gal');
+    // Phase G card: one line per physical sponge (instanceId), never a combined figure.
+    await expect(multi.locator('li[data-path="sponge"]')).toHaveText(['Sponge 1: rated 10–40 gal', 'Sponge 2: rated 10–40 gal']);
+    await expect(multi.locator('li[data-path="sponge"]')).toHaveCount(2);
     const text = await filtrationText(page);
     expect(text).not.toMatch(/80 ?gal/);
     expect(text).not.toMatch(LEGACY_SPONGE_GPH);
@@ -252,7 +261,7 @@ test.describe('phase D: duplicate filter instances', () => {
     expect(state.level).toBe('not-evaluated');
     expect(state.gph).toEqual([0, 0, 0]);
     expect([state.spongeCount, state.verifiedCount]).toEqual([2, 0]);
-    await expect(warning(page, 'filtration.rating_needed')).toContainText('These sponge filters have no verified manufacturer tank rating');
+    await expect(warning(page, 'filtration.rating_needed')).toContainText('No verified manufacturer tank rating');
     expect(await filtrationText(page)).not.toMatch(LEGACY_SPONGE_GPH);
   });
 

@@ -73,7 +73,12 @@ async function setUpTank(page: Page, tankId: string) {
 
 const chips = (page: Page) => page.locator('[data-role="proto-filter-chips"] .proto-filter-chip');
 const productChips = (page: Page, id: string) => page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id="${id}"]`);
-const warning = (page: Page, id: string) => page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`);
+// Phase G: filtration warnings are shown once, in the filtration status card (which lists the engine's
+// filtration warning ids in data-warning-ids); every other warning stays a #stock-warnings strip.
+const FILTRATION_CARD = '[data-role="filtration-status-card"]';
+const warning = (page: Page, id: string) => (id.startsWith('filtration.')
+  ? page.locator(`${FILTRATION_CARD}[data-warning-ids~="${id}"]`)
+  : page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`));
 const addSelected = (page: Page) => page.locator('#filter-product-add');
 const productNote = (page: Page) => page.locator('#filter-product-note');
 
@@ -127,7 +132,10 @@ async function filtrationText(page: Page) {
     document.querySelector('[data-role="proto-filter-summary"]')?.textContent ?? '',
     document.querySelector('.filter-flow-meta')?.textContent ?? '',
     document.querySelector('#stock-warnings')?.textContent ?? '',
-  ].join(' ').replace(/\s+/g, ' '));
+    document.querySelector('[data-role="filtration-status-card"]')?.textContent ?? '',
+  ].join(' ').replace(/\s+/g, ' ')
+    // Phase G: the card's one permitted mention of an old custom sponge's GPH (design 12), never scored.
+    .replace(/Old value: \d+ GPH — not used for sponge filters\./g, ''));
 }
 
 const stored = (page: Page, key: string) => page.evaluate((k) => localStorage.getItem(k), key);

@@ -31,6 +31,7 @@ import {
   canonicalizeFilterType,
 } from './utils.js';
 import { getGearData } from './gear-data.js';
+import { renderFiltrationStatusCard } from './stocking-advisor/filtration/status-card.js';
 
 export let shouldRestoreVariantFocus = () => {
   if (typeof document === 'undefined') {
@@ -2251,8 +2252,19 @@ function renderWarningList(container, warnings = []) {
   container.hidden = desired.length === 0;
 }
 
+// Filtration warnings (kind "filtration", ids "filtration.*") are shown once, in the filtration
+// status card (sponge migration phase G). They stay in computed state for every other consumer; only
+// their duplicate strip in #stock-warnings is left out. No other warning kind is filtered.
+function isFiltrationWarning(warning) {
+  return warning?.kind === 'filtration' || (typeof warning?.id === 'string' && warning.id.startsWith('filtration.'));
+}
+
 function renderStockWarningsPanel(warnings = []) {
-  renderWarningList(refs.stockWarnings, warnings);
+  renderWarningList(refs.stockWarnings, (Array.isArray(warnings) ? warnings : []).filter((warning) => !isFiltrationWarning(warning)));
+}
+
+function renderFiltrationStatus() {
+  renderFiltrationStatusCard(document.querySelector('[data-role="filtration-status-card"]'), computed?.filtering ?? null);
 }
 
 // Warnings that the previewed species would add (or change) before it is added. After Add the same
@@ -2313,6 +2325,7 @@ function renderAll() {
     renderCandidateState();
     syncStockFromState();
     renderStockWarningsPanel([]);
+    renderFiltrationStatus();
     renderCandidateWarningsPanel([]);
     renderDiagnostics();
     renderEnvironmentPanels();
@@ -2334,6 +2347,7 @@ function renderAll() {
   renderCandidateState(shownWarningIds);
   syncStockFromState();
   renderStockWarningsPanel(planWarnings);
+  renderFiltrationStatus();
   renderCandidateWarningsPanel(candidateWarnings, computed.candidate);
   renderDiagnostics();
   renderEnvironmentPanels();

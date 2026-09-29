@@ -7,14 +7,15 @@ import { defineConfig, devices } from '@playwright/test';
 // tests/stocking-advisor-sponge-phase-c.spec.ts (sponge migration phase C, stale / legacy data),
 // tests/stocking-advisor-duplicate-filters.spec.ts (phase D) and
 // tests/stocking-advisor-sponge-phase-e.spec.ts (phase E, legacy sponge catalog fields removed) and
-// tests/stocking-advisor-ugf-phase-f.spec.ts (phase F, undergravel filter by tank compatibility).
+// tests/stocking-advisor-ugf-phase-f.spec.ts (phase F, undergravel filter by tank compatibility) and
+// tests/stocking-advisor-filtration-card-phase-g.spec.ts (phase G, filtration status card).
 // Set PW_CHROMIUM_PATH to use a locally installed Chromium instead of Playwright's download.
 const PORT = 4174;
 const launchOptions = process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {};
 
 export default defineConfig({
   testDir: 'tests',
-  testMatch: ['stocking-advisor-gate.spec.ts', 'stocking-advisor-saved-filters.spec.ts', 'stocking-advisor-sponge-phase-b.spec.ts', 'stocking-advisor-sponge-phase-c.spec.ts', 'stocking-advisor-duplicate-filters.spec.ts', 'stocking-advisor-sponge-phase-e.spec.ts', 'stocking-advisor-ugf-phase-f.spec.ts'],
+  testMatch: ['stocking-advisor-gate.spec.ts', 'stocking-advisor-saved-filters.spec.ts', 'stocking-advisor-sponge-phase-b.spec.ts', 'stocking-advisor-sponge-phase-c.spec.ts', 'stocking-advisor-duplicate-filters.spec.ts', 'stocking-advisor-sponge-phase-e.spec.ts', 'stocking-advisor-ugf-phase-f.spec.ts', 'stocking-advisor-filtration-card-phase-g.spec.ts'],
   timeout: 60000,
   expect: { timeout: 10000 },
   reporter: [['list']],

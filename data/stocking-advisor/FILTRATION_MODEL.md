@@ -78,6 +78,35 @@ Multiple filters: flow through media adds (two 150 GPH HOBs = 300 GPH). Because 
 awarded, duplicates cannot inflate anything; more flow can only clear the "low" warnings. Circulation
 devices never count toward filter turnover and never stack into filtration.
 
+### 3.1 Filtration status card (sponge migration phase G)
+
+The filter setup area shows one **Filtration** card under the compact summary. It is a presentation of
+the engine result (`computed.filtering.assessment`), built by
+`js/stocking-advisor/filtration/status-view.js`; it never recalculates or re-scores anything.
+
+- **Overall status comes from independent paths.** The headline and tone are the engine's own
+  (`assessment.status`): powered filters by the 2× floor, a sponge by its verified manufacturer rating,
+  an undergravel filter by the tank presets it lists. Any one path passing is enough.
+- **The card lists each path on its own line**: powered filters with their rated GPH and
+  "× / hour (rated)"; each physical sponge with its own rating (two copies of one product are two
+  lines); an undergravel filter with its listed presets ("20 Long and 29 Gallon").
+- **Supplemental devices are shown, never combined.** A device the verdict doesn't need is listed as
+  "+ …" ("+ Additional sponge filter: rated up to 20 gal", "+ Powered filter: … below the 2×
+  powered-filter minimum", "+ Undergravel filter: this tank size isn't listed"). A supplemental sponge
+  is not flagged as below its rating. GPH and gallons are never added together or converted.
+- **Redundancy is qualitative**: with two or more biological filters, "Redundancy: N biological
+  filters provide backup during maintenance." It makes no capacity claim; powerheads don't count.
+- **Filtration never changes Stocking Load.** Every card state ends with "Filtration supports your
+  livestock but does not increase stocking capacity."
+- **Sponges and undergravel filters have no turnover estimate**; a turnover figure (card and compact
+  summary) appears only when there is powered biological GPH. No filter / powerhead-only plans show no
+  "0.0×/h".
+- **Powerheads are circulation only** ("Powerhead: 300 GPH circulation only"), never part of the
+  biological turnover.
+
+The filtration warning objects (`filtration.*`) stay in computed state; the page shows them once, in
+this card, not again as strips in the stock-warning list.
+
 ## 4. Maturity
 
 The percentage assumes an established (cycled) filter; the page says so beside the filter summary and
