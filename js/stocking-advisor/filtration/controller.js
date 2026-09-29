@@ -401,7 +401,7 @@ function toAppFilter(item) {
   return appFilter;
 }
 
-// Saved as ttg.stocking.filters.v2, with the v1 mirror older scripts read (see saved-state.js).
+// Saved as ttg.stocking.filters.v2 only (see saved-state.js; the v1 mirror was retired in phase E).
 // A custom filter also keeps its chip label there.
 function persistAppFilters(items) {
   const saved = Array.isArray(items)

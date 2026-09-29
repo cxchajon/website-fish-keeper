@@ -156,7 +156,7 @@ test.describe('phase D: duplicate filter instances', () => {
     await expect(page.locator('[data-role="proto-filter-summary"]')).toContainText('600 GPH');
     const v2 = await savedV2(page);
     expect(v2.filters.map((e: Record<string, unknown>) => [e.instanceId, e.productId, e.gph])).toEqual([[first, AC70, 300], [second, AC70, 300]]);
-    expect(JSON.parse((await stored(page, V1)) as string)).toEqual([{ id: AC70, type: 'HOB', rated_gph: 300 }, { id: AC70, type: 'HOB', rated_gph: 300 }]);
+    expect(await stored(page, V1)).toBeNull(); // phase E: no v1 mirror
 
     // B: remove the first chip only.
     await instanceChip(page, first).locator('[data-remove-filter]').click();

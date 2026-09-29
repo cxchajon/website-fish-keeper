@@ -1,15 +1,21 @@
 # Stocking Advisor — sponge migration phase E: remove legacy sponge flow + bucket data (2026-09)
 
-Phase **E** of `stocking-advisor-sponge-filter-migration-design-2026-09.md` (section 15): remove the
-obsolete sponge GPH and generic filter-sizing bucket fields that the rating-based sponge model no
-longer uses. Cleanup only — not a filtration-model change. Builds on phase A, B (`…-phase-b-2026-09.md`),
+Phase **E** of `stocking-advisor-sponge-filter-migration-design-2026-09.md` (section 15), complete
+per the locked design row: (1) remove the obsolete sponge GPH and generic filter-sizing bucket
+fields from the current catalog, (2) bump the catalog cache key (`ttg.gear.catalog.v2 → v3`),
+(3) stop writing the v1 filter mirror after its grace period, and correct `FILTRATION_MODEL.md` §6.
+Cleanup only — not a filtration-model change. Builds on phase A, B (`…-phase-b-2026-09.md`),
 C (`…-phase-c-2026-09.md`) and D (`…-phase-d-2026-09.md`).
 
 Base: `main` @ `91fa188` (phase D + permanent live tests). Branch:
 `claude/stocking-advisor-sponge-phase-e-vuff26`.
 
+A first pass (commit `b1c5574`) did (1) and the doc correction and deferred (2) and (3); review
+reinstated them as locked phase E requirements, and the follow-up did both (sections 6a and 8).
+This report describes the combined result.
+
 Not changed: powered-filter calculations, sponge manufacturer-rating logic, duplicate-filter /
-`instanceId` behaviour, Stocking Load, species / water / compatibility / predation /
+`instanceId` behaviour, v2 saved-state format, v1 **read** / migration, Stocking Load, species / water / compatibility / predation /
 quantity-space rules, the UGF record and behaviour, `MIN_BIOLOGICAL_TURNOVER` (2×). Phases F and G
 not started.
 
@@ -34,9 +40,11 @@ duplicate filter instances (`instances.js`, phase D), permanent live tests for p
 Phase B kept each sponge record's pre-phase-B `gphRated` and GPH-bucket `minGallons` / `maxGallons`
 as compatibility baggage for older cached scripts (design 9.3 item 2: "keep legacy `gphRated` in the
 data until phase E, at least one release after phase B"). Phases B, C and D are live, so the
-compatibility window is over. Phase E removes those values from the **current catalog data** and
-stops the loader from emitting synthetic flow / bucket fields for sponges, while keeping every
-protection that neutralises the same fields when they arrive from **old caches or old saved plans**.
+compatibility window is over. Phase E removes those values from the **current catalog data**, stops
+the loader from emitting synthetic flow / bucket fields for sponges, starts a clean catalog cache
+generation (v3), and retires the v1 filter mirror (design 8.3: "retire v1 writes" after one or two
+releases), while keeping every protection that neutralises old fields when they arrive from **old
+caches or old saved plans**, and keeping v1 **reads**.
 
 ## 2. Fields removed
 
@@ -49,7 +57,7 @@ For the seven ids (`aquaneat-sponge-10`, `-20`, `-60`, `hygger-double-sponge-s`,
 | --- | --- | --- | --- |
 | `assets/data/gearCatalog.json` | `manufacturerMinGallons`, `manufacturerMaxGallons`, `ratingStatus`, `capacityMethod` (+ review-only `ratingExpression`, `ratingEvidence`, `ratingSourceKind`, `ratingSource`, `productRef`, `ratingNote`, `ratingCheckedAt`) | **A. authoritative rating** | kept, unchanged |
 | `assets/data/gearCatalog.json` | `gphRated`, `minGallons`, `maxGallons`, `legacyFieldsNote` | **B. obsolete compatibility** | **removed** |
-| `js/gear-data.js sanitizeItem` output (memory catalog, `ttg.gear.catalog.v2`) | `gphRated` (legacy value, or a synthetic `0` for a GPH-less sponge), `rated_gph`, `minGallons` (default `0`), `maxGallons` (default `Infinity` → `null` in the cache JSON) | **B. obsolete (derived)** | **no longer emitted for SPONGE** |
+| `js/gear-data.js sanitizeItem` output (memory catalog, cache — now `ttg.gear.catalog.v3`) | `gphRated` (legacy value, or a synthetic `0` for a GPH-less sponge), `rated_gph`, `minGallons` (default `0`), `maxGallons` (default `Infinity` → `null` in the cache JSON) | **B. obsolete (derived)** | **no longer emitted for SPONGE** |
 | `js/stocking-advisor/filtration/math.js` | `KNOWN_SPONGE_PRODUCT_IDS` | phase C safety list (identity only) | kept |
 | `data/filters.json`, `tools/build_filter_catalog.py` | `rated_gph`, old names | non-runtime audit / prototype data (read only by `scripts/*audit*` and `extract-gear-filters.mjs`, never by the advisor or gear page) | out of scope (phase B §20 gear-page content pass) |
 | tests (section 14) | `gphRated`, `rated_gph`, `ratedGph`, `gph`, `minGallons`, `maxGallons` | **C. historical fixtures** (v1, phase A v2, stale cache, contradictory saved state, offline, old custom sponge) | kept |
@@ -106,9 +114,12 @@ protections was removed:
 - **`legacyGph` kept (step 14).** Distinct from catalog GPH: it is migration-only metadata on an old
   user-created custom sponge that had only a GPH, never scored, never shown (phase B §10). The design
   (section 8.2) keeps it "for one migration cycle", and section 15 does **not** list its removal under
-  phase E (only the phase B / C reports' deferred lists mention dropping it). One release after phase
-  B is too early to call the cycle complete, and removing it would change saved-state output, which
-  this phase must not do. Decision: **preserved**; revisit with the v1-mirror retirement (section 16).
+  phase E (only the phase B / C reports' deferred lists mention dropping it). Decision:
+  **intentionally retained**. It is not part of either phase E cleanup: it is not current catalog
+  data, and it is not the v1 mirror — it lives inside **v2** entries of old custom sponges (written
+  by the v1 / phase A migration) so the user's old number is not silently lost before they enter a
+  rating; it is dropped as soon as they do. Retiring v1 *writes* does not touch it, and v1 *reads*
+  still create it for a GPH-only custom sponge found in a historical v1 plan.
 
 ## 6. Current catalog cache behaviour (step 16)
 
@@ -116,7 +127,7 @@ protections was removed:
 longer emits the shared placeholder fields for sponges (`gphRated:0` / legacy value, `rated_gph`,
 `minGallons:0`, `maxGallons:Infinity`, which serialised as `null` in the cache). Powered records are
 built exactly as before (same fields, same defaults, same drop rule for a missing GPH). After a load,
-`ttg.gear.catalog.v2` holds the seven sponges as e.g.
+`ttg.gear.catalog.v3` holds the seven sponges as e.g.
 `{"id":"hygger-double-sponge-s","brand":"Hygger","name":"…","type":"SPONGE","capacityMethod":"manufacturer_rating","manufacturerMaxGallons":40,"manufacturerMinGallons":10,"ratingStatus":"verified"}`.
 
 Why removing the placeholders is safe — every reader of a sanitised catalog record was checked:
@@ -136,23 +147,45 @@ have changed the picker. Sponges are now ordered by `manufacturerMaxGallons` (nu
 brand, which reproduces the previous order exactly (AQUANEAT Single, Middle, Large; hygger S, M).
 This only orders the picker and never feeds scoring. Powered filters still sort by GPH.
 
-**Cache key not bumped.** The design's "bump the catalog cache key" item was done in phase B
-(`v1 → v2`). A second bump is not needed: an old v2 cache is sanitised on read (section 7) and
-rewritten with clean records by the background refresh on the same page load, and a bump would only
-orphan another key in visitors' storage.
+## 6a. Catalog cache key bumped: `ttg.gear.catalog.v2` → `ttg.gear.catalog.v3`
+
+`js/gear-data.js`: `STORAGE_KEY = 'ttg.gear.catalog.v3'` (also exported as `CATALOG_CACHE_KEY` for
+tests). The loader reads and writes only v3.
+
+Why v2 is retired as the current cache: every v2 cache in a visitor's browser was written by the
+phases B–D loader, so its sponge records physically carry `gphRated` / `rated_gph` / `minGallons` /
+`maxGallons`. The phase E catalog is a new data generation; starting it on a new key means current
+code never takes an old-generation cache for the phase E catalog, and the current cache begins clean
+instead of relying on the first background refresh to overwrite it.
+
+Behaviour:
+
+| Situation | Result |
+| --- | --- |
+| Online, only an old v2 (and/or v1) cache | no cache served; the network catalog is used (`source: NETWORK`) and written to v3 clean; **v2 and v1 are neither read nor modified** (tabs still running older code keep their own key, the phase B precedent for v1) |
+| Offline, only an old v2 (and/or v1) cache | catalog unavailable (no fallback to an older generation); saved sponges restore as **Rating needed**, 0 GPH, identity kept (phase C offline path); powered custom filters keep their stored GPH; no crash |
+| v3 present | served first, refreshed in the background (unchanged cache logic) |
+| An old-shaped record inside the cache the loader reads (damaged / tampered / historical fixture) | sanitised exactly as before (section 7): sponge flow / bucket fields dropped, known sponge ids typed SPONGE, no rating unless the record carries valid verified rating metadata |
+
+The stale-record sanitiser is **not** relaxed: it still runs on every cached and network record, and
+all historical stale-cache fixtures (phase C and phase E) are still exercised — they are now fed
+through the key the loader reads (`CATALOG_CACHE_KEY`) instead of the retired v2 key, so they keep
+testing the sanitiser rather than silently becoming "cache ignored" tests. Separate tests prove the
+v2 key itself is ignored online and offline.
 
 ## 7. Stale-cache behaviour (step 15)
 
-| Old cache content (`ttg.gear.catalog.v2`) | Result |
+| Old-shaped record in the cache the loader reads (fixtures fed through `ttg.gear.catalog.v3`) | Result |
 | --- | --- |
 | Pre-phase-B shape: `{type:"SPONGE", gphRated, rated_gph, minGallons, maxGallons, capacityMethod:"flow"}`, no rating | legacy fields dropped on read; 0 GPH; **Rating needed** for all seven; the old `maxGallons` never becomes `manufacturerMaxGallons`; offered on every tank; `not-evaluated` on all 10 presets |
 | Phase B–D shape (what `main`'s loader wrote): rating metadata **plus** `gphRated` / `rated_gph` / `minGallons` / `maxGallons` | legacy fields dropped on read; record identical to the current one; Hygger S rated / adequate on 29, 2 × Hygger S likely-multi on 55, AQUANEAT Middle not evaluated — all 0 GPH; background refresh replaces the cache with clean records |
 | Damaged: a known sponge typed `HOB` with 900 GPH and a bucket | typed `SPONGE` (phase C), legacy fields dropped, 0 GPH |
 | Junk values (`"huge"`, negative, `Infinity`, objects, `1e9`) | no crash; record kept; Rating needed; 0 GPH |
-| `ttg.gear.catalog.v1` | still never read (phase C) |
+| `ttg.gear.catalog.v2` / `ttg.gear.catalog.v1` keys | never read or written (section 6a) |
 
-Unit-tested (`filter-sponge-phase-e.test.mjs`) and browser-tested (phase E spec, "old
-ttg.gear.catalog.v2 …"). Phase C's stale-cache tests (which keep their fake-GPH fixtures) pass unchanged.
+Unit-tested (`filter-sponge-phase-e.test.mjs`, `filter-sponge-phase-c.test.mjs`) and browser-tested
+(phase C spec stale / offline cache tests, phase E spec "old ttg.gear.catalog.v2 … is ignored").
+Phase C's fake-GPH fixtures are unchanged; only the key they are seeded under moved to the current one.
 
 **Old-JS window.** A tab still running pre-phase-B JavaScript with the new catalog would drop the
 GPH-less sponge records from its picker (its loader required GPH). This is the window design 9.3 kept
@@ -160,13 +193,37 @@ the legacy GPH for; phases B, C and D have each shipped since, and `/js/*` and `
 `must-revalidate`, so it is limited to tabs left open across four releases. Consequence is
 conservative (sponges missing from an old picker, never scored).
 
-## 8. Saved-state behaviour (step 13)
+## 8. Saved-state behaviour (step 13) and v1 mirror retirement
 
-Unchanged. A newly selected catalog sponge saves `{instanceId, source:"product", productId,
-type:"SPONGE", capacityMethod:"manufacturer_rating"}` — no GPH, no bucket, no rating (re-resolved from
-the catalog). Unit test: all seven written and re-read, exact key set, same instanceIds, rating
-badges from the catalog. Custom sponges unchanged (user rating stored). The v1 mirror still holds
-flow-method entries only.
+**v2 format unchanged.** A newly selected catalog sponge saves `{instanceId, source:"product",
+productId, type:"SPONGE", capacityMethod:"manufacturer_rating"}` — no GPH, no bucket, no rating
+(re-resolved from the catalog). Custom sponges unchanged (user rating stored). Powered entries
+unchanged (`flow` + `gph`).
+
+**v1 mirror retired.** The grace period of design 8.3 ("keep writing a v1 mirror … for one or two
+releases … then retire v1 writes") is complete: phases B, C and D each shipped with the mirror. Both
+writers (filtration controller `persistAppFilters`, `tankStore.saveFilterSnapshot`) go through
+`saved-state.js writeSavedFilters`, which is the only place v1 was written; `toV1Mirror` is removed.
+
+Write semantics (`writeSavedFilters`), chosen as the narrowest rule that never creates v1 data and
+never lets a stale plan return:
+
+| Call | v2 | v1 |
+| --- | --- | --- |
+| non-empty list | written (`{v:2, filters}`) | **not written**; an existing (historical) v1 key is **removed** after the v2 write succeeds — v2 now holds the plan, and a stale v1 must not come back if v2 is ever lost or corrupted |
+| empty list (user removed every filter) | removed | **removed** — otherwise the v1 fallback would resurrect an old plan on the next load |
+| v2 write throws (quota / private mode) | unchanged | **left alone** — nothing is lost; returns `false` |
+
+Read semantics — unchanged: a well-formed v2 wins (v1 is not even read); if v2 is missing or
+unreadable (`{oops`, `[]`, `v:1`, `v:3`, missing `filters`, a string), historical v1 is read and
+migrated in memory with every phase B / C / D rule: known sponge ids ignore GPH (also when typed
+`HOB`), fake sponge GPH never scores, catalog type authority, malformed entries fail closed, a
+GPH-only custom sponge becomes Rating needed + `legacyGph`, repeated v1 ids become separate
+instances. The migrated plan is written back as v2 only (and the v1 key removed) on the first save.
+
+Consequence (accepted by the design): a tab still running pre-phase-A JavaScript (which reads only
+v1) no longer sees plans saved by current code. That code predates four releases; `/js/*` is
+`must-revalidate`.
 
 ## 9. Powered-filter regression (step 17)
 
@@ -204,6 +261,10 @@ browser test (`load` equals the same stock with no filters). `capacityAdjustment
 
 ## 13. Differential results (step 28)
 
+Intentional differences from `main` (locked phase E): **A** current sponge catalog metadata cleanup;
+**B** catalog cache `v2 → v3`; **C** current filter saves write v2 only (no v1 mirror; a historical
+v1 key is removed on save). Everything else must be identical.
+
 1. **Loader differential** (node, `main` worktree vs branch): sorted catalog order identical; picker
    ids identical on 3 / 5 / 10 / 15 / 20 / 29 / 40 / 55 / 75 / 125 gal; the only field differences are
    `gphRated`, `rated_gph`, `minGallons`, `maxGallons` on the seven sponges (intended).
@@ -216,8 +277,10 @@ browser test (`load` equals the same stock with no filters). `capacityAdjustment
    tanks (v1 sponges with fake GPH, phase A v2 sponges, HOB-900 conflict, v1 custom sponges, v1
    powered, UGF) = **2,858 scenarios**. Compared: full computed state (filtration, Stocking Load,
    species, conditions, water, warnings) directly, after save → read in the pre-controller view and
-   after controller restore, plus the written v2 and v1 payloads. **0 differences** (9 v1-migration
-   scenarios differ only in randomly generated `instanceId`s; identical after normalising them).
+   after controller restore, plus the written v2 and v1 payloads. Result (after normalising randomly
+   generated `instanceId`s): the **only** differing field is the written v1 payload — `main` wrote a
+   v1 mirror in 2,006 scenarios, the branch in **0** (difference C). Computed state before and after
+   restore, and the written **v2** payloads, are identical in all 2,858 (0 differences).
 3. **UI differential** (Playwright, `main` and branch served side by side, 53 scenarios: picker on all
    10 presets; each of the 7 sponges and Tetra / AC70 / Fluval 307 / EHEIM 2213 on 10 / 29 / 55 gal;
    2 × Hygger S on 55 and 29; 2 × Middle; 2 × Middle + AC70; UGF; Tetra + sponge; custom sponge;
@@ -225,74 +288,104 @@ browser test (`load` equals the same stock with no filters). `capacityAdjustment
    value / text / data attributes, chips and their aria labels, summary, flow meta, warnings (id,
    state, text), engine level / GPH / turnover / Stocking Load, calculator filters, saved v2 / v1,
    product note. **0 differences** (2 custom-filter scenarios differ only in the time-generated
-   `manual-…` id). The catalog cache was excluded: it is the intended difference.
+   `manual-…` id). Run before the cache-key / v1 follow-up; the follow-up changes no UI, scoring or
+   v2 code path, and the node differential above plus the full gate cover it. The catalog cache and
+   v1 key are the intended differences (B, C).
 
-Expected zero-difference areas all confirmed: Stocking Load, filtration status, verified / unrated /
-duplicate sponge results, powered filters, powerheads, species, water, predation, quantity-space,
-saved state, phase C restoration.
+Expected zero-difference areas all confirmed: Stocking Load, filtration scoring and status, powered
+GPH, sponge ratings, verified / unrated / duplicate sponge results, powerheads, species, water,
+predation, quantity-space, v2 saved state, v1 read / migration, phase C safety, phase D instances, UGF.
 
 ## 14. Test results (steps 24–27, 30)
 
 | Suite | Result |
 | --- | --- |
-| `npm run test:unit` | **238 / 238** (217 existing + 21 new in `tests/unit/filter-sponge-phase-e.test.mjs`) |
-| saved-state / phase B / phase C / phase D unit | 20 / 20, 26 / 26, 23 / 23, 22 / 22 |
-| phase E unit | 21 / 21 (7 fail on `main`: the catalog / loader / cache contract; the 14 behaviour guards pass on both) |
+| `npm run test:unit` | **245 / 245** (217 on `main` + 28 net new) |
+| saved-state / phase B / phase C / phase D unit | 21 / 21, 26 / 26, 23 / 23, 22 / 22 |
+| phase E unit (`filter-sponge-phase-e.test.mjs`) | 27 / 27 |
+| historical v1 migration tests (`--test-name-pattern=v1`, all unit files) | 35 / 35 |
 | filtration model / Tetra IQ 45 / catalog batch 1 | 15 / 15, 7 / 7, 7 / 7 |
-| Stocking gate (desktop + mobile, `CI=1`) | **177 passed, 0 failed, 27 skipped** (165 baseline + 12 new). Per spec: gate 95 (+27 skipped, the gate's own desktop/mobile splits), saved filters 16, phase B 16, phase C 16, phase D 22, phase E 12 |
+| Stocking gate (desktop + mobile, `CI=1`) | **179 passed, 0 failed, 27 skipped** (`main`: 165 / 0 / 27). Per spec: gate 95 (+27 skipped, the gate's own desktop/mobile splits), saved filters 16, phase B 16, phase C 16, phase D 22, phase E 14 |
 | `npm run test:stocking:extended` | 105 pairs, 0 failures (generated report not committed) |
 | Permanent live files, locally against the branch (`BASE_URL` = local static server) | `stocking-advisor-saved-filters.live.ts` 12 / 12, `stocking-advisor.live.ts` 5 / 5 |
 | `guard:live`, `audit:controls` | pass |
 
-Test changes to existing files (current-catalog assertions only):
+Test changes to existing files — only assertions about **current** behaviour; historical inputs kept:
 
-- `filter-sponge-phase-b.test.mjs` — the catalog-metadata test asserted "legacy GPH kept"; it now
-  asserts the seven records carry no `gphRated` / `rated_gph` / `ratedGph` / `gph` / `minGallons` /
-  `maxGallons` / `legacyFieldsNote`. The loader test asserted `gphRated === 0` for a GPH-less sponge;
-  it now asserts no synthetic flow / bucket fields.
-- Fixture classification (step 23): every other fake sponge GPH in tests is **kept** because it
-  represents historical data — phase B stale type-wins entries and stale record; phase C
-  `OLD_SPONGE_RECORD`, stale v2 cache, damaged cache, v1 / phase A plans, conflicts, old custom sponges;
-  phase C browser `STALE_CATALOG`; saved-state contradictory entry; the phase B / D browser negative
-  assertions (`LEGACY_SPONGE_GPH` must not appear). Helpers building powered items from
-  `product.gphRated` already route sponges through `buildSpongeProductItem`.
+| File | Changed (current behaviour) | Kept (historical) |
+| --- | --- | --- |
+| `filter-sponge-phase-b.test.mjs` | catalog has no legacy fields; loader emits no synthetic fields; cache key v3; custom sponge save "no v1 written"; "v1 mirror" test → "v2 only" | stale type-wins entries, stale record |
+| `filter-saved-state.test.mjs` | F: write-back is v2 only and removes v1; "v1 mirror" test → "no v1 mirror, clearing removes both"; new "clearing with a historical v1" test (incl. failed-write case) | v1 payload migration F, v2-wins G, malformed-v2 fallback, contradictory entries |
+| `filter-sponge-phase-c.test.mjs` | mirror assertions → `[]`; "v1 mirror excludes every sponge" → "current saves write no v1 mirror" (+ historical v1 removed on save); stale-record fixtures seeded under `CATALOG_CACHE_KEY` | every fake-GPH fixture, v1 / phase A plans, conflicts A–D, offline cases, `ttg.gear.catalog.v1` never-read test |
+| `filter-duplicates-phase-d.test.mjs` | serialize test: no `toV1Mirror`, v2 holds both instances, no v1; repeated-powered-v1 test: written back as two v2 instances, no v1 | repeated powered / sponge / damaged-manual v1 fixtures |
+| `filter-sponge-phase-e.test.mjs` | cache key v3 | stale-record fixtures (pre-B, B–D, damaged, junk) |
+| browser specs (saved filters, phase B, phase C, phase D, phase E) | "current save writes v1 mirror" → `v1` is `null`; phase C stale-cache seeds moved to v3 plus old v2 / v1 seeded and asserted untouched / unused | every seeded v1 plan and fake-GPH cache |
 
-New unit coverage (`filter-sponge-phase-e.test.mjs`): current catalog has no legacy fields and the
-safety list equals the catalog; exact rating metadata; powered + UGF records and loaded values; exact
-loaded sponge shape; cache written / re-read clean; picker order preserved; stale pre-B cache; stale
-B–D cache (as `main` wrote it) incl. background refresh; damaged HOB-900 cache; junk values; picker on
-19 tank sizes; option / chip text; five unverified never score; save / reload of all seven; 2 × Hygger
-S (55 / 29) with instanceIds; 2 × Middle; powered scoring; UGF; v1 / phase A / conflict saved GPH
-(7 ids × 5 GPH values, online + offline); `legacyGph` preserved; Stocking Load invariant.
+Fixture classification for sponge GPH (step 23): every fake sponge GPH in tests is **kept** because it
+represents historical data; only the three assertions describing the current catalog / loader changed
+(first pass). Helpers building powered items from `product.gphRated` route sponges separately.
 
-New browser spec `tests/stocking-advisor-sponge-phase-e.spec.ts` (6 tests × desktop + mobile = 12
+New unit coverage (`filter-sponge-phase-e.test.mjs`, 27): current catalog has no legacy fields and
+the safety list equals the catalog; exact rating metadata; powered + UGF records; exact loaded sponge
+shape; **cache key v3: network writes v3, never v2, sponges clean, powered unchanged, re-read**;
+**old v2 cache ignored online (network used, v2 untouched, v3 clean, a tampered v2 rating never
+surfaces)**; **offline with only v2 / v1 caches: catalog unavailable, Rating needed, no GPH**;
+stale-record sanitising (pre-B, B–D incl. background refresh, damaged HOB-900, junk); picker on 19
+tank sizes; option / chip text; five unverified never score; save / reload of all seven; duplicates;
+powered scoring; UGF; old saved GPH (v1 / phase A / conflict, online + offline); `legacyGph`
+retained; **v1 retirement 1–4** (powered, sponge, duplicate powered, duplicate sponge → v2 only, every
+instance, no v1; `toV1Mirror` gone); **5–7** (historical v1-only plan: powered, sponge with fake GPH,
+repeated powered and sponge ids → separate instances, custom sponge Rating needed + `legacyGph`,
+written back v2-only, next load reads v2); **8–9** (valid v2 wins over stale v1; missing / 6 kinds
+of malformed v2 fall back to v1 with phase C rules); **10** (clearing removes v2 and v1, nothing
+restores); Stocking Load invariant.
+
+New browser spec `tests/stocking-advisor-sponge-phase-e.spec.ts` (7 tests × desktop + mobile = 14
 runs, in the gate config): A–E all seven options on 5 / 10 / 29 / 55 / 75 / 125 gal with exact
-labels (`Sponge • Rated 10–40 gal`, `Sponge • Rated 15–55 gal`, `Sponge • Rating needed`), no GPH /
-bucket text or data attributes, clean `ttg.gear.catalog.v2`; each sponge's chip, level, 0 GPH and
-identity-only v2; F 55 gal + 2 × Hygger S likely-multi; G Tetra IQ 45 label / chip / 215 GPH / v1
-mirror; H UGF 150 GPH, 20–40 range, one per tank; old v2 cache with legacy fields harmless and
-replaced. Against `main`'s JS the two storage-contract tests fail and the four UI tests pass.
+labels, no GPH / bucket text or data attributes, clean v3 cache and no v2 written; each sponge's
+chip, level, 0 GPH and identity-only v2; F 55 gal + 2 × Hygger S likely-multi; G Tetra IQ 45 label /
+chip / 215 GPH, saved to v2 only; H UGF 150 GPH, 20–40 range, one per tank; an old v2 cache (legacy
+fields + tampered rating) ignored, v3 written clean, v2 untouched; historical v1 plan migrated, then
+every chip removed → v2 and v1 both gone, nothing returns after reload.
 
 ## 15. Live-test decision (step 29)
 
 **No new live test.** The permanent suite already fails if legacy sponge GPH becomes visible or
 scores (AQUANEAT 20 / Hygger S 29 & 55 / v1 plan / phase A plan / phase C offline / phase D
-duplicates all assert 0 GPH, rating text, and no "80 / 120 GPH" text).
+duplicates all assert 0 GPH, rating text, and no "80 / 120 GPH" text), and it already covers a seeded
+historical v1 plan, current saves, the phase C offline path and phase D duplicates.
 
-**One existing live assertion had to change**: `catalog sponge needing review (AQUANEAT 20)` asserted
+Existing assertions updated to the phase E contract:
+
+- `catalog sponge needing review (AQUANEAT 20)`: record has no `gphRated` / `rated_gph` /
+  `minGallons` / `maxGallons` (see below).
+- Current-write v1 assertions → `v1` is `null`: Tetra IQ 45 save; existing v1 plan (still seeded as
+  historical v1 and restored by rating — now also asserts the historical v1 key is gone after the
+  v2 write-back); unsupported-`capacityMethod` v2 entry. Seven other tests already asserted
+  `v1 === null` (sponge-only saves) and are unchanged.
+- Phase C offline test: also clears `ttg.gear.catalog.v3` and asserts no v3 cache is written.
+- The deployment sentinel request test now also asserts `saved-state.js` no longer contains
+  `toV1Mirror` and `gear-data.js` serves `'ttg.gear.catalog.v3'`.
+
+The AQUANEAT 20 change in detail: `catalog sponge needing review (AQUANEAT 20)` asserted
 the production record still had `gphRated: 120`. It now asserts the record has none of `gphRated`,
 `rated_gph`, `minGallons`, `maxGallons` (review-only max 20 still asserted). Without this edit the
 permanent suite would go red as soon as phase E deploys; with it, the suite also guards against the
 legacy field returning to production data. Locally: passes on the branch, fails on `main` at that
 assertion (`gphRated` = 120). **Run the live-verify workflow only after phase E is deployed** —
-against today's production (no phase E yet) this one assertion fails by design.
+against today's production (no phase E yet) the updated assertions (catalog record, v1 `null`
+after current saves, v3 sentinel) fail by design.
 
-## 16. Deferred (phase E design items not done here, and phases F / G)
+## 16. Design alignment and remaining out-of-scope items
 
-- **Stop v1 mirror writes** (design 8.3 / section 15 row E, "after grace period"): deferred. It is a
-  saved-state behaviour change (old tabs would lose powered filters), and this phase required zero
-  saved-state differences. Suggested as its own small change; retire `legacyGph` at the same time.
-- **`legacyGph`**: kept (section 5).
+Design section 15, row E — all items done: remove `gphRated` and GPH-bucket `minGallons` /
+`maxGallons` from the air-driven records (the seven sponges; the UGF is phase F by decision), bump
+the catalog cache key (v3), stop v1 mirror writes after the grace period, correct
+`FILTRATION_MODEL.md` §6.
+
+Not part of phase E:
+
+- **`legacyGph`**: intentionally retained (section 5).
 - `data/filters.json`, `tools/build_filter_catalog.py`, `data/gear_filters_ranges.csv`,
   `assets/data/gear/filters.json`: non-runtime gear / audit data with old sponge names and GPH; gear-page
   content pass (phase B §20).
@@ -314,10 +407,12 @@ sponges are checked by their manufacturer rating (the correction design section 
 ## Files changed
 
 - `assets/data/gearCatalog.json` — seven sponge records: `gphRated`, `minGallons`, `maxGallons`, `legacyFieldsNote` removed.
-- `js/gear-data.js` — `sanitizeItem` emits no flow / bucket fields for a SPONGE (drops them from old caches); sponge sort key = manufacturer max (keeps the previous order); comments.
-- `js/stocking-advisor/filtration/saved-state.js` — comment only (v1 mirror retirement deferred).
+- `js/gear-data.js` — `sanitizeItem` emits no flow / bucket fields for a SPONGE (drops them from old caches); sponge sort key = manufacturer max (keeps the previous order); cache key `ttg.gear.catalog.v3` (exported as `CATALOG_CACHE_KEY`).
+- `js/stocking-advisor/filtration/saved-state.js` — `writeSavedFilters` writes v2 only, removes a historical v1 on save and on clear; `toV1Mirror` removed; v1 read / migration unchanged; header comment.
+- `js/stocking-advisor/filtration/controller.js`, `js/stocking/tankStore.js` — comments only.
 - `data/stocking-advisor/FILTRATION_MODEL.md` — §6 sponge-GPH bullet corrected.
 - `tests/unit/filter-sponge-phase-e.test.mjs` (new), `tests/stocking-advisor-sponge-phase-e.spec.ts` (new), `playwright.stocking-gate.config.ts` (runs the new spec).
-- `tests/unit/filter-sponge-phase-b.test.mjs` — two current-catalog / loader assertions updated.
-- `tests/live/stocking-advisor-saved-filters.live.ts` — AQUANEAT 20 record assertion updated (section 15).
+- `tests/unit/filter-sponge-phase-b.test.mjs`, `filter-saved-state.test.mjs`, `filter-sponge-phase-c.test.mjs`, `filter-duplicates-phase-d.test.mjs` — current-behaviour assertions updated (section 14).
+- `tests/stocking-advisor-saved-filters.spec.ts`, `-sponge-phase-b.spec.ts`, `-sponge-phase-c.spec.ts`, `-duplicate-filters.spec.ts` — current-write v1 assertions; phase C stale-cache seeds.
+- `tests/live/stocking-advisor-saved-filters.live.ts` — phase E contract (section 15).
 - `_internal/reports/stocking-advisor-sponge-migration-phase-e-2026-09.md` (this report).

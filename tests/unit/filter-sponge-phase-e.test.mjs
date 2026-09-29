@@ -4,6 +4,10 @@
 //   loader emits no gphRated / rated_gph / minGallons / maxGallons for a sponge.
 //   HISTORICAL data (old caches, old saved plans, old custom sponges) keeps its fake GPH in the
 //   fixtures below on purpose: the phase B / C protections must still neutralise it.
+//   Cache: current key ttg.gear.catalog.v3; ttg.gear.catalog.v2 is never read or written. The stale-record
+//   tests feed old-shaped records through the key the loader reads, so the sanitiser stays covered.
+//   Saved filters: current saves write ttg.stocking.filters.v2 only (v1 mirror retired); historical
+//   v1 is still read and migrated when v2 is missing or unreadable.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -43,7 +47,9 @@ const TETRA = 'tetra-whisper-iq-45';
 const UGF = 'penn-plax-ugf-20-29';
 const V1 = saved.FILTER_STORAGE_KEY_V1;
 const V2 = saved.FILTER_STORAGE_KEY_V2;
-const CACHE_KEY = 'ttg.gear.catalog.v2';
+// Current catalog cache generation (phase E) and the retired phases B–D generation.
+const CACHE_KEY = 'ttg.gear.catalog.v3';
+const OLD_CACHE_KEY = 'ttg.gear.catalog.v2';
 
 // Every legacy flow / bucket key a sponge record could carry.
 const LEGACY_FLOW_KEYS = ['gphRated', 'rated_gph', 'ratedGph', 'gph'];
@@ -248,10 +254,12 @@ test('loader: a current sponge record is identity + rating metadata only (no syn
   }
 });
 
-test('current catalog cache (ttg.gear.catalog.v2) holds no sponge GPH or bucket fields, written and re-read', async () => {
+test('current catalog cache is ttg.gear.catalog.v3: network writes v3 (never v2); sponges clean, powered unchanged; re-read', async () => {
   try {
     const { gear, store } = await freshGearData({});
+    assert.equal(gear.CATALOG_CACHE_KEY, CACHE_KEY);
     await gear.getGearData({ fetchImpl: realFetch });
+    assert.equal(store.map.has(OLD_CACHE_KEY), false, 'v2 is not written');
     const cached = JSON.parse(store.map.get(CACHE_KEY));
     for (const id of SPONGE_IDS) {
       const record = cached.find((item) => item.id === id);
@@ -288,7 +296,7 @@ test('picker order is unchanged without sponge GPH (sponges ordered by manufactu
 // ---------------------------------------------------------------------------------------------
 // Stale cache compatibility (step 15): OLD cached sponge records still carrying fake GPH / buckets
 
-test('stale cache, pre-phase-B shape (fake GPH + bucket, no rating): harmless — 0 GPH, Rating needed, bucket never a rating', async () => {
+test('stale-shaped cache records, pre-phase-B shape (fake GPH + bucket, no rating): harmless — 0 GPH, Rating needed, bucket never a rating', async () => {
   const OLD = { [HYGGER_S]: [80, 0, 20], [HYGGER_M]: [120, 0, 20], [AQUANEAT_MIDDLE]: [120, 0, 20], [AQUANEAT_LARGE]: [200, 20, 40],
     [AQUANEAT_SMALL]: [60, 0, 20], [PAWFLY]: [60, 0, 20], [POWKOO]: [150, 20, 40] };
   const stale = RAW.map((record) => (OLD[record.id]
@@ -324,7 +332,7 @@ test('stale cache, pre-phase-B shape (fake GPH + bucket, no rating): harmless �
   }
 });
 
-test('stale cache, phase B–D shape (fake GPH + bucket + rating metadata, as main wrote it): rating used, GPH never', async () => {
+test('stale-shaped cache records, phase B–D shape (fake GPH + bucket + rating metadata, as the v2 loader wrote them): rating used, GPH never', async () => {
   // Exactly what the pre-phase-E loader wrote to ttg.gear.catalog.v2 for a returning visitor.
   const LEGACY = { [AQUANEAT_SMALL]: [60, 0, 20], [AQUANEAT_MIDDLE]: [120, 0, 20], [AQUANEAT_LARGE]: [200, 20, 40],
     [HYGGER_S]: [80, 0, 20], [HYGGER_M]: [120, 0, 20], [PAWFLY]: [60, 0, 20], [POWKOO]: [150, 20, 40] };
@@ -355,6 +363,49 @@ test('stale cache, phase B–D shape (fake GPH + bucket + rating metadata, as ma
       const record = cached.find((item) => item.id === id);
       for (const key of LEGACY_KEYS) assert.equal(key in record, false, `refreshed ${id}: ${key}`);
     }
+  } finally {
+    delete globalThis.localStorage;
+  }
+});
+
+test('an old ttg.gear.catalog.v2 is never the current cache: online the network catalog is used and v3 written; v2 left untouched', async () => {
+  // Exactly what the phases B–D loader cached: rating metadata plus fake GPH / bucket fields — and a
+  // tampered verified rating that must not surface if v2 were read.
+  const LEGACY = { [HYGGER_S]: [80, 0, 20], [AQUANEAT_MIDDLE]: [120, 0, 20], [POWKOO]: [150, 20, 40] };
+  const oldV2 = CATALOG.map((item) => (LEGACY[item.id]
+    ? { ...item, gphRated: LEGACY[item.id][0], rated_gph: LEGACY[item.id][0], minGallons: LEGACY[item.id][1], maxGallons: LEGACY[item.id][2],
+      ...(item.id === POWKOO ? { ratingStatus: 'verified', manufacturerMaxGallons: 500 } : {}) }
+    : item));
+  const oldJson = JSON.stringify(oldV2);
+  try {
+    const { gear, store } = await freshGearData({ [OLD_CACHE_KEY]: oldJson, 'ttg.gear.catalog.timestamp': '1' });
+    const list = await gear.getGearData({ fetchImpl: realFetch });
+    assert.equal(gear.getGearDataMeta().source, 'NETWORK', 'no cache served: v2 is not the current generation');
+    assert.equal(list.find((item) => item.id === POWKOO).ratingStatus, 'needed', 'nothing from v2 is used');
+    for (const id of SPONGE_IDS) assert.deepEqual(list.find((item) => item.id === id), CATALOG_BY_ID.get(id), id);
+    assert.equal(store.map.get(OLD_CACHE_KEY), oldJson, 'v2 left for tabs still running older code');
+    const v3 = JSON.parse(store.map.get(CACHE_KEY));
+    for (const id of SPONGE_IDS) {
+      for (const key of LEGACY_KEYS) assert.equal(key in v3.find((item) => item.id === id), false, `v3 ${id}: ${key}`);
+    }
+    assert.deepEqual(['gphRated', 'minGallons', 'maxGallons'].map((key) => v3.find((item) => item.id === TETRA)[key]), [215, 40, 75]);
+  } finally {
+    delete globalThis.localStorage;
+  }
+});
+
+test('offline with only an obsolete v2 (and v1) catalog cache: catalog unavailable, saved sponges Rating needed, no GPH revived', async () => {
+  const oldV2 = CATALOG.map((item) => (math.isSpongeFilter(item) ? { ...item, gphRated: 200, rated_gph: 200, minGallons: 0, maxGallons: 40, capacityMethod: 'flow' } : item));
+  try {
+    const { gear, store } = await freshGearData({ [OLD_CACHE_KEY]: JSON.stringify(oldV2), 'ttg.gear.catalog.v1': JSON.stringify(oldV2) });
+    await assert.rejects(() => gear.getGearData({ fetchImpl: failingFetch }), 'no fallback to an old cache generation');
+    assert.equal(store.map.has(CACHE_KEY), false);
+    const plan = pageLoad(v1Storage([{ id: HYGGER_S, type: 'SPONGE', rated_gph: 200 }, { id: AQUANEAT_LARGE, type: 'HOB', rated_gph: 900 }]),
+      { catalogById: new Map() });
+    assert.deepEqual(plan.restored.map((item) => [item.productId, item.type, item.gph, item.ratingStatus]),
+      [[HYGGER_S, 'SPONGE', 0, 'needed'], [AQUANEAT_LARGE, 'SPONGE', 0, 'needed']]);
+    assert.deepEqual([plan.computed.filtering.level, plan.computed.filtering.gphTotal], ['not-evaluated', 0]);
+    assertNoSpongeFlow(plan, 'offline, only v2 cache');
   } finally {
     delete globalThis.localStorage;
   }
@@ -465,7 +516,7 @@ test('new catalog sponge selection saves identity + instanceId + manufacturer_ra
     assert.deepEqual(Object.keys(entry).sort(), ['capacityMethod', 'instanceId', 'productId', 'source', 'type'], SPONGE_IDS[index]);
     assert.deepEqual([entry.productId, entry.type, entry.capacityMethod, entry.instanceId], [SPONGE_IDS[index], 'SPONGE', 'manufacturer_rating', list[index].instanceId]);
   });
-  assert.equal(storage.map.has(V1), false, 'sponge-only plan: no v1 mirror');
+  assert.equal(storage.map.has(V1), false, 'no v1 mirror (phase E)');
   const reload = pageLoad(storage, { tank: '29g' });
   assert.deepEqual(reload.restored.map((item) => [item.productId, item.instanceId, items.spongeChipBadge(item)]),
     list.map((item) => [item.productId, item.instanceId, EXPECTED_BADGE[item.productId]]));
@@ -546,6 +597,83 @@ test('legacyGph is kept for old custom GPH-only sponges (one migration cycle; ne
   assert.equal(result.written.filters[0].ratingStatus, 'needed');
   assertNoSpongeFlow(result, 'old custom sponge');
   assert.equal(result.computed.filtering.level, 'not-evaluated');
+});
+
+// ---------------------------------------------------------------------------------------------
+// v1 mirror retired (phase E follow-up): current saves write v2 only; historical v1 still read
+
+const writeFresh = (list, values = {}) => {
+  const storage = storageWith(values);
+  const ok = saved.writeSavedFilters(storage, list.map(toApp));
+  return { storage, ok, v2: JSON.parse(storage.map.get(V2) ?? 'null') };
+};
+
+test('1–4. current saves write v2 only: powered, sponge, duplicate powered, duplicate sponge', () => {
+  const cases = {
+    powered: [addProduct([], TETRA), [[TETRA, 'HOB', 215]]],
+    sponge: [addProduct([], HYGGER_S), [[HYGGER_S, 'SPONGE', null]]],
+    'duplicate powered': [addProduct(addProduct([], AC70), AC70), [[AC70, 'HOB', 300], [AC70, 'HOB', 300]]],
+    'duplicate sponge': [addProduct(addProduct([], HYGGER_S), HYGGER_S), [[HYGGER_S, 'SPONGE', null], [HYGGER_S, 'SPONGE', null]]],
+  };
+  for (const [label, [list, expected]] of Object.entries(cases)) {
+    const { storage, ok, v2 } = writeFresh(list);
+    assert.equal(ok, true, label);
+    assert.equal(storage.map.has(V1), false, `${label}: no v1 mirror`);
+    assert.deepEqual(v2.filters.map((e) => [e.productId, e.type, e.gph ?? null]), expected, label);
+    assert.deepEqual(v2.filters.map((e) => e.instanceId), list.map((item) => item.instanceId), `${label}: every instance saved`);
+    assert.equal(new Set(v2.filters.map((e) => e.instanceId)).size, list.length);
+  }
+  assert.equal('toV1Mirror' in saved, false, 'the v1 mirror serializer is gone');
+});
+
+test('5–7. historical v1-only plans still migrate: powered, sponge (fake GPH neutralised), repeated ids as separate instances', () => {
+  const v1 = [
+    { id: TETRA, type: 'HOB', rated_gph: 215 }, { id: TETRA, type: 'HOB', rated_gph: 215 },
+    { id: HYGGER_S, type: 'SPONGE', rated_gph: 200 }, { id: HYGGER_S, type: 'HOB', rated_gph: 900 },
+    { id: 'manual-old1', type: 'SPONGE', rated_gph: 120 }, { id: 'manual-hob', type: 'HOB', rated_gph: 150 },
+  ];
+  const result = pageLoad(v1Storage(v1), { tank: '55g' });
+  assert.equal(result.state.version, 1);
+  assert.deepEqual(result.restored.map((item) => [item.productId ?? item.id, item.type, item.gph, item.ratingStatus ?? null]), [
+    [TETRA, 'HOB', 215, null], [TETRA, 'HOB', 215, null],
+    [HYGGER_S, 'SPONGE', 0, 'verified'], [HYGGER_S, 'SPONGE', 0, 'verified'],
+    ['manual-old1', 'SPONGE', 0, 'needed'], ['manual-hob', 'HOB', 150, null],
+  ]);
+  assert.equal(new Set(result.restored.map((item) => item.instanceId)).size, 6, 'repeated v1 ids → separate instances');
+  assert.equal(result.restored[4].legacyGph, 120);
+  assert.equal(result.computed.filtering.biologicalGph, 215 * 2 + 150, 'only powered GPH counts');
+  assertNoSpongeFlow(result, 'historical v1');
+  // Written back as v2 only; the historical v1 key is gone, and the next load reads v2.
+  assert.equal(result.written.filters.length, 6);
+  assert.deepEqual(result.mirror, []);
+  const next = saved.readSavedFilterState(storageWith({ [V2]: JSON.stringify(result.written) }));
+  assert.equal(next.version, 2);
+});
+
+test('8–9. valid v2 wins over a stale v1; missing or malformed v2 falls back to historical v1', () => {
+  const staleV1 = JSON.stringify([{ id: HYGGER_S, type: 'HOB', rated_gph: 900 }, { id: 'manual-x', type: 'HOB', rated_gph: 999 }]);
+  const valid = storageWith({ [V2]: JSON.stringify({ v: 2, filters: [{ instanceId: 'f-good01', source: 'product', productId: AC70, type: 'HOB', capacityMethod: 'flow', gph: 300 }] }), [V1]: staleV1 });
+  const state = saved.readSavedFilterState(valid);
+  assert.deepEqual([state.version, state.filters.map((f) => f.id)], [2, [AC70]]);
+  for (const bad of [null, '{oops', '[]', '{"v":1,"filters":[]}', '{"v":3,"filters":[]}', '{"v":2}', '"text"']) {
+    const values = { [V1]: staleV1 };
+    if (bad !== null) values[V2] = bad;
+    const result = pageLoad(storageWith(values), { tank: '29g' });
+    assert.equal(result.state.version, 1, String(bad));
+    assert.deepEqual(result.restored.map((item) => [item.productId ?? item.id, item.type, item.gph]),
+      [[HYGGER_S, 'SPONGE', 0], ['manual-x', 'HOB', 999]], String(bad));
+    assertNoSpongeFlow(result, `fallback ${bad}`);
+  }
+});
+
+test('10. clearing filters removes v2 and any historical v1: nothing returns after reload', () => {
+  const staleV1 = JSON.stringify([{ id: TETRA, type: 'HOB', rated_gph: 215 }]);
+  for (const values of [{ [V1]: staleV1 }, { [V2]: JSON.stringify(writeFresh(addProduct([], AC70)).v2), [V1]: staleV1 }]) {
+    const storage = storageWith(values);
+    assert.equal(saved.writeSavedFilters(storage, []), true);
+    assert.deepEqual([storage.map.has(V2), storage.map.has(V1)], [false, false]);
+    assert.deepEqual(saved.readSavedFilterState(storage), { version: 0, entries: [], filters: [] });
+  }
 });
 
 // ---------------------------------------------------------------------------------------------

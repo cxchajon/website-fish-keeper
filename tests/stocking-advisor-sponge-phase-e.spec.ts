@@ -1,13 +1,14 @@
 // Sponge migration phase E on the real page (desktop and mobile): the current catalog no longer
 // carries legacy sponge GPH or GPH-bucket min/max fields. Sponge options, chips and scoring stay
-// rating based; powered filters and the UGF are unchanged; an old cached catalog that still holds the
-// legacy fields stays harmless. Part of the Stocking Advisor gate (`npm run test:e2e:stocking-gate`).
+// rating based; powered filters and the UGF are unchanged. The catalog cache is ttg.gear.catalog.v3 (an
+// old v2 cache is ignored) and current saves write ttg.stocking.filters.v2 only (no v1 mirror). Part of the Stocking Advisor gate (`npm run test:e2e:stocking-gate`).
 // Report: _internal/reports/stocking-advisor-sponge-migration-phase-e-2026-09.md
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 const V1 = 'ttg.stocking.filters.v1';
 const V2 = 'ttg.stocking.filters.v2';
+const CATALOG_CURRENT = 'ttg.gear.catalog.v3';
 const CATALOG_V2 = 'ttg.gear.catalog.v2';
 const HYGGER_S = 'hygger-double-sponge-s';
 const HYGGER_M = 'hygger-double-sponge-m';
@@ -146,8 +147,9 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
         expect(option.data).toEqual({ filterType: 'SPONGE', ratingStatus: EXPECTED_DETAILS[option.id].includes('Rated') ? 'verified' : 'needed' });
       }
     }
-    // The current catalog cache holds no legacy sponge fields.
-    const cache = JSON.parse((await stored(page, CATALOG_V2)) as string) as Array<Record<string, unknown>>;
+    // The current catalog cache (v3) holds no legacy sponge fields; v2 is not written.
+    expect(await stored(page, CATALOG_V2)).toBeNull();
+    const cache = JSON.parse((await stored(page, CATALOG_CURRENT)) as string) as Array<Record<string, unknown>>;
     for (const id of SPONGE_IDS) {
       const record = cache.find((item) => item.id === id) as Record<string, unknown>;
       for (const key of LEGACY_KEYS) expect(key in record, `${id}: ${key}`).toBe(false);
@@ -208,7 +210,9 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
     expect(state.filters).toEqual([[TETRA, 'HOB', 215, null]]);
     expect(state.gph).toEqual([215, 215, 0]);
     expect(state.level).toBe('adequate');
-    expect(JSON.parse((await stored(page, V1)) as string)).toEqual([{ id: TETRA, type: 'HOB', rated_gph: 215 }]);
+    // Phase E: v2 only, no v1 mirror.
+    expect(JSON.parse((await stored(page, V2)) as string).filters.map((e: Record<string, unknown>) => [e.productId, e.gph])).toEqual([[TETRA, 215]]);
+    expect(await stored(page, V1)).toBeNull();
   });
 
   test('H: UGF unchanged — 150 GPH, offered on its 20–40 gal range, one plate set per tank', async ({ page }) => {
@@ -233,44 +237,67 @@ test.describe('sponge phase E: legacy sponge GPH / bucket fields removed', () =>
     expect(state.level).toBe('adequate');
   });
 
-  test('old ttg.gear.catalog.v2 still holding legacy sponge GPH / buckets (as main wrote it) is harmless and replaced', async ({ page }) => {
-    // The records a pre-phase-E loader cached: rating metadata plus the fake GPH and bucket range.
+  test('an old ttg.gear.catalog.v2 (legacy sponge GPH / buckets, tampered rating) is ignored: network catalog used, v3 written clean', async ({ page }) => {
+    // What the phases B–D loader cached, plus a tampered verified rating that must not surface.
     const LEGACY: Record<string, [number, number, number]> = {
       [AQUANEAT_SMALL]: [60, 0, 20], [AQUANEAT_MIDDLE]: [120, 0, 20], [AQUANEAT_LARGE]: [200, 20, 40],
       [HYGGER_S]: [80, 0, 20], [HYGGER_M]: [120, 0, 20], [PAWFLY]: [60, 0, 20], [POWKOO]: [150, 20, 40],
     };
-    const staleCache = CATALOG.map((item) => {
+    const oldCache = CATALOG.map((item) => {
       const legacy = LEGACY[item.id as string];
       if (!legacy) return item;
       const { ratingEvidence, ratingSourceKind, ratingSource, productRef, ratingNote, ratingCheckedAt, ratingExpression, ...runtime } = item;
-      return { ...runtime, gphRated: legacy[0], rated_gph: legacy[0], minGallons: legacy[1], maxGallons: legacy[2] };
+      return { ...runtime, gphRated: legacy[0], rated_gph: legacy[0], minGallons: legacy[1], maxGallons: legacy[2],
+        ...(item.id === POWKOO ? { ratingStatus: 'verified', manufacturerMaxGallons: 500 } : {}) };
     });
+    const oldJson = JSON.stringify(oldCache);
     await seedStorage(page, {
-      [CATALOG_V2]: JSON.stringify(staleCache),
+      [CATALOG_V2]: oldJson,
       'ttg.gear.catalog.timestamp': '1',
       [V2]: JSON.stringify({ v: 2, filters: [
         { instanceId: 'f-olde01', source: 'product', productId: HYGGER_S, type: 'SPONGE', capacityMethod: 'manufacturer_rating' },
-        { instanceId: 'f-olde02', source: 'product', productId: AQUANEAT_MIDDLE, type: 'SPONGE', capacityMethod: 'manufacturer_rating' },
+        { instanceId: 'f-olde02', source: 'product', productId: POWKOO, type: 'SPONGE', capacityMethod: 'manufacturer_rating' },
       ] }),
     });
     await openAdvisor(page);
     await setUpTank(page, '29g');
     await settle(page);
-    // The stale cache is served for this load: ratings used, legacy GPH / buckets never shown or scored.
     const options = await productOptions(page);
     for (const id of SPONGE_IDS) {
       expect(options.find((option) => option.id === id)?.text).toBe(`${nameOf(id)} • ${EXPECTED_DETAILS[id]}`);
     }
     await expect(productChips(page, HYGGER_S).locator('.proto-filter-chip__gph')).toHaveText('Rated 10–40 gal');
-    await expect(productChips(page, AQUANEAT_MIDDLE).locator('.proto-filter-chip__gph')).toHaveText('Rating needed');
+    await expect(productChips(page, POWKOO).locator('.proto-filter-chip__gph')).toHaveText('Rating needed');
     const state = await expectLoadUnchanged(page);
     expect(state.gph).toEqual([0, 0, 0]);
     expect([state.level, state.adequateBy]).toEqual(['adequate', 'sponge']);
-    expect(await filtrationText(page)).not.toMatch(/GPH|\b(60|80|120|150|200)\b/);
-    // The background refresh replaced the cache with clean records.
-    await expect.poll(async () => {
-      const cache = JSON.parse((await stored(page, CATALOG_V2)) as string) as Array<Record<string, unknown>>;
-      return SPONGE_IDS.every((id) => LEGACY_KEYS.every((key) => !(key in (cache.find((item) => item.id === id) as object))));
-    }, { timeout: 10000 }).toBe(true);
+    expect(await filtrationText(page)).not.toMatch(/GPH|\b(60|80|120|150|200|500)\b/);
+    // v2 is left for tabs still running older code; the current generation is v3, clean.
+    expect(await stored(page, CATALOG_V2)).toBe(oldJson);
+    const v3 = JSON.parse((await stored(page, CATALOG_CURRENT)) as string) as Array<Record<string, unknown>>;
+    for (const id of SPONGE_IDS) {
+      for (const key of LEGACY_KEYS) expect(key in (v3.find((item) => item.id === id) as object), `${id}: ${key}`).toBe(false);
+    }
+  });
+
+  test('clearing every filter removes v2 and a historical v1: the old plan does not return after reload', async ({ page }) => {
+    await seedStorage(page, { [V1]: JSON.stringify([{ id: TETRA, type: 'HOB', rated_gph: 215 }, { id: HYGGER_S, type: 'SPONGE', rated_gph: 120 }]) });
+    await openAdvisor(page);
+    await setUpTank(page, '55g');
+    await settle(page);
+    // Historical v1 migrated: both restored, the sponge by rating; saved as v2 only.
+    await expect(chips(page)).toHaveCount(2);
+    expect((await engine(page)).filters).toEqual([[TETRA, 'HOB', 215, null], [HYGGER_S, 'SPONGE', 0, 'verified']]);
+    expect(await stored(page, V1)).toBeNull();
+    while (await chips(page).count()) {
+      await chips(page).first().locator('[data-remove-filter]').click();
+    }
+    await settle(page);
+    expect([await stored(page, V2), await stored(page, V1)]).toEqual([null, null]);
+    await page.reload();
+    await setUpTank(page, '55g');
+    await settle(page);
+    await expect(chips(page)).toHaveCount(0);
+    expect((await engine(page)).level).toBe('none');
   });
 });

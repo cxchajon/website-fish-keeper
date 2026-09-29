@@ -181,7 +181,7 @@ export function subscribeTank(listener) {
 
 export const EMPTY_TANK = EMPTY;
 
-// The saved filter list (ttg.stocking.filters.v2 plus its v1 mirror) has one serializer, shared with
+// The saved filter list (ttg.stocking.filters.v2; historical v1 is read only) has one serializer, shared with
 // the filtration controller: js/stocking-advisor/filtration/saved-state.js.
 export function loadFilterSnapshot() {
   return readSavedFilters();

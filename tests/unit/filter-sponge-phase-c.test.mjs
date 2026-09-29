@@ -17,7 +17,7 @@ const compute = await import('../../js/logic/compute.js');
 const math = await import('../../js/stocking-advisor/filtration/math.js');
 const saved = await import('../../js/stocking-advisor/filtration/saved-state.js');
 const items = await import('../../js/stocking-advisor/filtration/sponge-items.js');
-const { getGearData } = await import('../../js/gear-data.js');
+const { getGearData, CATALOG_CACHE_KEY } = await import('../../js/gear-data.js');
 const { getTankById } = await import('../../js/utils.js');
 
 await compute.initializeCompute();
@@ -35,6 +35,9 @@ const SPONGE_IDS = [...VERIFIED_IDS, ...UNVERIFIED];
 const FAKE_GPH = [60, 120, 200, 900, 1500];
 const V1 = saved.FILTER_STORAGE_KEY_V1;
 const V2 = saved.FILTER_STORAGE_KEY_V2;
+// The cache key the loader reads (ttg.gear.catalog.v3 since phase E). Stale-record fixtures below are
+// fed through it so the historical-record sanitising stays covered whatever the key generation is.
+const CACHE = CATALOG_CACHE_KEY;
 
 function storageWith(values = {}) {
   const map = new Map(Object.entries(values));
@@ -243,7 +246,7 @@ test('B: a known powered product saved as SPONGE is restored as that powered pro
   assert.equal(online.computed.filtering.level, 'adequate');
   assert.equal(online.assessment.adequateBy, 'powered');
   assert.deepEqual(online.written.filters, [{ instanceId: 'f-typeb1', source: 'product', productId: 'aquaclear-70', type: 'HOB', capacityMethod: 'flow', gph: 300 }]);
-  assert.deepEqual(online.mirror, [{ id: 'aquaclear-70', type: 'HOB', rated_gph: 300 }]);
+  assert.deepEqual(online.mirror, [], 'phase E: no v1 mirror is written');
   // Offline the catalog can't say it is powered: it stays a sponge that needs a rating (fails
   // closed) — the stored 500-gallon "verified" rating is never trusted for a product entry.
   const offline = pageLoad(v2Storage([entry]), { catalogById: OFFLINE });
@@ -307,7 +310,7 @@ test('unresolved legacy sponge cannot score GPH; unresolved powered filter keeps
     assert.equal(result.computed.filtering.biologicalGph, 150, 'only the powered legacy filter counts');
     assert.deepEqual(result.written.filters.map((e) => [e.productId, e.type, e.capacityMethod, e.gph]),
       [['discontinued-sponge-x', 'SPONGE', 'manufacturer_rating', undefined], ['discontinued-hob-y', 'HOB', 'flow', 150]]);
-    assert.deepEqual(result.mirror, [{ id: 'discontinued-hob-y', type: 'HOB', rated_gph: 150 }]);
+    assert.deepEqual(result.mirror, [], 'phase E: no v1 mirror; a historical v1 input is removed once v2 holds the plan');
     assertNoSpongeGph(result, 'unresolved');
   }
   // Alone on a tank, the unresolved sponge is "Not evaluated — rating needed", never adequate/red.
@@ -457,12 +460,12 @@ test('stale ttg.gear.catalog.v1 is never read as the catalog; v1-shaped sponges 
   }
 });
 
-test('stale v2 catalog sponge (gphRated 120, capacityMethod flow, no rating): zero GPH, Rating needed; refresh restores the verified rating', async () => {
+test('stale cached catalog sponge (gphRated 120, capacityMethod flow, no rating): zero GPH, Rating needed; refresh restores the verified rating', async () => {
   const staleCatalog = CATALOG.map((item) => (item.id === HYGGER_S
     ? { id: HYGGER_S, brand: item.brand, name: item.name, type: 'SPONGE', gphRated: 120, minGallons: 0, maxGallons: 20, capacityMethod: 'flow' }
     : item));
   try {
-    const { gear, store } = await freshGearData({ 'ttg.gear.catalog.v2': JSON.stringify(staleCatalog) });
+    const { gear, store } = await freshGearData({ [CACHE]: JSON.stringify(staleCatalog) });
     // The cached catalog is served first; the network refresh runs in the background.
     let refreshed;
     const refreshDone = new Promise((resolve) => { refreshed = resolve; });
@@ -482,7 +485,7 @@ test('stale v2 catalog sponge (gphRated 120, capacityMethod flow, no rating): ze
 
     await refreshDone;
     await new Promise((resolve) => setTimeout(resolve, 10));
-    const cached = JSON.parse(store.map.get('ttg.gear.catalog.v2'));
+    const cached = JSON.parse(store.map.get(CACHE));
     const refreshedRecord = cached.find((record) => record.id === HYGGER_S);
     assert.deepEqual([refreshedRecord.ratingStatus, refreshedRecord.manufacturerMaxGallons, refreshedRecord.capacityMethod], ['verified', 40, 'manufacturer_rating']);
     const next = await gear.getGearData({ fetchImpl });
@@ -498,7 +501,7 @@ test('stale v2 catalog sponge (gphRated 120, capacityMethod flow, no rating): ze
 test('stale / damaged cached record typing a known sponge as HOB is still a sponge', async () => {
   const damaged = CATALOG.map((item) => (item.id === HYGGER_M ? { ...item, type: 'HOB', gphRated: 200, rated_gph: 200 } : item));
   try {
-    const { gear } = await freshGearData({ 'ttg.gear.catalog.v2': JSON.stringify(damaged) });
+    const { gear } = await freshGearData({ [CACHE]: JSON.stringify(damaged) });
     const list = await gear.getGearData({ fetchImpl: failingFetch });
     const record = list.find((item) => item.id === HYGGER_M);
     assert.equal(record.type, 'SPONGE');
@@ -515,14 +518,14 @@ test('offline: failed network with stale, verified or no cache never produces a 
   try {
     // Stale GPH-only cache → Rating needed.
     const staleCatalog = CATALOG.map((item) => (math.isSpongeFilter(item) ? OLD_SPONGE_RECORD(item.id, 200) : item));
-    const stale = await freshGearData({ 'ttg.gear.catalog.v2': JSON.stringify(staleCatalog) });
+    const stale = await freshGearData({ [CACHE]: JSON.stringify(staleCatalog) });
     const staleList = await stale.gear.getGearData({ fetchImpl: failingFetch });
     const staleResult = pageLoad(plan(), { catalogById: catalogOf(staleList) });
     assert.equal(staleResult.computed.filtering.level, 'not-evaluated');
     assert.equal(staleResult.computed.filtering.gphTotal, 0);
     assertNoSpongeGph(staleResult, 'offline stale');
     // A cache that stored verified rating metadata may be used (it is the catalog's own rating).
-    const good = await freshGearData({ 'ttg.gear.catalog.v2': JSON.stringify(CATALOG) });
+    const good = await freshGearData({ [CACHE]: JSON.stringify(CATALOG) });
     const goodList = await good.gear.getGearData({ fetchImpl: failingFetch });
     const goodResult = pageLoad(plan(), { catalogById: catalogOf(goodList) });
     assert.equal(goodResult.computed.filtering.level, 'adequate');
@@ -597,9 +600,9 @@ test('mixed valid / malformed v2 entries: bad entries fail independently, valid 
 });
 
 // ---------------------------------------------------------------------------------------------
-// Step 16 — v1 mirror safety
+// Step 16 — v1 mirror safety (phase E: the mirror is retired; current saves never write v1)
 
-test('v1 mirror excludes every sponge: HOB, powerhead, verified catalog / custom sponge, unrated legacy sponge', () => {
+test('current saves write no v1 mirror: HOB, powerhead, verified catalog / custom sponge, unrated legacy sponge', () => {
   const tetra = CATALOG_BY_ID.get('tetra-whisper-iq-45');
   const plan = [
     { id: tetra.id, source: 'product', type: 'HOB', gph: 215, productId: tetra.id },
@@ -610,19 +613,17 @@ test('v1 mirror excludes every sponge: HOB, powerhead, verified catalog / custom
   ];
   const store = storageWith({});
   saved.writeSavedFilters(store, plan.map(toApp));
-  const mirror = JSON.parse(store.map.get(V1));
-  assert.deepEqual(mirror, [
-    { id: 'tetra-whisper-iq-45', type: 'HOB', rated_gph: 215 },
-    { id: 'manual-ph1', type: 'POWERHEAD', rated_gph: 400 },
-  ]);
+  assert.equal(store.map.has(V1), false);
   const v2 = JSON.parse(store.map.get(V2)).filters;
   assert.equal(v2.length, 5);
   assert.equal(v2[4].legacyGph, 120);
-  assert.doesNotMatch(store.map.get(V1), /SPONGE|hygger|manual-sp|"rated_gph":(40|55|120)\b/);
-  // Sponge-only plan: the v1 key is removed rather than written with sponges.
-  const spongeOnly = storageWith({ [V1]: '[{"id":"x","type":"HOB","rated_gph":1}]' });
-  saved.writeSavedFilters(spongeOnly, plan.slice(2).map(toApp));
-  assert.equal(spongeOnly.map.has(V1), false);
+  // A historical v1 key is removed once v2 holds the plan (sponge-only and mixed plans alike).
+  for (const list of [plan, plan.slice(2)]) {
+    const withOld = storageWith({ [V1]: '[{"id":"x","type":"HOB","rated_gph":1}]' });
+    saved.writeSavedFilters(withOld, list.map(toApp));
+    assert.equal(withOld.map.has(V1), false);
+    assert.equal(JSON.parse(withOld.map.get(V2)).filters.length, list.length);
+  }
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -702,7 +703,7 @@ test('powered filters are untouched by the hardening: legitimate GPH intact thro
       assert.deepEqual(result.restored.map((i) => [i.id, i.type, i.gph]), [[id, type, gph]]);
       assert.equal(result.computed.filtering.biologicalGph, gph);
       assert.deepEqual(result.written.filters.map((e) => [e.productId, e.type, e.capacityMethod, e.gph]), [[id, type, 'flow', gph]]);
-      assert.deepEqual(result.mirror, [{ id, type, rated_gph: gph }]);
+      assert.deepEqual(result.mirror, [], 'phase E: no v1 mirror');
     }
   }
   // Tetra IQ 45 stays 215 GPH even if old data stored another number: the catalog wins.
@@ -714,7 +715,7 @@ test('powered filters are untouched by the hardening: legitimate GPH intact thro
       const result = pageLoad(storage, { tank: '55g' });
       assert.deepEqual(result.restored.map((i) => [i.id, i.type, i.gph]), [[id, type, gph]]);
       assert.deepEqual([result.computed.filtering.biologicalGph, result.computed.filtering.circulationGph], [bio, circ]);
-      assert.deepEqual(result.mirror, [{ id, type, rated_gph: gph }]);
+      assert.deepEqual(result.mirror, [], 'phase E: no v1 mirror');
     }
   }
 });

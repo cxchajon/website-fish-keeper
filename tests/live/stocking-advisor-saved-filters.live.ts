@@ -1,10 +1,13 @@
 // Live check of the saved-filter v2 plumbing, the sponge migration phase B rating model, the
 // phase C stale-data fallback and phase D duplicate filter instances against production. Each test runs in a fresh browser context, so it
-// only touches its own throwaway localStorage.
+// only touches its own throwaway localStorage. Phase E contract: current saves write
+// ttg.stocking.filters.v2 only (no v1 mirror; a historical v1 plan is still read, migrated and then
+// removed) and the catalog cache is ttg.gear.catalog.v3.
 import { test, expect, type Page } from '@playwright/test';
 
 const V1 = 'ttg.stocking.filters.v1';
 const V2 = 'ttg.stocking.filters.v2';
+const CATALOG_CACHE = 'ttg.gear.catalog.v3';
 const ASSET_PATH = /\/(js|data|assets\/data)\//;
 
 type Errors = { page: string[]; console: string[] };
@@ -121,15 +124,20 @@ async function reloadWithStock(page: Page, tankId: string) {
 
 const filtrationWarningIds = (state: Snapshot) => state.warnings.filter((id: string) => id.startsWith('filtration.'));
 
-test('phase B is deployed: the saved-state module is served with the rating model', async ({ request }) => {
+test('phases B–E are deployed: saved-state (rating model, no v1 mirror) and catalog cache v3 are served', async ({ request }) => {
   const response = await request.get('/js/stocking-advisor/filtration/saved-state.js');
   expect(response.status()).toBe(200);
   const body = await response.text();
   expect(body).toContain("'ttg.stocking.filters.v2'");
   expect(body).toContain('CAPACITY_METHODS.MANUFACTURER_RATING');
+  // Phase E: the v1 mirror serializer is retired and the catalog cache generation is v3.
+  expect(body).not.toContain('toV1Mirror');
+  const gear = await request.get('/js/gear-data.js');
+  expect(gear.status()).toBe(200);
+  expect(await gear.text()).toContain("'ttg.gear.catalog.v3'");
 });
 
-test('powered catalog filter (Tetra IQ 45): 215 GPH, load unchanged, v2 + v1 written, identical after reload', async ({ page }) => {
+test('powered catalog filter (Tetra IQ 45): 215 GPH, load unchanged, v2 written (no v1 mirror), identical after reload', async ({ page }) => {
   const errors = trackErrors(page);
   await openAdvisor(page);
   await setUp(page, '55g');
@@ -152,7 +160,7 @@ test('powered catalog filter (Tetra IQ 45): 215 GPH, load unchanged, v2 + v1 wri
   expect(v2.filters).toHaveLength(1);
   expect(v2.filters[0]).toMatchObject({ source: 'product', productId: 'tetra-whisper-iq-45', type: 'HOB', capacityMethod: 'flow', gph: 215 });
   expect(v2.filters[0].instanceId).toMatch(/^f-/);
-  expect(await storedJson(page, V1)).toEqual([{ id: 'tetra-whisper-iq-45', type: 'HOB', rated_gph: 215 }]);
+  expect(await stored(page, V1)).toBeNull(); // phase E: v2 only, no v1 mirror
 
   await reloadWithStock(page, '55g');
   const after = await snapshot(page);
@@ -210,7 +218,7 @@ test('catalog sponge needing review (AQUANEAT 20): 0 GPH, "Rating needed", not e
   expect(errors).toEqual({ page: [], console: [] });
 });
 
-test('an existing v1 plan restores: sponge by rating (0 GPH, Rating needed), powered filters unchanged; v2 written, v1 flow only', async ({ page }) => {
+test('an existing v1 plan restores: sponge by rating (0 GPH, Rating needed), powered filters unchanged; v2 written, historical v1 removed', async ({ page }) => {
   const errors = trackErrors(page);
   const v1 = [
     { id: 'aquaneat-sponge-20', type: 'SPONGE', rated_gph: 120 },
@@ -246,11 +254,9 @@ test('an existing v1 plan restores: sponge by rating (0 GPH, Rating needed), pow
   expect(v2.filters[0]).toMatchObject({ source: 'product', productId: 'aquaneat-sponge-20' });
   expect(v2.filters[0]).not.toHaveProperty('manufacturerMaxGallons');
   expect(v2.filters[0]).not.toHaveProperty('legacyGph');
-  // The v1 mirror now holds the flow devices only; the sponge is not written back as fake GPH.
-  expect(await storedJson(page, V1)).toEqual([
-    { id: 'manual-live-a', type: 'HOB', rated_gph: 150 },
-    { id: 'manual-live-b', type: 'POWERHEAD', rated_gph: 300 },
-  ]);
+  // Phase E: the plan now lives in v2 only; no v1 mirror is written and the historical v1 is removed,
+  // so the sponge's old 120 GPH is never written back anywhere.
+  expect(await stored(page, V1)).toBeNull();
   expect(errors).toEqual({ page: [], console: [] });
 });
 
@@ -279,7 +285,7 @@ test('a v2 entry with an unsupported capacityMethod is ignored; the valid filter
   const saved = await storedJson(page, V2);
   expect(saved.filters.map((entry: { instanceId: string }) => entry.instanceId)).toEqual(['f-live01']);
   expect(saved.filters[0]).toMatchObject({ source: 'custom', legacyId: 'manual-live-good', type: 'HOB', capacityMethod: 'flow', gph: 150 });
-  expect(await storedJson(page, V1)).toEqual([{ id: 'manual-live-good', type: 'HOB', rated_gph: 150 }]);
+  expect(await stored(page, V1)).toBeNull(); // phase E: no v1 mirror
   expect(errors).toEqual({ page: [], console: [] });
 });
 
@@ -437,10 +443,11 @@ test('phase C: catalog unavailable — a known sponge id saved as a 900 GPH HOB 
     catalogRequests += 1;
     return route.abort('failed');
   });
-  // Fresh context: there is no cached catalog (ttg.gear.catalog.v2) to fall back on either.
+  // Fresh context: there is no cached catalog (current ttg.gear.catalog.v3, or an old v2 / v1) to fall back on either.
   await page.addInitScript(() => {
     if (sessionStorage.getItem('__phaseC_seeded')) return;
     sessionStorage.setItem('__phaseC_seeded', '1');
+    localStorage.removeItem('ttg.gear.catalog.v3');
     localStorage.removeItem('ttg.gear.catalog.v2');
     localStorage.removeItem('ttg.gear.catalog.v1');
     localStorage.removeItem('ttg.stocking.filters.v1');
@@ -455,6 +462,7 @@ test('phase C: catalog unavailable — a known sponge id saved as a 900 GPH HOB 
   // The fallback path really ran: the catalog request failed and nothing resolved the product.
   expect(catalogRequests).toBeGreaterThan(0);
   await expect(page.locator('#filter-product')).toHaveAttribute('data-catalog-ready', '0');
+  expect(await stored(page, CATALOG_CACHE)).toBeNull();
   expect(await stored(page, 'ttg.gear.catalog.v2')).toBeNull();
 
   const state = await snapshot(page);

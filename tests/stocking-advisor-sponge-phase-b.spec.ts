@@ -280,8 +280,8 @@ test.describe('sponge phase B', () => {
     await expect(chip(page, 'manual-oldsp')).toContainText('Sponge filter');
     await expect(chip(page, 'manual-oldsp')).toContainText('Rating needed');
     expect(await filtrationText(page)).not.toMatch(LEGACY_SPONGE_GPH);
-    // v1 mirror: powered only.
-    expect(JSON.parse((await stored(page, V1)) as string)).toEqual([{ id: 'manual-oldhob', type: 'HOB', rated_gph: 110 }]);
+    // Phase E: migrated into v2 only; no v1 mirror, and the historical v1 key is removed.
+    expect(await stored(page, V1)).toBeNull();
     const saved = JSON.parse((await stored(page, V2)) as string);
     expect(saved.filters[2]).toMatchObject({ source: 'custom', type: 'SPONGE', capacityMethod: 'manufacturer_rating', ratingStatus: 'needed', legacyGph: 120 });
     expect(saved.filters[2].gph).toBeUndefined();

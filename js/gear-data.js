@@ -1,11 +1,14 @@
 import { hasUnsupportedCapacityMethod, isKnownSpongeProductId, isSpongeFilter, pickPassthroughFields } from './stocking-advisor/filtration/math.js';
 
 const DATA_URL = '/assets/data/gearCatalog.json';
-// v2 since sponge migration phase B: the sponge records gained rating metadata, so a cache written by
-// earlier code (records without it) is not reused. Earlier code keeps reading its own v1 key. New code
-// is safe with a stale v1-shaped record anyway: a SPONGE without a verified rating is "Rating needed",
-// never scored by its old GPH (filtration/math.js effectiveCapacityMethod).
-const STORAGE_KEY = 'ttg.gear.catalog.v2';
+// v3 since sponge migration phase E: the sponge records lost their legacy GPH / GPH-bucket fields, so
+// the phase E catalog starts from a clean cache generation. ttg.gear.catalog.v2 (phases B–D, whose
+// sponge records may still hold gphRated / minGallons / maxGallons) and ttg.gear.catalog.v1 are never
+// read or written here; tabs still running older code keep their own keys. New code is safe with a
+// stale record anyway: sanitizeItem drops sponge flow / bucket fields and a SPONGE without a verified
+// rating is "Rating needed", never scored by an old GPH (filtration/math.js effectiveCapacityMethod).
+const STORAGE_KEY = 'ttg.gear.catalog.v3';
+export const CATALOG_CACHE_KEY = STORAGE_KEY;
 const STORAGE_TIMESTAMP_KEY = 'ttg.gear.catalog.timestamp';
 
 export const CATALOG_SOURCES = Object.freeze({
