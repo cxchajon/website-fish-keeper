@@ -20,8 +20,9 @@
  *                   {…, ratingStatus:"needed", legacyGph}   an old custom sponge that only had a GPH:
  *                   legacyGph is kept for one migration cycle, never scored, never shown as flow.
  *
- * The v1 mirror is kept until phase E so a tab still running the previous JavaScript restores the
- * same powered filters. It holds only flow-method entries and only the three fields old code reads;
+ * The v1 mirror is kept (its retirement was deferred out of phase E, which only cleaned catalog data;
+ * see the phase E report) so a tab still running the previous JavaScript restores the same powered
+ * filters. It holds only flow-method entries and only the three fields old code reads;
  * a rating-based sponge is never written to it (no manufacturer gallons in rated_gph).
  *
  * Duplicates (phase D): each entry is one physical filter with its own instanceId; productId may

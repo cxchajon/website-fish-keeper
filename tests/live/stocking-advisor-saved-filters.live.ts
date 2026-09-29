@@ -168,8 +168,10 @@ test('catalog sponge needing review (AQUANEAT 20): 0 GPH, "Rating needed", not e
     const catalog = await (await fetch('/assets/data/gearCatalog.json', { cache: 'no-store' })).json();
     return catalog.find((item: { id: string }) => item.id === 'aquaneat-sponge-20');
   });
-  // The historical 120 GPH and a review-only 20 gal rating are both still in the record; neither may be used.
-  expect(record).toMatchObject({ type: 'SPONGE', capacityMethod: 'manufacturer_rating', manufacturerMaxGallons: 20, ratingStatus: 'needs_review', gphRated: 120 });
+  // A review-only 20 gal rating is in the record and must not be used. Since phase E the record carries
+  // no legacy sponge GPH (formerly 120) and no GPH-bucket minGallons / maxGallons.
+  expect(record).toMatchObject({ type: 'SPONGE', capacityMethod: 'manufacturer_rating', manufacturerMaxGallons: 20, ratingStatus: 'needs_review' });
+  for (const key of ['gphRated', 'rated_gph', 'minGallons', 'maxGallons']) expect(record, key).not.toHaveProperty(key);
   // A 10 gal tank: the review-only 20 gal number would cover it if it were (wrongly) trusted.
   await setUp(page, '10g');
   await settle(page);

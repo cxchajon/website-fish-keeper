@@ -72,33 +72,27 @@ function sanitizeItem(raw) {
   const name = typeof raw.name === 'string' ? raw.name.trim() : '';
   // A known sponge product is a sponge even in a stale or damaged cached record (phase C).
   const type = isKnownSpongeProductId(id) ? 'SPONGE' : normalizeType(raw.type);
-  const gphRatedRaw = toNumber(raw.gphRated ?? raw.rated_gph ?? raw.ratedGph, NaN);
-  const hasFlow = Number.isFinite(gphRatedRaw) && gphRatedRaw > 0;
-  // A sponge is rated by tank size, not flow, so it is kept without a GPH (phase E removes the
-  // legacy sponge gphRated). Its gphRated, when present, is legacy compatibility data for older
-  // scripts only: the filtration code never scores or shows it.
-  if (!hasFlow && !isSpongeFilter({ type })) {
-    return null;
-  }
-  const gphRated = hasFlow ? gphRatedRaw : 0;
   // A capacity method this code doesn't support is never offered as a flow-rated product.
   if (hasUnsupportedCapacityMethod(raw)) {
     return null;
   }
-  const minGallonsRaw = toNumber(raw.minGallons, 0);
-  const maxGallonsRaw = toNumber(raw.maxGallons, Infinity);
-  const minGallons = Math.max(0, Number.isFinite(minGallonsRaw) ? minGallonsRaw : 0);
-  const maxGallons = Number.isFinite(maxGallonsRaw) && maxGallonsRaw > 0 ? maxGallonsRaw : Infinity;
-  const entry = {
-    id,
-    brand,
-    name,
-    type,
-    gphRated,
-    rated_gph: gphRated,
-    minGallons,
-    maxGallons,
-  };
+  const entry = { id, brand, name, type };
+  // A sponge is rated by tank size, not flow (phase B), so it is kept without a GPH. Since phase E
+  // the catalog stores no GPH and no GPH-bucket minGallons / maxGallons for sponges and the loader
+  // emits none: an old cached record's gphRated / rated_gph / ratedGph / minGallons / maxGallons are
+  // dropped, so there is no synthetic 0 GPH or bucket range for any code to read as a real value.
+  if (!isSpongeFilter({ type })) {
+    const gphRatedRaw = toNumber(raw.gphRated ?? raw.rated_gph ?? raw.ratedGph, NaN);
+    if (!(Number.isFinite(gphRatedRaw) && gphRatedRaw > 0)) {
+      return null;
+    }
+    const minGallonsRaw = toNumber(raw.minGallons, 0);
+    const maxGallonsRaw = toNumber(raw.maxGallons, Infinity);
+    entry.gphRated = gphRatedRaw;
+    entry.rated_gph = gphRatedRaw;
+    entry.minGallons = Math.max(0, Number.isFinite(minGallonsRaw) ? minGallonsRaw : 0);
+    entry.maxGallons = Number.isFinite(maxGallonsRaw) && maxGallonsRaw > 0 ? maxGallonsRaw : Infinity;
+  }
   if (raw?.links && typeof raw.links === 'object') {
     entry.links = { ...raw.links };
   }
@@ -117,6 +111,17 @@ function sanitizeItem(raw) {
   return entry;
 }
 
+// Within a brand, smaller products first: powered filters by rated GPH; sponges (no GPH since phase
+// E) by the catalog's manufacturer maximum, which keeps the order the legacy sponge GPH gave. This
+// only orders the picker; it is never a rating (math.js resolveSpongeRating decides what scores).
+function sizeSortKey(item) {
+  if (isSpongeFilter(item)) {
+    const max = Number(item?.manufacturerMaxGallons);
+    return Number.isFinite(max) && max > 0 ? max : 0;
+  }
+  return item?.gphRated ?? 0;
+}
+
 function sortByTypeBrandGphInternal(items) {
   const clone = items.slice();
   clone.sort((a, b) => {
@@ -129,9 +134,9 @@ function sortByTypeBrandGphInternal(items) {
     if (brandCompare !== 0) {
       return brandCompare;
     }
-    const gphCompare = (a.gphRated ?? 0) - (b.gphRated ?? 0);
-    if (gphCompare !== 0) {
-      return gphCompare;
+    const sizeCompare = sizeSortKey(a) - sizeSortKey(b);
+    if (sizeCompare !== 0) {
+      return sizeCompare;
     }
     return (a.name || '').localeCompare(b.name || '');
   });
@@ -266,8 +271,9 @@ export function filterGearByTank(items, gallons) {
     return list.slice();
   }
   return list.filter((item) => {
-    // A sponge's minGallons / maxGallons are legacy GPH-bucket values, not a rating. Sponges stay
-    // selectable on every tank: an undersized sponge is valid as one of several (phase B).
+    // Sponges stay selectable on every tank: an undersized sponge is valid as one of several
+    // (phase B). They carry no GPH-bucket minGallons / maxGallons since phase E, and an old cached
+    // record's bucket values are never used as a tank range (or as a rating).
     if (isSpongeFilter(item)) {
       return true;
     }

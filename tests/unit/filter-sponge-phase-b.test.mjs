@@ -76,7 +76,7 @@ const nonFiltration = (computed) => computed.status.warnings.filter((w) => !w.id
 // ---------------------------------------------------------------------------------------------
 // Catalog metadata
 
-test('catalog: the seven sponge records carry the locked metadata; ids unchanged; legacy GPH kept', () => {
+test('catalog: the seven sponge records carry the locked metadata; ids unchanged; no legacy GPH (phase E)', () => {
   const expected = {
     [HYGGER_S]: [10, 40, 'verified', 'verified'],
     [HYGGER_M]: [15, 55, 'verified', 'verified'],
@@ -95,9 +95,10 @@ test('catalog: the seven sponge records carry the locked metadata; ids unchanged
     assert.equal(item.manufacturerMaxGallons, max, item.id);
     assert.equal(item.ratingStatus, status, item.id);
     assert.equal(item.ratingEvidence, evidence, item.id);
-    // Legacy compatibility fields stay until phase E.
-    assert.ok(item.gphRated > 0, `${item.id} keeps legacy gphRated`);
-    assert.ok('minGallons' in item && 'maxGallons' in item, item.id);
+    // Phase E removed the legacy compatibility fields (GPH and GPH-bucket range) from the catalog.
+    for (const key of ['gphRated', 'rated_gph', 'ratedGph', 'gph', 'minGallons', 'maxGallons', 'legacyFieldsNote']) {
+      assert.equal(key in item, false, `${item.id} has no ${key}`);
+    }
   }
   assert.equal(RAW.find((item) => item.id === HYGGER_S).ratingSourceKind, 'manufacturer_official');
   assert.deepEqual(RAW.find((item) => item.id === 'aquaneat-sponge-60').ratingSourceKind, ['retailer_exact_product', 'third_party_manual']);
@@ -614,7 +615,8 @@ test('catalog cache key is v2; the loader keeps a GPH-less sponge record and dro
   const loaded = await gear.getGearData({ forceRefresh: true, fetchImpl });
   assert.deepEqual(loaded.map((item) => item.id).sort(), ['future-sponge', 'ok-hob']);
   const sponge = loaded.find((item) => item.id === 'future-sponge');
-  assert.equal(sponge.gphRated, 0);
+  // No synthetic flow or bucket fields on a sponge (phase E).
+  for (const key of ['gphRated', 'rated_gph', 'minGallons', 'maxGallons']) assert.equal(key in sponge, false, key);
   assert.equal(sponge.ratingStatus, 'verified');
   // Restore the real catalog for any later test.
   await gear.getGearData({ forceRefresh: true });
