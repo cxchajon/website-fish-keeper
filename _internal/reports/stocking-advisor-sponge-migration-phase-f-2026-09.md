@@ -330,7 +330,7 @@ The only other UGF-plan difference: the legacy `bioload.flowAdjustment` export e
 | phase F browser (`stocking-advisor-ugf-phase-f.spec.ts`, desktop + mobile) | 20 / 20 |
 | Stocking gate (`CI=1`) | **199 passed, 0 failed, 27 skipped** (`main`: 179 / 0 / 27; +20 phase F runs) |
 | `npm run test:stocking:extended` | 105 pairs, 0 failures (generated report not committed) |
-| permanent live files, locally against the branch (`BASE_URL` = local static server) | `stocking-advisor-saved-filters.live.ts` 12 / 12, `stocking-advisor.live.ts` 5 / 5 |
+| permanent live files, locally against the branch (`BASE_URL` = local static server) | first pass: `stocking-advisor-saved-filters.live.ts` 12 / 12, `stocking-advisor.live.ts` 5 / 5; after the phase F live test (section 25): **18 / 18** (13 + 5) |
 | `guard:live`, `audit:controls` | pass |
 
 A mutation check (compatibility ignoring the preset id) fails 9 phase F unit tests, including the 20h /
@@ -367,19 +367,36 @@ beside a UGF; J second UGF blocked.
 
 ## 25. Permanent live-test recommendation (step 48)
 
-**Recommended, not added.** The existing live suite covers powered, sponge, v1, offline-sponge and
-duplicate paths, and — after this branch — asserts v4 is served, but nothing in it would catch the UGF
-regressing to GPH scoring or 20h passing. Because the 20h / 20l distinction is the reason this model
-exists, one permanent test is worthwhile:
+**Implemented and validated locally** (review follow-up). The existing live suite would not catch the
+UGF going back to GPH scoring or 20h passing, and the 20h / 20l distinction is the reason this model
+exists, so one permanent test was added to `tests/live/stocking-advisor-saved-filters.live.ts`:
 
-> 29 gal: Penn-Plax UGF offered and added through the real picker; option / chip show "20 Long and 29 Gallon",
-> no "150" / "GPH"; v2 entry `tank_compatibility` without `gph`; level adequate, "Undergravel filter
-> rated for this tank", 0 GPH; reload keeps the instance; Stocking Load unchanged. Then 20 High: option
-> absent, the saved UGF stays, level not evaluated.
+`phase F: Penn-Plax UGF by tank compatibility — passes on 29 and 20 Long, not on 20 High (same instance,
+0 GPH, load unchanged)`. Fresh context, no saved filters, online catalog, 8 Neon Tetras.
 
-It should be added in a follow-up after phase F is deployed (against today's production it fails by
-design). **Run the live-verify workflow only after phase F is deployed**: the updated sentinel
-(`'ttg.gear.catalog.v4'`, `TANK_COMPATIBILITY`) fails against phase E production by design.
+| Step | Asserted |
+| --- | --- |
+| 29 picker | option offered; text contains `Undergravel • 20 Long and 29 Gallon`; the part after the manufacturer title has no `150`, `GPH`, `20g–40g`, `20–40`, `20 High` |
+| catalog contract | served record `type UGF`, `tank_compatibility`, `compatibleTanks ["20l","29g"]`, no `gphRated` / `rated_gph` / `minGallons` / `maxGallons`; the same in the `ttg.gear.catalog.v4` cache the page wrote (the sentinel test covers the v4 key in the served source) |
+| 29 add (real Add Selected) | one chip `Rated: 20 Long and 29 Gallon`, `data-rating="compatible"`; engine `adequate`, `adequateBy 'ugf'`, `passingPaths ['ugf']`, status `Undergravel filter rated for this tank`, biological filtration present, UGF `[1,'compatible',true,0]`, GPH `[0,0,0]`, turnover `[0,0]`, app filter `[UGF,'UGF',0,'tank_compatibility']`, only the info note `filtration.ugf_rated`; Stocking Load equal to the no-filter computation and to the DOM load before adding; Add disabled (one per tank); filter text has no `150` / `GPH` |
+| saved v2 | exactly `{capacityMethod, instanceId, productId, source, type}` = product / UGF / tank_compatibility, `f-…` instanceId; no `150`, `gph`, bucket or `compatibleTanks`; no v1 |
+| reload on 29 | same instanceId, same passing result, same v2 |
+| switch to 20h (no re-add) | same chip and instanceId, `data-rating="not-listed"`; `not-evaluated`, `adequateBy null`, `passingPaths []`, status `Rating needed — this undergravel filter isn't listed for this tank size`, biological filtration still present, UGF `not-listed`, 0 GPH / turnover, only `filtration.rating_needed` (info); no "No biological filter"; "20 High" never in compatibility text; picker does **not** offer the UGF; Stocking Load unchanged; v2 unchanged |
+| switch to 20l | same instance; adequate again; offered again; 20h and 20l levels differ |
+| reload on 20l | same instanceId; still adequate; v2 identity-only; no v1; no 150 |
+| errors | no page errors, no site-script console errors (same filter as the rest of the file) |
+
+Local results: against a local server of the phase F branch, **3 / 3 passes** of the new test, and the
+complete permanent live suite **18 / 18** (`stocking-advisor-saved-filters.live.ts` 13, `stocking-advisor.live.ts` 5;
+was 17). Against `main`'s application code (clean `a4bc40f` worktree served by its own static server):
+the new test **fails** at the picker assertion — `main` shows
+`… • 150 GPH • UGF • 20g–40g` — and the suite is 16 passed / 2 failed (this test and the phase F
+sentinel), as intended. The engine helper uses optional chaining so a pre-phase-F build fails on a UGF
+assertion, not inside the helper.
+
+**Run the live-verify workflow only after phase F is merged and deployed**: the new test and the
+updated sentinel (`'ttg.gear.catalog.v4'`, `TANK_COMPATIBILITY`) fail against phase E production by
+design.
 
 ## 26. Deferred phase G work
 
