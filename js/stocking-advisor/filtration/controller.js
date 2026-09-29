@@ -816,16 +816,25 @@ function currentStats() {
 // "Filtration: 150 GPH • 5.2×/h" counts filters only; powerheads are listed as circulation.
 // Sponges (phase B) are listed by count: they are rated by tank size and have no flow or turnover.
 // Undergravel filters (phase F) likewise: rated by listed tank sizes, no flow or turnover.
+// Phase G: a turnover figure appears only when there is powered biological flow. With no filter, or
+// powerheads only, there is no filtration turnover to report, so no "0 GPH • 0.0×/h" is shown.
 function formatSummary(stats) {
   const spongeCount = stats.spongeCount ?? 0;
   const ugfCount = stats.ugfCount ?? 0;
   const zeroFlow = [];
   if (spongeCount > 0) zeroFlow.push(`${spongeCount} sponge filter${spongeCount === 1 ? '' : 's'} (rated by tank size)`);
   if (ugfCount > 0) zeroFlow.push(`${ugfCount} undergravel filter${ugfCount === 1 ? '' : 's'} (rated for listed tanks)`);
-  const flow = `${formatGph(stats.biologicalGph)} GPH • ${formatTurnover(stats.turnover)}×/h`;
-  let base = `Filtration: ${flow}`;
-  if (zeroFlow.length) {
-    base = (stats.poweredCount ?? 0) > 0 ? `Filtration: ${flow} + ${zeroFlow.join(' + ')}` : `Filtration: ${zeroFlow.join(' + ')}`;
+  const hasPoweredFlow = (stats.poweredCount ?? 0) > 0 && stats.biologicalGph > 0;
+  const turnover = Number(stats.turnover);
+  const flow = Number.isFinite(turnover) && turnover > 0
+    ? `${formatGph(stats.biologicalGph)} GPH • ${formatTurnover(turnover)}×/h`
+    : `${formatGph(stats.biologicalGph)} GPH`;
+  const parts = [...(hasPoweredFlow ? [flow] : []), ...zeroFlow];
+  let base;
+  if (parts.length) {
+    base = `Filtration: ${parts.join(' + ')}`;
+  } else {
+    base = stats.circulationGph > 0 ? 'Filtration: no biological filter' : 'Filtration: no filter added';
   }
   return stats.circulationGph > 0 ? `${base} (+${formatGph(stats.circulationGph)} GPH circulation only)` : base;
 }

@@ -58,7 +58,12 @@ async function setUpTank(page: Page, tankId: string) {
 
 const chips = (page: Page) => page.locator('[data-role="proto-filter-chips"] .proto-filter-chip');
 const ugfChip = (page: Page) => page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id="${UGF}"]`);
-const warning = (page: Page, id: string) => page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`);
+// Phase G: filtration warnings are shown once, in the filtration status card (which lists the engine's
+// filtration warning ids in data-warning-ids); every other warning stays a #stock-warnings strip.
+const FILTRATION_CARD = '[data-role="filtration-status-card"]';
+const warning = (page: Page, id: string) => (id.startsWith('filtration.')
+  ? page.locator(`${FILTRATION_CARD}[data-warning-ids~="${id}"]`)
+  : page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`));
 const addSelected = (page: Page) => page.locator('#filter-product-add');
 const productNote = (page: Page) => page.locator('#filter-product-note');
 const summary = (page: Page) => page.locator('[data-role="proto-filter-summary"]');
@@ -118,14 +123,19 @@ async function filtrationText(page: Page) {
     document.querySelector('[data-role="proto-filter-chips"]')?.textContent ?? '',
     document.querySelector('[data-role="proto-filter-summary"]')?.textContent ?? '',
     document.querySelector('#stock-warnings')?.textContent ?? '',
-  ].join(' ').replace(/\s+/g, ' '));
+    document.querySelector('[data-role="filtration-status-card"]')?.textContent ?? '',
+  ].join(' ').replace(/\s+/g, ' ')
+    // Phase G: the card's one permitted mention of an old custom sponge's GPH (design 12), never scored.
+    .replace(/Old value: \d+ GPH — not used for sponge filters\./g, ''));
 }
 
 async function expectPassing(page: Page, tankId: string) {
   await expect(ugfChip(page).locator('.proto-filter-chip__gph')).toHaveText(CHIP_TEXT);
   await expect(ugfChip(page).locator('.proto-filter-chip__gph')).toHaveAttribute('data-rating', 'compatible');
-  await expect(warning(page, 'filtration.ugf_rated')).toContainText(PASSING);
-  await expect(warning(page, 'filtration.ugf_rated')).toContainText('Rated for: 20 Long and 29 Gallon tanks');
+  // Phase G card: the engine headline and the explicit listed-preset line.
+  await expect(warning(page, 'filtration.ugf_rated')).toHaveAttribute('data-state', 'good');
+  await expect(warning(page, 'filtration.ugf_rated').locator('[data-role="filtration-status-headline"]')).toContainText(PASSING.replace(/^✓ /, ''));
+  await expect(warning(page, 'filtration.ugf_rated')).toContainText('Undergravel filter: rated for 20 Long and 29 Gallon — rated for this tank');
   await expect(summary(page)).toContainText('1 undergravel filter (rated for listed tanks)');
   const state = await expectLoadUnchanged(page);
   expect(state.tankId).toBe(tankId);
@@ -308,7 +318,8 @@ test.describe('phase F: undergravel filter by tank compatibility', () => {
     expect([state.adequateBy, state.passingPaths]).toEqual(['powered', ['powered']]);
     expect(state.gph).toEqual([215, 215, 0]);
     expect(state.ugf.status).toBe('not-listed');
-    await expect(warning(page, 'filtration.ugf_not_listed')).toContainText(NOT_LISTED);
+    // Phase G card: green from the powered filter, the unlisted UGF a neutral supplemental line.
+    await expect(warning(page, 'filtration.ugf_not_listed')).toContainText('+ Undergravel filter: this tank size isn\'t listed (rated for 20 Long and 29 Gallon)');
     await expect(summary(page)).toContainText('215 GPH');
     await expect(summary(page)).toContainText('1 undergravel filter');
   });

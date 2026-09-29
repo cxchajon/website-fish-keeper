@@ -28,7 +28,12 @@ async function addSpecies(page: Page, id: string, qty: number) {
   await expect(page.locator(`[data-testid="species-row"][data-row-id="${id}"]`)).toBeVisible();
 }
 
-const warning = (page: Page, id: string) => page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`);
+// Phase G: filtration warnings are shown once, in the filtration status card (which lists the engine's
+// filtration warning ids in data-warning-ids); every other warning stays a #stock-warnings strip.
+const FILTRATION_CARD = '[data-role="filtration-status-card"]';
+const warning = (page: Page, id: string) => (id.startsWith('filtration.')
+  ? page.locator(`${FILTRATION_CARD}[data-warning-ids~="${id}"]`)
+  : page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`));
 // A pair warning names both species in its id; their order follows species ordering (it changed when
 // "Freshwater Angelfish" was renamed "Angelfish"), so match the rule and both species, not the order.
 const pairWarning = (page: Page, rule: string, a: string, b: string) => page.locator(
@@ -130,7 +135,8 @@ async function startProductScenario(page: Page, tankId = '10g') {
 }
 
 const filterChips = (page: Page) => page.locator('[data-role="proto-filter-chips"] .proto-filter-chip');
-const filtrationWarnings = (page: Page) => page.locator('#stock-warnings .status-strip[data-warning-id^="filtration."]');
+// A filtration warning is present when the card lists any engine filtration warning id.
+const filtrationWarnings = (page: Page) => page.locator(`${FILTRATION_CARD}:not([data-warning-ids=""])`);
 const bioloadFill = (page: Page) => page.locator('#env-bars .env-bar__fill').first();
 
 // A "normal green" result would have no red warning, a band-coloured bioload bar and no qualifier.
@@ -293,7 +299,8 @@ test.describe('desktop: filtration', () => {
     const alert = warning(page, 'filtration.circulation_only');
     await expect(alert).toHaveAttribute('data-state', 'bad');
     await expect(alert).toContainText('No biological filter');
-    await expect(page.locator('[data-role="proto-filter-summary"]')).toHaveText(/^Filtration: 0 GPH • 0\.0×\/h \(\+200 GPH circulation only\)$/);
+    // Phase G: no filtration turnover without powered biological flow (no "0 GPH • 0.0×/h").
+    await expect(page.locator('[data-role="proto-filter-summary"]')).toHaveText('Filtration: no biological filter (+200 GPH circulation only)');
     await expect(bioloadLabel(page)).toHaveText(before ?? '');
   });
 
@@ -559,8 +566,12 @@ const anyWarning = (page: Page, id: string) => page.locator(`.status-strip[data-
 async function expectShown(locator: Locator, state: 'bad' | 'warn') {
   await expectScrolledIntoView(locator);
   await expect(locator).toHaveAttribute('data-state', state);
-  // Severity in words, not colour alone.
-  await expect(locator.locator('.warning-severity')).toHaveText(state === 'bad' ? '✖ Problem:' : '⚠ Warning:');
+  // Severity in words, not colour alone (a strip's badge, or the filtration card's headline label).
+  if (await locator.getAttribute('data-role') === 'filtration-status-card') {
+    await expect(locator.locator('[data-role="filtration-status-headline"]')).toContainText(state === 'bad' ? 'Problem:' : 'Warning:');
+  } else {
+    await expect(locator.locator('.warning-severity')).toHaveText(state === 'bad' ? '✖ Problem:' : '⚠ Warning:');
+  }
   // Readable: the strip text is not the old dark-on-dark colour, and nothing is clipped.
   const box = await locator.evaluate((el) => ({
     color: getComputedStyle(el).color,

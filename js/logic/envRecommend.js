@@ -238,7 +238,9 @@ export function deriveEnv(stock = [], options = {}) {
   const flowResult = buildFlow(entries);
   const filteringInfo = computed?.filtering ?? null;
   const turnoverValue = Number(filteringInfo?.turnover);
-  const hasFlowEstimate = filteringInfo?.hasData;
+  // A filtration turnover exists only with powered biological flow (phase G): a powerhead's GPH is
+  // circulation, so a powerhead-only plan shows "—", not 0.0×/h.
+  const hasFlowEstimate = filteringInfo?.hasData && Number(filteringInfo?.biologicalGph) > 0;
   let turnoverCaption = 'Turnover: —';
   if (Number.isFinite(turnoverValue) && hasFlowEstimate) {
     const safeTurnover = Math.max(turnoverValue, 0);

@@ -50,7 +50,7 @@
         media="print"
         onload="this.media='all'">
 
-  <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-26-warnings">
+  <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-29-filtration-card">
   <link rel="stylesheet" href="/css/author-byline.css?v=2026-09-05">
 
 <script defer src="/js/nav.js?v=1.1.0"></script>
@@ -538,10 +538,7 @@
                     title="More info"
                   >i</button>
                 </div>
-                <p class="proto-filter-summary" data-role="proto-filter-summary">Filtration: 0 GPH • 0.0×/h</p>
-                <div class="heads-up-note" role="note">
-                  <p><strong>Heads-up:</strong> The bioload % assumes an established (cycled) filter. A new filter takes several weeks to grow the bacteria that process waste, so add fish gradually and keep testing your water. A bigger filter does not raise the bioload limit.</p>
-                </div>
+                <p class="proto-filter-summary" data-role="proto-filter-summary">Filtration: no filter added</p>
                 <span class="filter-turnover-value" data-role="filter-turnover-value" aria-hidden="true" hidden>—</span>
                 <!-- Mirrors .filter-flow-input__field > input styling from Rated flow (GPH) field -->
                 <!-- PROTOTYPE-ONLY: Compact turnover field -->
@@ -558,6 +555,11 @@
                   />
                   <span class="proto-input-suffix" aria-hidden="true">×/h</span>
                 </div>
+              </div>
+              <!-- Filtration status card (sponge migration phase G): filled by js/stocking-advisor/filtration/status-card.js from the engine's result. -->
+              <section class="filtration-status" data-role="filtration-status-card" aria-labelledby="filtration-status-title" hidden></section>
+              <div class="heads-up-note" role="note">
+                <p><strong>Heads-up:</strong> The bioload % assumes an established (cycled) filter. A new filter takes several weeks to grow the bacteria that process waste, so add fish gradually and keep testing your water. A bigger filter does not raise the bioload limit.</p>
               </div>
             </div>
           </div>

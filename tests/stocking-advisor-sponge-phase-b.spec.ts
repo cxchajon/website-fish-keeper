@@ -68,8 +68,14 @@ async function addCustomSponge(page: Page, gallons: number) {
 
 const chips = (page: Page) => page.locator('[data-role="proto-filter-chips"] .proto-filter-chip');
 const chip = (page: Page, id: string) => page.locator(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id="${id}"]`);
-const warning = (page: Page, id: string) => page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`);
-const filtrationWarnings = (page: Page) => page.locator('#stock-warnings .status-strip[data-warning-id^="filtration."]');
+// Phase G: filtration warnings are shown once, in the filtration status card (which lists the engine's
+// filtration warning ids in data-warning-ids); every other warning stays a #stock-warnings strip.
+const FILTRATION_CARD = '[data-role="filtration-status-card"]';
+const warning = (page: Page, id: string) => (id.startsWith('filtration.')
+  ? page.locator(`${FILTRATION_CARD}[data-warning-ids~="${id}"]`)
+  : page.locator(`#stock-warnings .status-strip[data-warning-id="${id}"]`));
+// A filtration warning is present when the card lists any engine filtration warning id.
+const filtrationWarnings = (page: Page) => page.locator(`${FILTRATION_CARD}:not([data-warning-ids=""])`);
 const summary = (page: Page) => page.locator('[data-role="proto-filter-summary"]');
 const bioloadLabel = (page: Page) => page.locator('[data-role="bioload-percent"]').first();
 
@@ -94,8 +100,11 @@ async function filtrationText(page: Page) {
   return page.evaluate(() => [
     document.querySelector('.filter-flow-meta')?.textContent ?? '',
     document.querySelector('#stock-warnings')?.textContent ?? '',
+    document.querySelector('[data-role="filtration-status-card"]')?.textContent ?? '',
     document.querySelector('.filtration-chipbar')?.getAttribute('data-total') ?? '',
-  ].join(' ').replace(/\s+/g, ' '));
+  ].join(' ').replace(/\s+/g, ' ')
+    // Phase G: the card's one permitted mention of an old custom sponge's GPH (design 12), never scored.
+    .replace(/Old value: \d+ GPH — not used for sponge filters\./g, ''));
 }
 
 const stored = (page: Page, key: string) => page.evaluate((k) => localStorage.getItem(k), key);
@@ -184,9 +193,11 @@ test.describe('sponge phase B', () => {
     expect(state.level).toBe('adequate');
     expect(state.gph).toEqual([0, 0, 0]);
     const rated = warning(page, 'filtration.sponge_rated');
-    await expect(rated).toHaveAttribute('data-state', 'ok');
-    await expect(rated).toContainText('✓ Rated for this tank');
-    await expect(rated).toContainText('Manufacturer rating: 10–40 gal · Tank: 29 gal');
+    // Phase G card: green (was a neutral "ok" note strip), the rating line and the tank.
+    await expect(rated).toHaveAttribute('data-state', 'good');
+    await expect(rated).toContainText('Rated for this tank');
+    await expect(rated).toContainText('Sponge filter: rated 10–40 gal — rated for this tank');
+    await expect(rated).toContainText('Tank: 29 gal');
     await expect(bioloadLabel(page)).toHaveText(before ?? '');
     expect(await filtrationText(page)).not.toMatch(LEGACY_SPONGE_GPH);
 
@@ -197,7 +208,8 @@ test.describe('sponge phase B', () => {
     const below = warning(page, 'filtration.below_rating');
     await expect(below).toHaveAttribute('data-state', 'warn');
     await expect(below).toContainText('Below manufacturer rating');
-    await expect(below).toContainText('Filter rating: 10–40 gal · Tank: 55 gal');
+    await expect(below).toContainText('Sponge filter: rated 10–40 gal');
+    await expect(below).toContainText('Tank: 55 gal');
     // The sponge stays chosen and selectable on the bigger tank.
     await expect(chip(page, HYGGER_S)).toBeVisible();
     await expect(page.locator(`#filter-product option[value="${HYGGER_S}"]`)).toHaveCount(1);
@@ -221,10 +233,10 @@ test.describe('sponge phase B', () => {
     expect(state.level).toBe('not-evaluated');
     expect(state.gph).toEqual([0, 0, 0]);
     const note = warning(page, 'filtration.rating_needed');
-    await expect(note).toHaveAttribute('data-state', 'ok');
+    await expect(note).toHaveAttribute('data-state', 'neutral');
     await expect(note).toContainText('Not evaluated — rating needed');
     await expect(warning(page, 'filtration.none')).toHaveCount(0);
-    await expect(page.locator('#stock-warnings .status-strip[data-warning-id^="filtration."][data-state="bad"]')).toHaveCount(0);
+    await expect(page.locator(`${FILTRATION_CARD}[data-state="bad"]`)).toHaveCount(0);
     expect(await filtrationText(page)).not.toMatch(LEGACY_SPONGE_GPH);
   });
 
@@ -342,7 +354,7 @@ test.describe('sponge phase B', () => {
     await expect(review).toHaveAttribute('data-state', 'warn');
     await expect(review).toContainText('Review filtration');
     await expect(review).toContainText('below the 2× minimum');
-    await expect(review).toContainText('rating needed');
+    await expect(review).toContainText('Sponge filter: Rating needed');
     await expect(warning(page, 'filtration.very_low')).toHaveCount(0);
     await expect(summary(page)).toHaveText('Filtration: 40 GPH • 1.4×/h + 1 sponge filter (rated by tank size)');
 
@@ -353,7 +365,7 @@ test.describe('sponge phase B', () => {
     expect(state.level).toBe('adequate');
     expect(state.adequateBy).toBe('sponge');
     expect(state.gph).toEqual([40, 40, 0]);
-    await expect(warning(page, 'filtration.sponge_rated')).toContainText('the sponge is rated for this tank on its own');
+    await expect(warning(page, 'filtration.sponge_rated')).toContainText('+ Powered filter: 40 GPH · 1.4× / hour (rated) — below the 2× powered-filter minimum');
 
     // Replace the weak HOB with a strong one: adequate from the powered filter, sponges supplemental.
     await page.click(`[data-role="proto-filter-chips"] .proto-filter-chip[data-filter-id^="manual-"] [data-remove-filter]`);

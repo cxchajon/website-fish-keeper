@@ -11852,6 +11852,122 @@ body.prototype-stock-page .chip {
   overflow-wrap: anywhere;
 }
 
+/* ==========================================================================
+   Stocking Advisor filtration status card (sponge migration phase G).
+   Part of the filter setup area: the same tones as the warning strips
+   (good / warn / bad; neutral = the plain card line colour), status in words
+   and an icon as well as colour, long lines wrap, nothing clips on phones.
+   ========================================================================== */
+#stocking-page .filtration-status {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 12px;
+  background: var(--card-raised);
+  color: var(--fg);
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
+
+#stocking-page .filtration-status[hidden] {
+  display: none;
+}
+
+#stocking-page .filtration-status[data-state="good"] {
+  border-color: var(--ok);
+  background: linear-gradient(0deg, rgba(18, 194, 120, 0.1), rgba(18, 194, 120, 0.1)), var(--card-raised);
+}
+
+#stocking-page .filtration-status[data-state="warn"] {
+  border-color: var(--warn);
+  background: linear-gradient(0deg, rgba(244, 180, 0, 0.1), rgba(244, 180, 0, 0.1)), var(--card-raised);
+}
+
+#stocking-page .filtration-status[data-state="bad"] {
+  border-color: var(--bad);
+  background: linear-gradient(0deg, rgba(255, 100, 92, 0.12), rgba(255, 100, 92, 0.12)), var(--card-raised);
+}
+
+#stocking-page .filtration-status__title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#stocking-page .filtration-status__headline {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 4px 0 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+#stocking-page .filtration-status__icon {
+  flex: 0 0 auto;
+}
+
+#stocking-page .filtration-status__headline-text {
+  min-width: 0;
+}
+
+#stocking-page .filtration-status[data-state="good"] .filtration-status__icon {
+  color: var(--ok);
+}
+
+#stocking-page .filtration-status[data-state="warn"] .filtration-status__icon {
+  color: var(--chip-warn-text);
+}
+
+#stocking-page .filtration-status[data-state="bad"] .filtration-status__icon {
+  color: var(--chip-bad-text);
+}
+
+#stocking-page .filtration-status__paths {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+#stocking-page .filtration-status__row[data-row-kind="supplemental"],
+#stocking-page .filtration-status__row[data-row-kind="legacy"],
+#stocking-page .filtration-status__row[data-row-kind="fact"] {
+  color: var(--muted);
+}
+
+#stocking-page .filtration-status__row[data-row-kind="legacy"] {
+  padding-left: 12px;
+  font-size: 0.9rem;
+}
+
+#stocking-page .filtration-status__explanation p,
+#stocking-page .filtration-status__redundancy {
+  margin: 8px 0 0;
+  font-size: 0.93rem;
+  line-height: 1.4;
+}
+
+#stocking-page .filtration-status__note {
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
 /* ===== TTG DESKTOP LAYER v1 — generated from css/ttg-desktop.css, do not hand-edit ===== */
 /*
  * The Tank Guide desktop foundation.

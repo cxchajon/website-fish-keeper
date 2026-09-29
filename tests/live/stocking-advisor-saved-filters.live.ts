@@ -96,6 +96,7 @@ async function snapshot(page: Page) {
         ...text('[data-role="proto-filter-chips"]'),
         ...text('[data-role="proto-filter-summary"]'),
         ...text('#stock-warnings'),
+        ...text('[data-role="filtration-status-card"]'),
       ].join(' \n '),
       bodyText: document.body.innerText,
     };
@@ -122,6 +123,13 @@ async function reloadWithStock(page: Page, tankId: string) {
   await setUp(page, tankId);
   await settle(page);
 }
+
+// Where a filtration warning is shown: since phase G, once, in the filtration status card (which
+// lists the engine's filtration warning ids); before phase G, a #stock-warnings strip. Either
+// matches, so this suite passes against production both before and after the phase G deploy.
+const filtrationSignal = (page: Page, id: string) => page.locator(
+  `#stock-warnings .status-strip[data-warning-id="${id}"], [data-role="filtration-status-card"][data-warning-ids~="${id}"]`,
+).first();
 
 const filtrationWarningIds = (state: Snapshot) => state.warnings.filter((id: string) => id.startsWith('filtration.'));
 
@@ -314,7 +322,7 @@ test('verified sponge (hygger Double Sponge S) on 29 gal: Rated 10–40 gal, 0 G
   expect(before.spongeStatus).toBe('rated');
   expect(before.status).toEqual({ tone: 'good', text: 'Rated for this tank' });
   expect(before.filtrationWarnings).toEqual([['filtration.sponge_rated', 'info']]);
-  await expect(page.locator('#stock-warnings .status-strip[data-warning-id="filtration.sponge_rated"]')).toContainText('Rated for this tank');
+  await expect(filtrationSignal(page, 'filtration.sponge_rated')).toContainText('Rated for this tank');
   expect(before.summary).toBe('Filtration: 1 sponge filter (rated by tank size)');
   expect(before.filterText).not.toMatch(/80\s*GPH|×\/h/);
   expect(before.load).toBe(noFilter.load);
@@ -348,10 +356,11 @@ test('verified sponge (hygger Double Sponge S) on 55 gal: below manufacturer rat
   expect(state.spongeStatus).toBe('below-rating');
   expect(state.status).toEqual({ tone: 'warn', text: 'Below manufacturer rating' });
   expect(state.filtrationWarnings).toEqual([['filtration.below_rating', 'warn']]);
-  const strip = page.locator('#stock-warnings .status-strip[data-warning-id="filtration.below_rating"]');
+  const strip = filtrationSignal(page, 'filtration.below_rating');
   await expect(strip).toHaveAttribute('data-state', 'warn');
-  await expect(strip).toContainText('Filter rating: 10–40 gal · Tank: 55 gal.');
-  await expect(page.locator('#stock-warnings .status-strip[data-state="bad"][data-warning-id^="filtration."]')).toHaveCount(0);
+  await expect(strip).toContainText('10–40 gal');
+  await expect(strip).toContainText('55 gal');
+  await expect(page.locator('#stock-warnings .status-strip[data-state="bad"][data-warning-id^="filtration."], [data-role="filtration-status-card"][data-state="bad"]')).toHaveCount(0);
   expect(state.filterText).not.toMatch(/80\s*GPH|×\/h/);
   expect(state.load).toBe(noFilter.load);
   expect(errors).toEqual({ page: [], console: [] });
@@ -587,7 +596,7 @@ test('phase D: hygger Double Sponge S added twice on 55 gal: two instances, like
   expect(pair.spongeStatus).toBe('likely-multi');
   expect(pair.status).toEqual({ tone: 'warn', text: 'Likely adequate — multiple sponge filters' });
   expect(pair.filtrationWarnings).toEqual([['filtration.likely_multi_sponge', 'warn']]);
-  const multi = page.locator('#stock-warnings .status-strip[data-warning-id="filtration.likely_multi_sponge"]');
+  const multi = filtrationSignal(page, 'filtration.likely_multi_sponge');
   await expect(multi).toHaveAttribute('data-state', 'warn');
   await expect(multi).toContainText('Likely adequate — multiple sponge filters');
   expect(pair.summary).toBe('Filtration: 2 sponge filters (rated by tank size)');
@@ -689,7 +698,7 @@ async function ugfState(page: Page) {
       load: load(computed),
       loadWithoutFilters: load(withoutFilters),
       loadText: document.querySelector('[data-role="bioload-percent"]')?.textContent?.trim() ?? '',
-      filterText: ['[data-role="proto-filter-chips"]', '[data-role="proto-filter-summary"]', '#stock-warnings']
+      filterText: ['[data-role="proto-filter-chips"]', '[data-role="proto-filter-summary"]', '#stock-warnings', '[data-role="filtration-status-card"]']
         .map((selector) => document.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim() ?? '').join(' \n '),
     };
   });
@@ -716,7 +725,8 @@ function expectUgfPasses(state: Awaited<ReturnType<typeof ugfState>>, tankId: st
   expect(state.filtrationWarnings).toEqual([['filtration.ugf_rated', 'info']]);
   expect([state.chipCount, state.chipInstance, state.chipBadge, state.chipRating]).toEqual([1, instanceId, UGF_CHIP, 'compatible']);
   expect(state.load).toEqual(state.loadWithoutFilters);
-  expect(state.filterText).toContain(`✓ ${UGF_RATED}`);
+  // Pre-phase-G strip: "✓ <status>"; phase G card: icon and status in separate elements.
+  expect(state.filterText).toContain(UGF_RATED);
   expect(state.filterText).not.toMatch(UGF_FORBIDDEN);
 }
 
@@ -793,7 +803,9 @@ test('phase F: Penn-Plax UGF by tank compatibility — passes on 29 and 20 Long,
   expect(onTwentyHigh.offered).toBe(false);
   expect(onTwentyHigh.load).toEqual(onTwentyHigh.loadWithoutFilters);
   expect(onTwentyHigh.filterText).toContain(UGF_NOT_LISTED);
-  expect(onTwentyHigh.filterText).not.toMatch(/No biological filter|150|GPH|20 High|20–40/);
+  // "20 High" is never part of the compatibility text. The phase G card names the selected tank on its
+  // own line ("Current tank: 20 High"), which is the only place it may appear.
+  expect(onTwentyHigh.filterText.replace('Current tank: 20 High', '')).not.toMatch(/No biological filter|150|GPH|20 High|20–40/);
   await expectIdentityOnlyV2(page, instanceId);
 
   // 20 Long (same 20 gallons): listed — adequate again, same instance.
