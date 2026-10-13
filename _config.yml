@@ -25,5 +25,6 @@ exclude:
   # --- internal-only content: kept in Git, kept off the public site ---
   - tests/
   - stocking-tests-real/
+  - scripts/
   - assets/data/gear/filters.summary.md
   - README.md
