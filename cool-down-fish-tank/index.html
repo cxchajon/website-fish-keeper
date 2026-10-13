@@ -563,15 +563,8 @@
 </article>
   </main>
 
-  <div id="footer-placeholder"></div>
-
-  <script>
-    fetch('/footer.html?v=1.5.2')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('footer-placeholder').innerHTML = html;
-      })
-      .catch(error => console.error('Error loading footer:', error));
-  </script>
+  <script src="/js/footer-loader.js?v=1.5.2" defer></script>
+  <section class="legal-links" aria-label="Site legal links"><a href="/privacy-legal.html">Privacy Policy</a><a href="/terms.html">Terms</a><a href="/contact-feedback.html">Contact</a></section>
+  <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
 </body>
 </html>
