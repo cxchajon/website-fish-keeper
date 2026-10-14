@@ -238,104 +238,152 @@ test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
 });
 
 test.describe('Contact & Feedback page', () => {
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xnngnwld';
+  let formspreeRequests = [];
+
+  // Never let a test reach the real Formspree service: every Formspree request is recorded
+  // and aborted unless a test registers its own mocked response.
   test.beforeEach(async ({ page }) => {
+    formspreeRequests = [];
+    await page.route(/^https:\/\/([a-z0-9-]+\.)*formspree\.io\//, async (route) => {
+      formspreeRequests.push(route.request());
+      await route.abort('blockedbyclient');
+    });
     await page.goto('/contact-feedback.html');
     await expect(page.getByRole('main')).toBeVisible();
   });
 
-  test('Page surface matches naming and exposes hooks', async ({ page }) => {
-    await expect(page).toHaveTitle('Contact & Feedback');
-    await expect(page.getByRole('heading', { level: 1, name: 'Contact & Feedback' })).toBeVisible();
+  const nameInput = (page) => page.getByRole('textbox', { name: /^Name/ });
+  const emailInput = (page) => page.getByRole('textbox', { name: /^Email/ });
+  const subjectSelect = (page) => page.getByRole('combobox', { name: /^Subject/ });
+  const messageInput = (page) => page.getByRole('textbox', { name: /^Message/ });
+  const permissionCheckbox = (page) => page.getByRole('checkbox', { name: /okay to email me back/i });
+  const newsletterCheckbox = (page) => page.getByRole('checkbox', { name: /occasional email updates/i });
+  const submitButton = (page) => page.locator('#contact-form').getByRole('button', { name: 'Contact & Feedback' });
 
-    const form = page.getByTestId('contact-form');
+  test('Page surface matches naming and exposes form semantics', async ({ page }) => {
+    await expect(page).toHaveTitle('Contact & Feedback — Fishkeeping Questions | The Tank Guide');
+    await expect(page.getByRole('heading', { level: 1, name: 'Contact & Feedback for Fishkeeping Guides' })).toBeVisible();
+
+    const form = page.locator('#contact-form');
     await expect(form).toBeVisible();
+    await expect(form).toHaveAttribute('action', FORMSPREE_ENDPOINT);
+    await expect(form).toHaveAttribute('method', /post/i);
 
-    const nameInput = page.getByTestId('contact-name');
-    const emailInput = page.getByTestId('contact-email');
-    const subjectSelect = page.getByTestId('contact-subject');
-    const messageInput = page.getByTestId('contact-message');
-    const submit = page.getByTestId('contact-submit');
+    const requiredControls = [
+      [nameInput(page), 'help-name'],
+      [emailInput(page), 'help-email'],
+      [subjectSelect(page), 'help-subject'],
+      [messageInput(page), 'help-message'],
+      [permissionCheckbox(page), 'help-contact-permission'],
+    ];
+    for (const [control, helpId] of requiredControls) {
+      await expect(control).toBeVisible();
+      await expect(control).toHaveAttribute('required', '');
+      await expect(control).toHaveAttribute('aria-describedby', helpId);
+    }
+    await expect(emailInput(page)).toHaveAttribute('type', 'email');
+    await expect(newsletterCheckbox(page)).toBeVisible();
+    await expect(newsletterCheckbox(page)).not.toHaveAttribute('required', '');
+    await expect(submitButton(page)).toBeVisible();
 
-    await expect(nameInput).toBeVisible();
-    await expect(emailInput).toBeVisible();
-    await expect(subjectSelect).toBeVisible();
-    await expect(messageInput).toBeVisible();
-    await expect(submit).toBeVisible();
-
-    await expect(nameInput).toHaveAttribute('aria-describedby', /help-name/);
-    await expect(emailInput).toHaveAttribute('aria-describedby', /help-email/);
-    await expect(subjectSelect).toHaveAttribute('aria-describedby', /help-subject/);
-    await expect(messageInput).toHaveAttribute('aria-describedby', /help-message/);
-
-    const successBanner = page.getByTestId('contact-success');
+    const successBanner = page.locator('#success-message');
     await expect(successBanner).toHaveAttribute('role', 'status');
     await expect(successBanner).toBeHidden();
 
-    const errorSummary = page.getByTestId('contact-errors');
+    const errorSummary = page.locator('#error-summary');
     await expect(errorSummary).toHaveAttribute('role', 'alert');
     await expect(errorSummary).toBeHidden();
   });
 
-  test('Keyboard tab order follows form inputs then submit', async ({ page }) => {
-    await focusByTab(page, 'contact-name');
-    await expect(page.getByTestId('contact-name')).toBeFocused();
+  test('Keyboard tab order reaches the form and follows its controls then submit', async ({ page }) => {
+    // The global navigation comes first; the form must still be reachable from the top by keyboard alone.
+    await focusByTab(page, 'contact-name', { maxTabs: 100 });
+    await expect(nameInput(page)).toBeFocused();
 
-    await page.keyboard.press('Tab');
-    let active = await page.evaluate(() => document.activeElement?.getAttribute('data-testid'));
-    expect(active).toBe('contact-email');
-
-    await page.keyboard.press('Tab');
-    active = await page.evaluate(() => document.activeElement?.getAttribute('data-testid'));
-    expect(active).toBe('contact-subject');
-
-    await page.keyboard.press('Tab');
-    active = await page.evaluate(() => document.activeElement?.getAttribute('data-testid'));
-    expect(active).toBe('contact-message');
-
-    await page.keyboard.press('Tab');
-    active = await page.evaluate(() => document.activeElement?.getAttribute('data-testid'));
-    expect(active).toBe('contact-submit');
+    const order = [
+      emailInput(page),
+      subjectSelect(page),
+      messageInput(page),
+      permissionCheckbox(page),
+      newsletterCheckbox(page),
+      submitButton(page),
+    ];
+    for (const control of order) {
+      await page.keyboard.press('Tab');
+      await expect(control).toBeFocused();
+    }
   });
 
-  test('Invalid submission surfaces helpers and aria-invalid state', async ({ page }) => {
-    await page.getByTestId('contact-submit').click();
+  test('Invalid submission surfaces the error summary and field help without sending', async ({ page }) => {
+    await submitButton(page).click();
 
-    await expect(page.getByTestId('contact-errors')).toBeVisible();
-    await expect(page.getByTestId('contact-name')).toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByTestId('contact-email')).toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByTestId('contact-subject')).toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByTestId('contact-message')).toHaveAttribute('aria-invalid', 'true');
+    const errorSummary = page.locator('#error-summary');
+    await expect(errorSummary).toBeVisible();
+    await expect(errorSummary).toBeFocused();
+    await expect(page.locator('#error-list li')).toHaveText([
+      'Name is required.',
+      'Email is required.',
+      'Subject is required.',
+      'Message is required.',
+      'Email permission is required.',
+    ]);
 
-    await expect(page.locator('#help-name')).toHaveClass(/visible/);
-    await expect(page.locator('#help-email')).toHaveClass(/visible/);
-    await expect(page.locator('#help-subject')).toHaveClass(/visible/);
-    await expect(page.locator('#help-message')).toHaveClass(/visible/);
-    await expect(page.getByTestId('contact-name')).toBeFocused();
+    const fieldHelp = [
+      [nameInput(page), '#help-name', 'Name is required.'],
+      [emailInput(page), '#help-email', 'Email is required.'],
+      [subjectSelect(page), '#help-subject', 'Subject is required.'],
+      [messageInput(page), '#help-message', 'Message is required.'],
+      [permissionCheckbox(page), '#help-contact-permission', 'Email permission is required.'],
+    ];
+    for (const [control, helpSelector, message] of fieldHelp) {
+      await expect(control).toHaveClass(/has-error/);
+      await expect(page.locator(helpSelector)).toHaveClass(/visible/);
+      await expect(page.locator(helpSelector)).toHaveText(message);
+    }
+
+    await expect(page.locator('#success-message')).toBeHidden();
+    expect(formspreeRequests).toHaveLength(0);
   });
 
-  test('Successful submission resets form and shows confirmation', async ({ page }) => {
-    await page.getByTestId('contact-name').fill('Jordan Tester');
-    await page.getByTestId('contact-email').fill('jordan@example.com');
-    await page.getByTestId('contact-subject').selectOption('logic');
-    await page.getByTestId('contact-message').fill('Found a small logic issue in the stocking advisor.');
+  test('Successful submission (mocked Formspree) resets the form and shows confirmation', async ({ page }) => {
+    const submitted = [];
+    await page.route(FORMSPREE_ENDPOINT, async (route) => {
+      submitted.push(route.request());
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) });
+    });
 
-    await page.getByTestId('contact-submit').click();
+    await nameInput(page).fill('Jordan Tester');
+    await emailInput(page).fill('jordan@example.com');
+    await subjectSelect(page).selectOption('logic');
+    await messageInput(page).fill('Found a small logic issue in the stocking advisor.');
+    await permissionCheckbox(page).check();
 
-    const successBanner = page.getByTestId('contact-success');
+    await submitButton(page).click();
+
+    const successBanner = page.locator('#success-message');
     await expect(successBanner).toBeVisible();
     await expect(successBanner).toBeFocused();
-    await expect(successBanner).toHaveText('Thanks—your message has been sent.');
+    await expect(successBanner).toHaveText('Thanks! Your message was sent to the team.');
+    await expect(page.locator('#error-summary')).toBeHidden();
 
-    await expect(page.getByTestId('contact-errors')).toBeHidden();
+    expect(submitted).toHaveLength(1);
+    const request = submitted[0];
+    expect(request.method()).toBe('POST');
+    expect(request.headers()['accept']).toBe('application/json');
+    const body = request.postData() || '';
+    expect(body).toContain('Jordan Tester');
+    expect(body).toContain('jordan@example.com');
+    expect(body).toContain('logic');
+    expect(body).toContain('Found a small logic issue in the stocking advisor.');
+    expect(formspreeRequests).toHaveLength(0);
 
-    await expect(page.getByTestId('contact-name')).toHaveValue('');
-    await expect(page.getByTestId('contact-email')).toHaveValue('');
-    await expect(page.getByTestId('contact-subject')).toHaveValue('');
-    await expect(page.getByTestId('contact-message')).toHaveValue('');
-
-    await expect(page.getByTestId('contact-name')).not.toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByTestId('contact-email')).not.toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByTestId('contact-subject')).not.toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByTestId('contact-message')).not.toHaveAttribute('aria-invalid', 'true');
+    await expect(nameInput(page)).toHaveValue('');
+    await expect(emailInput(page)).toHaveValue('');
+    await expect(subjectSelect(page)).toHaveValue('');
+    await expect(messageInput(page)).toHaveValue('');
+    await expect(permissionCheckbox(page)).not.toBeChecked();
+    await expect(nameInput(page)).not.toHaveClass(/has-error/);
+    await expect(submitButton(page)).toBeEnabled();
   });
 });
