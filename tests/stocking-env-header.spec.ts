@@ -1,12 +1,9 @@
 import { test, expect, devices } from '@playwright/test';
-import { mkdirSync } from 'fs';
-
-mkdirSync('test-artifacts', { recursive: true });
 
 const url = '/stocking-advisor.html';
 
 test.describe('Stocking Advisor — Env. Recommendations unified info icon', () => {
-  test('desktop: single icon toggles environmental legend', async ({ page }) => {
+  test('desktop: single icon toggles environmental legend', async ({ page }, testInfo) => {
     await page.goto(url, { waitUntil: 'networkidle' });
 
     const icon = page.locator('#env-info-toggle');
@@ -19,7 +16,7 @@ test.describe('Stocking Advisor — Env. Recommendations unified info icon', () 
     await icon.click();
     await expect(panel).toBeVisible();
     await expect(icon).toHaveAttribute('aria-expanded', 'true');
-    await page.screenshot({ path: 'test-artifacts/env-desktop-expanded.png', fullPage: false });
+    await page.screenshot({ path: testInfo.outputPath('env-desktop-expanded.png'), fullPage: false });
 
     // 2nd click → collapse panel
     await icon.click();
@@ -30,14 +27,14 @@ test.describe('Stocking Advisor — Env. Recommendations unified info icon', () 
     await icon.click();
     await expect(panel).toBeVisible();
     await expect(icon).toHaveAttribute('aria-expanded', 'true');
-    await page.screenshot({ path: 'test-artifacts/env-desktop-reopened.png', fullPage: false });
+    await page.screenshot({ path: testInfo.outputPath('env-desktop-reopened.png'), fullPage: false });
   });
 });
 
 test.use({ ...devices['iPhone 12'] });
 
 test.describe('Stocking Advisor — Env. Recommendations unified info icon (mobile)', () => {
-  test('mobile: single icon works and aligns', async ({ page }) => {
+  test('mobile: single icon works and aligns', async ({ page }, testInfo) => {
     await page.goto(url, { waitUntil: 'networkidle' });
 
     const icon = page.locator('#env-info-toggle');
@@ -49,6 +46,6 @@ test.describe('Stocking Advisor — Env. Recommendations unified info icon (mobi
     await icon.click();
     await expect(panel).toBeVisible();
     await expect(icon).toHaveAttribute('aria-expanded', 'true');
-    await page.screenshot({ path: 'test-artifacts/env-mobile-expanded.png', fullPage: false });
+    await page.screenshot({ path: testInfo.outputPath('env-mobile-expanded.png'), fullPage: false });
   });
 });

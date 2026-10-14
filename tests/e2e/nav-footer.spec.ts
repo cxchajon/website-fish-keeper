@@ -1,18 +1,7 @@
 import { test, expect } from '@playwright/test';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const auditScreenDir = path.resolve(
-  fileURLToPath(new URL('../../AUDIT/screens', import.meta.url))
-);
-
-test.beforeAll(() => {
-  fs.mkdirSync(auditScreenDir, { recursive: true });
-});
 
 test.describe('Navigation and footer smoke checks', () => {
-  test('global nav loads and footer trust messaging appears', async ({ page }) => {
+  test('global nav loads and footer trust messaging appears', async ({ page }, testInfo) => {
     await page.goto('/');
 
     await page.waitForSelector('#site-nav');
@@ -39,7 +28,7 @@ test.describe('Navigation and footer smoke checks', () => {
       await expect(footer.getByRole('link', { name: label })).toBeVisible();
     }
 
-    await footer.screenshot({ path: path.join(auditScreenDir, 'footer-trust-link.png') });
+    await footer.screenshot({ path: testInfo.outputPath('footer-trust-link.png') });
   });
 
   test('right click remains available by default when deterrent flag is off', async ({ page }) => {

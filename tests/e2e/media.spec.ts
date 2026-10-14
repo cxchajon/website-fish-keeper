@@ -1,18 +1,7 @@
 import { test, expect } from '@playwright/test';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const auditScreenDir = path.resolve(
-  fileURLToPath(new URL('../../AUDIT/screens', import.meta.url))
-);
-
-test.beforeAll(() => {
-  fs.mkdirSync(auditScreenDir, { recursive: true });
-});
 
 test.describe('Media hub embeds', () => {
-  test('YouTube, TikTok, Instagram, and archive content render', async ({ page }) => {
+  test('YouTube, TikTok, Instagram, and archive content render', async ({ page }, testInfo) => {
     await page.goto('/media.html');
 
     await page.waitForSelector('iframe.shorts-embed');
@@ -49,6 +38,6 @@ test.describe('Media hub embeds', () => {
       expect(await placeholders.count()).toBeGreaterThanOrEqual(2);
     }
 
-    await page.locator('#media-archive').screenshot({ path: path.join(auditScreenDir, 'media-archive.png') });
+    await page.locator('#media-archive').screenshot({ path: testInfo.outputPath('media-archive.png') });
   });
 });

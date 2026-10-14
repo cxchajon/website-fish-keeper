@@ -82,8 +82,8 @@ const FLOWS: FlowConfig[] = [
 
 const results = new Map<string, Map<string, FlowResult>>();
 const pagesMissingStylesheet = new Set<string>();
-const baseArtifactsDir = path.join('tests', 'artifacts');
-const reportPath = path.join('tests', 'consent-ads-report.md');
+// Runtime evidence goes to Playwright's disposable output directory, never into tracked files.
+const reportFileName = 'consent-ads-report.md';
 
 test.describe.configure({ mode: 'serial', retries: 0 });
 
@@ -97,10 +97,9 @@ function sanitizeSegment(segment: string) {
 
 async function captureState(page: Page, flowId: string, pagePath: string, state: string, testInfo: TestInfo) {
   const pageSlug = sanitizeSegment(pagePath || 'root');
-  const flowDir = path.join(baseArtifactsDir, flowId);
-  await ensureDir(flowDir);
   const filename = `${pageSlug}-${sanitizeSegment(state)}.png`;
-  const screenshotPath = path.join(flowDir, filename);
+  const screenshotPath = testInfo.outputPath(flowId, filename);
+  await ensureDir(path.dirname(screenshotPath));
   await page.screenshot({ path: screenshotPath, fullPage: true });
   await testInfo.attach(`${flowId}-${pageSlug}-${state}`, {
     path: screenshotPath,
@@ -507,7 +506,8 @@ test.describe('Consent and AdSense behavior audit', () => {
     });
   }
 
-  test.afterAll(async () => {
+  test.afterAll(async ({}, workerInfo) => {
+    const reportPath = path.join(workerInfo.project.outputDir, reportFileName);
     const lines: string[] = [];
     lines.push('# Consent & AdSense Audit Report');
     lines.push('');
