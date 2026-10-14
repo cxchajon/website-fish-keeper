@@ -239,6 +239,64 @@
   }
   </script>
 
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://thetankguide.com/store/#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Who are these books for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Beginners setting up their first tank, families learning together, and hobbyists who want a simple, guided way to track aquarium care without designing their own layout. Everyone from kids to adults will find something useful here."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What’s the difference between the Daily Tank Journal and the Planted Edition?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both help you track water parameters and daily care. The Planted Edition adds dedicated sections for CO₂ dosing, lighting schedules, nutrient tracking, and plant growth—perfect for anyone keeping or planning to keep live aquatic plants."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need both journals or just one?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most people choose the one that matches their setup. If you have a fish-only freshwater tank, the standard journal is perfect. If you’re adding plants soon, the Planted Edition gives you room for CO₂, lighting, and nutrient notes. If you’re staying unplanted for now but might try plants later, start with the regular journal—you can always upgrade to the Planted Edition when you’re ready."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are the books beginner-friendly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. Everything is written in simple, clear language. Even the storybook Life in Balance teaches aquarium fundamentals in a way that kids, parents, and brand-new hobbyists can all understand and enjoy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do the coloring books actually teach fishkeeping?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Every page includes real aquarium concepts—species information, ecosystem balance, and care basics. They’re designed to be both fun and genuinely educational for all ages."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a recommended order to use these books?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not at all—each book stands alone. That said, many people start with Life in Balance to learn the core concepts, then pick up a journal or coloring book based on what fits their interests or tank type."
+      }
+    }
+  ]
+}
+</script>
+
   <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-03-desktop-2">
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07">
   <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
@@ -672,6 +730,50 @@
       outline-offset: 4px;
     }
 
+    .store-faq {
+      margin-bottom: clamp(64px, 8vw, 100px);
+      padding-top: clamp(8px, 2vw, 22px);
+      border-top: 1px solid rgba(134, 215, 233, 0.26);
+    }
+
+    .store-faq h2 {
+      margin: 0 0 26px;
+      color: #fffaf2;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 3vw, 2.8rem);
+      line-height: 1.12;
+      text-wrap: balance;
+    }
+
+    .store-faq-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .store-faq-item {
+      min-width: 0;
+      padding: 22px;
+      border: 1px solid rgba(134, 215, 233, 0.22);
+      border-radius: 16px;
+      background: rgba(18, 43, 49, 0.72);
+    }
+
+    .store-faq-item h3 {
+      margin: 0 0 10px;
+      color: #fffaf2;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.15rem;
+      line-height: 1.35;
+    }
+
+    .store-faq-item p {
+      margin: 0;
+      color: rgba(248, 244, 237, 0.74);
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
     .store-explore {
       margin-bottom: clamp(64px, 8vw, 100px);
       padding-top: clamp(8px, 2vw, 22px);
@@ -851,6 +953,10 @@
       .store-explore-grid {
         grid-template-columns: 1fr;
       }
+
+      .store-faq-list {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1002,6 +1108,37 @@
               <span>New releases and more</span>
             </div>
             <a class="etsy-button" href="https://www.etsy.com/shop/FishKeepingLifeShop?etsrc=sdt" target="_blank" rel="noopener noreferrer">Explore the Etsy Shop</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="store-faq" id="faq" aria-labelledby="store-faq-title">
+        <p class="collection-eyebrow">Questions About the Books</p>
+        <h2 id="store-faq-title">Store FAQs</h2>
+        <div class="store-faq-list">
+          <div class="store-faq-item">
+            <h3>Who are these books for?</h3>
+            <p>Beginners setting up their first tank, families learning together, and hobbyists who want a simple, guided way to track aquarium care without designing their own layout. Everyone from kids to adults will find something useful here.</p>
+          </div>
+          <div class="store-faq-item">
+            <h3>What’s the difference between the Daily Tank Journal and the Planted Edition?</h3>
+            <p>Both help you track water parameters and daily care. The Planted Edition adds dedicated sections for CO₂ dosing, lighting schedules, nutrient tracking, and plant growth—perfect for anyone keeping or planning to keep live aquatic plants.</p>
+          </div>
+          <div class="store-faq-item">
+            <h3>Do I need both journals or just one?</h3>
+            <p>Most people choose the one that matches their setup. If you have a fish-only freshwater tank, the standard journal is perfect. If you’re adding plants soon, the Planted Edition gives you room for CO₂, lighting, and nutrient notes. If you’re staying unplanted for now but might try plants later, start with the regular journal—you can always upgrade to the Planted Edition when you’re ready.</p>
+          </div>
+          <div class="store-faq-item">
+            <h3>Are the books beginner-friendly?</h3>
+            <p>Absolutely. Everything is written in simple, clear language. Even the storybook <em>Life in Balance</em> teaches aquarium fundamentals in a way that kids, parents, and brand-new hobbyists can all understand and enjoy.</p>
+          </div>
+          <div class="store-faq-item">
+            <h3>Do the coloring books actually teach fishkeeping?</h3>
+            <p>Yes! Every page includes real aquarium concepts—species information, ecosystem balance, and care basics. They’re designed to be both fun and genuinely educational for all ages.</p>
+          </div>
+          <div class="store-faq-item">
+            <h3>Is there a recommended order to use these books?</h3>
+            <p>Not at all—each book stands alone. That said, many people start with <em>Life in Balance</em> to learn the core concepts, then pick up a journal or coloring book based on what fits their interests or tank type.</p>
           </div>
         </div>
       </section>
