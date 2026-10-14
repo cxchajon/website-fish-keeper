@@ -81,8 +81,15 @@ async function htmlFiles(directory) {
   return files;
 }
 
+// Journal pages may carry BlogPosting schema but use their own Journal breadcrumb.
+function isJournalPage(relativePath) {
+  const normalized = relativePath.split(path.sep).join('/');
+  return normalized === 'journal.html' || normalized.startsWith('journal/');
+}
+
 function isBlogArticle(html, relativePath) {
-  return relativePath !== 'blogs/index.html' && (html.includes('blog-breadcrumb') || html.includes('"BlogPosting"'));
+  if (relativePath === 'blogs/index.html' || isJournalPage(relativePath)) return false;
+  return html.includes('blog-breadcrumb') || html.includes('"BlogPosting"');
 }
 
 async function run() {
