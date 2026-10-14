@@ -2,24 +2,31 @@
 
 ## Source of truth
 - Primary log: 29G Master Journal (Google Sheet / Excel workbook) stored in the shared "Aquarium Ops" drive under `Logs/29G/master_journal`.
-- Ownership: Content team maintains copy updates; Ops ensures `tank_id` values remain accurate (default `29g`).
+- Ownership: Content team maintains copy updates.
 
-## Conversion workflow
-1. Pull the latest Sheet/Excel copy and verify the `tank_id` column is present for every entry.
-   - Name exports `29g_master_log_YYYYMMDD.(xlsx|csv)` so converters and archives can track versions at a glance.
-2. Run the converter script located at `scripts/journal/convert_29g.sh` (or the equivalent Node task `npm run journal:convert`).
-   - Input: path to the exported spreadsheet.
-   - Output: `data/journal.csv` and `data/journal.json` written in UTF-8 with LF line endings.
-3. Confirm the CSV headers match the schema (`date`, `title`, `summary`, `media_url`, `tank_id`, etc.).
-4. Commit the regenerated files along with any supporting assets.
+## Repository roles
+- `data/journal.csv` — preserved export of the master log; the closest local copy of it.
+- `data/journal.json` — legacy chart-style dataset (nitrate, dosing, maintenance for Oct–Nov 2025). Not an entries feed and not read by any page.
+- `data/journal/YYYY-MM.json` and `data/journal/index.json` — preserved historical/legacy monthly records. Some entries and photo metadata (for example in `2025-11.json`) exist only in these files. Not read by any public page.
+- `/journal.html` and the pages under `/journal/` — the public journal, maintained by hand as cards and narrative pages.
+
+These files are kept as recorded. Where they disagree with each other or with the narrative pages, the differences have not been reconciled.
+
+## Preserved data — do not overwrite
+- Do not overwrite, regenerate, or bulk-replace `data/journal.csv`, `data/journal.json`, or any file in `data/journal/`.
+- No converter or generator exists in this repository. The previously documented `scripts/journal/convert_29g.sh` and `npm run journal:convert` do not exist (obsolete, not runnable), and `scripts/generate-journal-months.mjs` was removed because it could delete the monthly files. Do not recreate them.
+- Any future import or sync from the master log needs its own separately designed and reviewed workflow first.
+
+## Publishing a journal update
+1. Add or edit the narrative page under `/journal/` and its card in `/journal.html` by hand.
+2. Update `sitemap.xml` when a new public page is added.
+3. Commit the page changes with any supporting assets.
 
 ## Rollback
-1. Retrieve the previous `journal.csv` / `journal.json` from Git history (`git checkout HEAD~1 -- data/journal.csv`).
-2. Re-deploy or re-publish the prior version of `/journal.html` if the layout was affected.
-3. Note the rollback in `/logs/codex_activity_log.md` with rationale and timestamp.
+1. Retrieve the previous version of the affected page from Git history (for example `git checkout HEAD~1 -- journal.html`).
+2. Re-deploy and confirm the rollback is live.
 
 ## Verification
-- Capture before/after screenshots of `/journal.html` (desktop and mobile widths) focusing on newest entries and Quick Facts.
-- Grab a Media page screenshot showing the Journal card label and color alignment.
-- File screenshots under `docs/memory/verification/29g/` for quick reference.
-- After publishing, spot-check CDN caches and confirm the homepage Aquarium Library still surfaces the Journal card.
+- Check `/journal.html` (desktop and mobile widths): the newest card appears first and links to its page.
+- Confirm the Media page and homepage still link to `/journal.html`.
+- After publishing, spot-check CDN caches.
