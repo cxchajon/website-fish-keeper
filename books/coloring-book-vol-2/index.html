@@ -230,6 +230,55 @@
 <script id="ttg-entity-graph" type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://thetankguide.com/#fishkeepinglifeco","name":"FishKeepingLifeCo","alternateName":["Fish Keeping Life Co","fishkeepinglife"],"description":"FishKeepingLifeCo is the parent company and publisher of The Tank Guide.","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG","width":512,"height":512},"brand":{"@id":"https://thetankguide.com/#brand"},"owns":{"@id":"https://thetankguide.com/#website"},"sameAs":["https://www.instagram.com/FishKeepingLifeCo","https://www.tiktok.com/@FishKeepingLifeCo","https://x.com/fishkeepinglife","https://www.youtube.com/@fishkeepinglifeco","https://www.facebook.com/fishkeepinglifeco"]},{"@type":"Brand","@id":"https://thetankguide.com/#brand","name":"The Tank Guide","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"},"parentOrganization":{"@id":"https://thetankguide.com/#fishkeepinglifeco"}},{"@type":"WebSite","@id":"https://thetankguide.com/#website","url":"https://thetankguide.com/","name":"The Tank Guide","description":"The Tank Guide is an educational aquarium website offering tools, guides, and beginner-friendly resources.","publisher":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"creator":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"brand":{"@id":"https://thetankguide.com/#brand"},"owner":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"inLanguage":"en-US","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://thetankguide.com/search?q={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}}]}
 </script>
+  <style>
+    /* Related-book navigation (internal links between book pages and the Store) */
+    .book-collection-nav {
+      margin: 2.5rem 0 0;
+      padding: 1.5rem 0 0;
+      border-top: 1px solid rgba(229, 231, 235, 0.18);
+    }
+    .book-content p.book-collection-nav__label {
+      margin: 0 0 0.875rem;
+      color: #f3f4f6;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .book-content ul.book-collection-nav__list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.625rem;
+      margin: 0 0 1.25rem;
+      padding: 0;
+      list-style: none;
+    }
+    .book-content .book-collection-nav__list > li {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+    .book-collection-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(147, 197, 253, 0.55);
+      border-radius: 999px;
+      color: #f9fafb;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .book-collection-nav a:hover {
+      background: rgba(59, 130, 246, 0.18);
+    }
+    .book-collection-nav a:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+    }
+    .book-content p.book-collection-nav__back {
+      margin: 0;
+      font-size: 1rem;
+    }
+  </style>
 </head>
 
 <body class="theme-light page--coloring-book-vol-2">
@@ -291,6 +340,16 @@
         <h3>The Life in Balance Collection</h3>
 
         <p>This volume is a part of the Life in Balance Coloring Book Series, which aims to provide accessible, grounded education for the modern hobbyist. Each entry in the series is structured to reinforce the values of FishKeepingLifeCo: prioritizing long-term animal welfare and the scientific principles that allow an aquarium to thrive.</p>
+        <nav class="book-collection-nav" aria-labelledby="book-collection-nav-label">
+          <p class="book-collection-nav__label" id="book-collection-nav-label">More books from The Tank Guide</p>
+          <ul class="book-collection-nav__list">
+            <li><a href="/books/life-in-balance/">Life in Balance</a></li>
+            <li><a href="/books/coloring-book-vol-1/">Coloring Book Vol. 1</a></li>
+            <li><a href="/books/daily-tank-journal/">Daily Tank Journal</a></li>
+            <li><a href="/books/daily-tank-journal-planted/">Daily Tank Journal — Planted</a></li>
+          </ul>
+          <p class="book-collection-nav__back"><a href="/store/"><span aria-hidden="true">←&nbsp;</span>Back to Store</a></p>
+        </nav>
       </div>
     </section>
 
