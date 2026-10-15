@@ -88,6 +88,48 @@ const isPage = (relativePath) => {
   return allowedPrefixes.some((prefix) => relativePath.startsWith(prefix));
 };
 
+// A redirect stub is a minimal noindex utility page that immediately sends the visitor to one
+// destination. It needs every redirect signal at once — noindex robots meta, a zero-second meta
+// refresh, a canonical and a location.replace() that all name the same destination — plus a body
+// with no page structure and only a short fallback message. Such stubs never render the shared
+// footer, so the full-page footer and entity checks do not apply to them.
+const SITE_ORIGIN = 'https://thetankguide.com/';
+
+const resolveUrl = (value) => {
+  try {
+    return new URL(value, SITE_ORIGIN).href;
+  } catch {
+    return null;
+  }
+};
+
+const isRedirectStub = (text) => {
+  const robots = text.match(/<meta\s+name="robots"\s+content="([^"]*)"/i);
+  if (!robots || !/\bnoindex\b/i.test(robots[1])) {
+    return false;
+  }
+
+  const refresh = text.match(/<meta\s+http-equiv="refresh"\s+content="0;\s*url=([^"]+)"/i);
+  const canonical = text.match(/<link\s+rel="canonical"\s+href="([^"]+)"/i);
+  const replace = text.match(/location\.replace\(\s*["']([^"']+)["']\s*\)/);
+  if (!refresh || !canonical || !replace) {
+    return false;
+  }
+
+  const target = resolveUrl(refresh[1]);
+  if (!target || resolveUrl(canonical[1]) !== target || resolveUrl(replace[1]) !== target) {
+    return false;
+  }
+
+  const body = text.match(/<body\b[^>]*>([\s\S]*)<\/body>/i);
+  if (!body || /<(nav|header|footer|article|section|h1)\b/i.test(body[1])) {
+    return false;
+  }
+
+  const visibleText = body[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return visibleText.length <= 300;
+};
+
 const lineNumber = (lines, index) => {
   let count = 0;
   for (let i = 0; i < lines.length; i += 1) {
@@ -214,7 +256,7 @@ const lint = () => {
       }
     }
 
-    if (!isPage(file)) {
+    if (!isPage(file) || isRedirectStub(text)) {
       continue;
     }
 
