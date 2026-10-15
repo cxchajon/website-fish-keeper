@@ -133,10 +133,18 @@
     const sessionId = params.get('session_id');
     
     if (sessionId) {
-      document.getElementById('sessionDetails').innerHTML = `
-        <p>Stripe Session ID: <code style="background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">${sessionId}</code></p>
-        <p>Check your email for your submission ID and next steps.</p>
-      `;
+      // Build with DOM methods so the URL-supplied session ID is only ever text
+      const sessionIdLine = document.createElement('p');
+      sessionIdLine.append('Stripe Session ID: ');
+      const sessionIdCode = document.createElement('code');
+      sessionIdCode.setAttribute('style', 'background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;');
+      sessionIdCode.textContent = sessionId;
+      sessionIdLine.append(sessionIdCode);
+
+      const nextStepsLine = document.createElement('p');
+      nextStepsLine.textContent = 'Check your email for your submission ID and next steps.';
+
+      document.getElementById('sessionDetails').replaceChildren(sessionIdLine, nextStepsLine);
     } else {
       document.getElementById('sessionDetails').textContent = 'Confirmation received. Check your email for details.';
     }
