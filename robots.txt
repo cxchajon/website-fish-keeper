@@ -1,25 +1,4 @@
 User-agent: *
 Allow: /
 
-# Sitemaps
 Sitemap: https://thetankguide.com/sitemap.xml
-
-# Block admin/config if needed
-Disallow: /admin/
-Disallow: /.git/
-Disallow: /includes/
-
-# Allow search engines full access
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-Disallow: /node_modules/
-Disallow: /workers/node_modules/
-Disallow: /footer.html
-Disallow: /nav.html
-Disallow: /params.html
-Disallow: /feature-your-tank-confirmation.html
-Disallow: /404.html
