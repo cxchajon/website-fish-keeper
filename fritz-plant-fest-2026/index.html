@@ -1,6 +1,50 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
+  <meta charset="utf-8" />
+  <!-- TTG consent stack START (Consent Mode v2 defaults must stay first; do not defer or move) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Consent Mode v2 defaults. The region-specific rule (EEA + UK + CH) takes precedence
+    // over the global rule; Google's CMP updates consent there once the visitor chooses.
+    gtag('consent', 'default', {
+      ad_storage: 'granted',
+      analytics_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted'
+    });
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      region: ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB', 'CH'],
+      wait_for_update: 500
+    });
+    gtag('set', 'ads_data_redaction', true);
+    gtag('set', 'url_passthrough', true);
+  </script>
+  <!-- Google CMP (Funding Choices) -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -8,8 +52,8 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-KTRVCMQN');</script>
   <!-- End Google Tag Manager -->
-  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
-  <meta charset="utf-8" />
+  <script src="/assets/js/consent-mode.js?v=1.6.0" defer></script>
+  <!-- TTG consent stack END -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Plant Fest 2026 — A Different Side of the Aquarium Hobby</title>
   <meta name="description" content="A reflection on Fitz’s Fish Ponds Plant Fest 2026 and what it reveals about koi ponds, aquatic plants, shrimp bowls, filtration, and the shared ecosystem principles connecting ponds and aquariums." />
@@ -139,8 +183,6 @@
 </script>
 
   <script defer src="/js/nav.js?v=1.1.0"></script>
-  <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
-  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
 <script id="ttg-entity-graph" type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://thetankguide.com/#fishkeepinglifeco","name":"FishKeepingLifeCo","alternateName":["Fish Keeping Life Co","fishkeepinglife"],"description":"FishKeepingLifeCo is the parent company and publisher of The Tank Guide.","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG","width":512,"height":512},"brand":{"@id":"https://thetankguide.com/#brand"},"owns":{"@id":"https://thetankguide.com/#website"},"sameAs":["https://www.instagram.com/FishKeepingLifeCo","https://www.tiktok.com/@FishKeepingLifeCo","https://x.com/fishkeepinglife","https://www.youtube.com/@fishkeepinglifeco","https://www.facebook.com/fishkeepinglifeco"]},{"@type":"Brand","@id":"https://thetankguide.com/#brand","name":"The Tank Guide","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"},"parentOrganization":{"@id":"https://thetankguide.com/#fishkeepinglifeco"}},{"@type":"WebSite","@id":"https://thetankguide.com/#website","url":"https://thetankguide.com/","name":"The Tank Guide","description":"The Tank Guide is an educational aquarium website offering tools, guides, and beginner-friendly resources.","publisher":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"creator":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"brand":{"@id":"https://thetankguide.com/#brand"},"owner":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"inLanguage":"en-US","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://thetankguide.com/search?q={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}}]}
 </script>

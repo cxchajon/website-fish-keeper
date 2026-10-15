@@ -1,3 +1,18 @@
+/*
+ * First-party consent helpers.
+ *
+ * Google Consent Mode v2 defaults are NOT set here. Every page sets them in an
+ * inline, synchronous block at the top of <head>, before Funding Choices, GTM and
+ * AdSense (see "TTG consent stack"). Google's CMP (Funding Choices) is the only
+ * source of Google consent updates; this file never calls
+ * gtag('consent', ...), does not translate TCF signals and does not detect regions.
+ *
+ * What remains here:
+ *   - the first-party preference record used by /cookie-settings.html
+ *     (site state only; it is not sent to Google Consent Mode)
+ *   - the is-ads-disabled / data-ad-consent CSS state
+ *   - helpers that open or reset the Funding Choices dialog (never auto-invoked)
+ */
 (function () {
   var STORE_KEY = 'ttgConsentV2';
   var EXP_DAYS  = 365;
@@ -72,23 +87,6 @@
       return normalizeConsent(stored);
     } catch(e){ return null; }
   }
-  function setBannerOpen(open){
-    var el = document.querySelector('[data-consent-banner]');
-    if (el) el.classList.toggle('is-open', !!open);
-  }
-  var EEA_UK_CH = ["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO","GB","CH"];
-  var regionParam = new URLSearchParams(location.search).get('region');
-  var tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '').toLowerCase();
-  var tzHintsEU = /(europe\/|gmt|bst|cet|cest)/.test(tz);
-  var inEEA = regionParam ? EEA_UK_CH.indexOf(regionParam.toUpperCase()) !== -1 : tzHintsEU;
-
-  window.dataLayer = window.dataLayer || [];
-  var gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
-  if (typeof window.gtag !== 'function') {
-    window.gtag = gtag;
-  }
-
-  var consentQueue = window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || [];
 
   function createDeniedState(){
     return Object.assign(createDeniedPayload(), {
@@ -98,33 +96,6 @@
     });
   }
 
-  function buildUpdatePayload(state){
-    return {
-      ad_storage: state && state.ad_storage === 'granted' ? 'granted' : 'denied',
-      analytics_storage: state && state.analytics_storage === 'granted' ? 'granted' : 'denied',
-      ad_user_data: state && state.ad_user_data === 'granted' ? 'granted' : 'denied',
-      ad_personalization: state && state.ad_personalization === 'granted' ? 'granted' : 'denied'
-    };
-  }
-
-  function applyGaConsent(state, options){
-    var updatePayload = buildUpdatePayload(state);
-    var defaultOnly = options && options.defaultOnly;
-
-    // Note: Consent defaults are set in includes/ga4.html BEFORE GA4 loads.
-    // This function now only handles consent UPDATES when user changes preferences.
-    if (defaultOnly) {
-      // Skip update if we're only supposed to set defaults (already done in ga4.html)
-      return;
-    }
-
-    if (typeof window.gtag === 'function'){
-      window.gtag('consent','update', updatePayload);
-    } else {
-      consentQueue.push({ type: 'update', payload: updatePayload });
-    }
-  }
-
   function emitConsentUpdate(state){
     window.__TTG_CONSENT_STATE__ = Object.assign({}, state);
     try {
@@ -132,69 +103,39 @@
     } catch (e) {}
   }
 
-  function applyAdConsentState(granted){
-    var adsGranted = !!granted;
-    document.documentElement.setAttribute('data-ad-consent', adsGranted ? 'granted' : 'denied');
-    var toggle = function(){ document.body.classList.toggle('is-ads-disabled', !adsGranted); };
+  // CSS state: ad units are dimmed/hidden only when the visitor has explicitly
+  // declined advertising on /cookie-settings.html (or on legal pages). Without a
+  // saved first-party choice, Google's CMP and Consent Mode decide ad behaviour.
+  function applyAdConsentState(status){
+    document.documentElement.setAttribute('data-ad-consent', status);
+    var disabled = status === 'denied';
+    var toggle = function(){ document.body.classList.toggle('is-ads-disabled', disabled); };
     if (document.body) toggle(); else document.addEventListener('DOMContentLoaded', toggle);
-  }
-
-  function applyAndEmit(state, options){
-    window.__TTG_CONSENT_STATE__ = Object.assign({}, state);
-    applyGaConsent(state, options);
-    emitConsentUpdate(state);
   }
 
   function ensureConsentState(){
     var savedConsent = ON_LEGAL_PAGE ? null : loadConsent();
     var baseState = savedConsent ? Object.assign({}, savedConsent) : createDeniedState();
-    if (ON_LEGAL_PAGE) baseState = createDeniedState();
 
-    applyAdConsentState(baseState.ad_storage === 'granted');
+    if (ON_LEGAL_PAGE) applyAdConsentState('denied');
+    else if (savedConsent) applyAdConsentState(savedConsent.ad_storage === 'granted' ? 'granted' : 'denied');
+    else applyAdConsentState('unset');
 
-    // GA4 consent defaults and initial update are already set in includes/ga4.html
-    // Here we just need to set up internal state, CSS classes, and events
-    // Skip the gtag update call since ga4.html already handled it
-    window.__TTG_CONSENT_STATE__ = Object.assign({}, baseState);
+    // Internal state + event only; never a Google consent call.
     emitConsentUpdate(baseState);
-
-    setBannerOpen(inEEA && !savedConsent);
 
     return savedConsent;
   }
 
-  var savedConsent = ensureConsentState();
-
-  window.__ttgUpdateConsentState__ = function(state){
-    var normalized = normalizeConsent(state) || createDeniedState();
-    applyAdConsentState(normalized.ad_storage === 'granted');
-    applyAndEmit(normalized);
-  };
+  ensureConsentState();
 
   function updateConsentFromPrefs(prefs){
     var state = buildConsentState(prefs);
     saveConsent(state);
-    applyAdConsentState(state.ad_storage === 'granted');
-    applyAndEmit(state);
-    setBannerOpen(false);
+    applyAdConsentState(state.ad_storage === 'granted' ? 'granted' : 'denied');
+    emitConsentUpdate(state);
     return state;
   }
-
-  function acceptAll(){
-    updateConsentFromPrefs({ analytics: true, advertising: true });
-  }
-
-  function rejectPersonalized(){
-    updateConsentFromPrefs({ analytics: false, advertising: false });
-  }
-  window.acceptAll = acceptAll;
-  window.rejectPersonalized = rejectPersonalized;
-
-  function wire(){
-    document.querySelectorAll('.js-consent-accept').forEach(function(b){ b.addEventListener('click', acceptAll); });
-    document.querySelectorAll('.js-consent-reject').forEach(function(b){ b.addEventListener('click', rejectPersonalized); });
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
 
   function invokeCmpOpen(){
     var api = window.googlefc || (window.googlefc = {});
@@ -230,9 +171,8 @@
     return false;
   }
 
-  // Expose the shared CMP helpers for utility pages (e.g., cookie-settings.html).
-  // These reuse the same Funding Choices hooks used elsewhere on the site so
-  // cookie management stays consistent with the main CMP bridge.
+  // Shared CMP helpers for utility pages (e.g., cookie-settings.html). They call
+  // Google's Funding Choices API directly; there is no custom TCF bridge.
   var ttgConsentBridge = (window.ttgConsentBridge = window.ttgConsentBridge || {});
   ttgConsentBridge.showFundingChoicesDialog = showFundingChoicesDialog;
   ttgConsentBridge.resetStoredConsent = resetStoredConsent;
@@ -249,8 +189,8 @@
     try { localStorage.removeItem('ttgConsent'); } catch(e){}
     document.cookie = STORE_KEY + '=; Max-Age=0; Path=/; SameSite=Lax';
 
-    applyAndEmit(deniedState);
-    applyAdConsentState(false);
+    emitConsentUpdate(deniedState);
+    applyAdConsentState('unset');
 
     var api = window.googlefc || (window.googlefc = {});
     if (api && typeof api.reset === 'function'){

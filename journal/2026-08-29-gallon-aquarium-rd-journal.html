@@ -1,6 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <!-- TTG consent stack START (Consent Mode v2 defaults must stay first; do not defer or move) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Consent Mode v2 defaults. The region-specific rule (EEA + UK + CH) takes precedence
+    // over the global rule; Google's CMP updates consent there once the visitor chooses.
+    gtag('consent', 'default', {
+      ad_storage: 'granted',
+      analytics_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted'
+    });
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      region: ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB', 'CH'],
+      wait_for_update: 500
+    });
+    gtag('set', 'ads_data_redaction', true);
+    gtag('set', 'url_passthrough', true);
+  </script>
+  <!-- Google CMP (Funding Choices) -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -8,8 +52,8 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-KTRVCMQN');</script>
   <!-- End Google Tag Manager -->
-  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
-  <meta charset="UTF-8">
+  <script src="/assets/js/consent-mode.js?v=1.6.0" defer></script>
+  <!-- TTG consent stack END -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>August 2026 — 29-Gallon Aquarium R&D Journal | The Tank Guide Journal</title>
   <meta name="description" content="August documented a major deep-maintenance discovery inside the drain plumbing, slower nitrate accumulation after the August 9 reset, continued reduced feeding, a switch to Thrive S, expanded chemistry tracking, BBA stabilization, and preparation for future top-off optimization.">
@@ -30,7 +74,6 @@
   <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-03-desktop-2">
   <link rel="stylesheet" href="/css/journal.css">
   <script src="/js/nav.js?v=1.1.0" defer></script>
-  <script src="/assets/js/consent-mode.js" defer></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
