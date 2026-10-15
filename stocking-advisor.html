@@ -1,6 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
+  <meta charset="utf-8" />
+  <!-- TTG consent stack START (Consent Mode v2 defaults must stay first; do not defer or move) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Consent Mode v2 defaults. The region-specific rule (EEA + UK + CH) takes precedence
+    // over the global rule; Google's CMP updates consent there once the visitor chooses.
+    gtag('consent', 'default', {
+      ad_storage: 'granted',
+      analytics_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted'
+    });
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      region: ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB', 'CH'],
+      wait_for_update: 500
+    });
+    gtag('set', 'ads_data_redaction', true);
+    gtag('set', 'url_passthrough', true);
+  </script>
+  <!-- Google CMP (Funding Choices) -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -8,8 +52,10 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-KTRVCMQN');</script>
   <!-- End Google Tag Manager -->
-  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
-  <meta charset="utf-8" />
+  <script src="/assets/js/consent-mode.js?v=1.6.0" defer></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
+    crossorigin="anonymous"></script>
+  <!-- TTG consent stack END -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="index,follow" />
   <title>Stocking Advisor Calculator — The Tank Guide</title> 
@@ -245,12 +291,7 @@
   ]
 }
 </script>
-  <!-- Consent Mode defaults (runs after GA loader) -->
-  <script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
 
-  <!-- AdSense loader (keep one global instance only) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9905718149811880"
-    crossorigin="anonymous"></script>
 
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
@@ -306,27 +347,6 @@
   }
   </style>
 
-  <!-- --- Google CMP (Funding Choices) START --- -->
-  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
-  <script>
-    // Required bootstrap per Google; signals CMP presence
-    (function() {
-      function signalGooglefcPresent() {
-        if (!window.frames['googlefcPresent']) {
-          if (document.body) {
-            const iframe = document.createElement('iframe');
-            iframe.style.cssText = 'display:none';
-            iframe.name = 'googlefcPresent';
-            document.body.appendChild(iframe);
-          } else {
-            setTimeout(signalGooglefcPresent, 0);
-          }
-        }
-      }
-      signalGooglefcPresent();
-    })();
-  </script>
-  <!-- --- Google CMP (Funding Choices) END --- -->
   
 <script id="ttg-entity-graph" type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://thetankguide.com/#fishkeepinglifeco","name":"FishKeepingLifeCo","alternateName":["Fish Keeping Life Co","fishkeepinglife"],"description":"FishKeepingLifeCo is the parent company and publisher of The Tank Guide.","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG","width":512,"height":512},"brand":{"@id":"https://thetankguide.com/#brand"},"owns":{"@id":"https://thetankguide.com/#website"},"sameAs":["https://www.instagram.com/FishKeepingLifeCo","https://www.tiktok.com/@FishKeepingLifeCo","https://x.com/fishkeepinglife","https://www.youtube.com/@fishkeepinglifeco","https://www.facebook.com/fishkeepinglifeco"]},{"@type":"Brand","@id":"https://thetankguide.com/#brand","name":"The Tank Guide","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"},"parentOrganization":{"@id":"https://thetankguide.com/#fishkeepinglifeco"}},{"@type":"WebSite","@id":"https://thetankguide.com/#website","url":"https://thetankguide.com/","name":"The Tank Guide","description":"The Tank Guide is an educational aquarium website offering tools, guides, and beginner-friendly resources.","publisher":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"creator":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"brand":{"@id":"https://thetankguide.com/#brand"},"owner":{"@id":"https://thetankguide.com/#fishkeepinglifeco"},"inLanguage":"en-US","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://thetankguide.com/search?q={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}}]}
@@ -1154,57 +1174,5 @@
   </noscript>
 
   <div id="site-footer" data-footer-src="/footer.html?v=1.5.2"></div>
-<!-- === TTG CMP Consent Bridge START === -->
-<script>
-(function(){
-  // Helper: map TCF consent to our single "ads granted" flag.
-  // We consider "granted" only when Purpose 1 (storage) AND Purpose 4 (select personalised ads)
-  // are consented. If you want to allow NON-personalised ads when only Purpose 1 is granted,
-  // set allowNPA=true below.
-  var allowNPA = true; // if true, we’ll treat Purpose 1 only as "granted" for showing slots (Google will serve NPA ads).
-
-  function setAdConsent(granted){
-    // Google CMP interface (Funding Choices) — set consent for ads_storage and ad_user_data
-    var consentState = granted ? 'granted' : 'denied';
-    var payload = {
-      'ad_storage': consentState,
-      'ad_user_data': consentState,
-      'ad_personalization': consentState
-    };
-    if (typeof window.__ttgUpdateConsentState__ === 'function') {
-      window.__ttgUpdateConsentState__(payload);
-    } else if (typeof window.gtag === 'function') {
-      window.gtag('consent', 'update', payload);
-    } else {
-      (window.__ttgDeferredConsentUpdates__ = window.__ttgDeferredConsentUpdates__ || []).push(payload);
-    }
-  }
-
-  function hookTCF(){
-    // Funding Choices exposes the IAB TCF v2 interface.
-    // We hook into it to map Purpose consent to Google consent mode.
-    if (typeof __tcfapi !== 'function') return;
-
-    __tcfapi('addEventListener', 2, function(tcData, success){
-      if(!success || !tcData || tcData.eventStatus !== 'tcloaded') return;
-
-      // Purpose IDs: 1 = Storage and Access, 4 = Select Personalised Ads
-      var p1 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[1] : false;
-      var p4 = tcData.purpose && tcData.purpose.consents ? tcData.purpose.consents[4] : false;
-
-      var granted = allowNPA ? (p1 && (p4 || true)) : (p1 && p4);
-      setAdConsent(granted);
-    });
-  }
-
-  // Initialize once Funding Choices loads the TCF stub
-  if (typeof __tcfapi === 'function') {
-    hookTCF();
-  } else {
-    window.addEventListener('tcfapiReady', hookTCF, { once: true });
-  }
-})();
-</script>
-<!-- === TTG CMP Consent Bridge END === -->
 </body>
 </html>

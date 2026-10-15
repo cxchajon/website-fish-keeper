@@ -1,6 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <!-- TTG consent stack START (Consent Mode v2 defaults must stay first; do not defer or move) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Consent Mode v2 defaults. The region-specific rule (EEA + UK + CH) takes precedence
+    // over the global rule; Google's CMP updates consent there once the visitor chooses.
+    gtag('consent', 'default', {
+      ad_storage: 'granted',
+      analytics_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted'
+    });
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      region: ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB', 'CH'],
+      wait_for_update: 500
+    });
+    gtag('set', 'ads_data_redaction', true);
+    gtag('set', 'url_passthrough', true);
+  </script>
+  <!-- Google CMP (Funding Choices) -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -8,8 +52,8 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-KTRVCMQN');</script>
   <!-- End Google Tag Manager -->
-  <link rel="preload" href="/footer.html?v=1.5.2" as="fetch" crossorigin="anonymous">
-  <meta charset="UTF-8">
+  <script src="/assets/js/consent-mode.js?v=1.6.0" defer></script>
+  <!-- TTG consent stack END -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deep Maintenance &amp; Check Valve Fix | The Tank Guide Journal</title>
   <meta name="description" content="Performed an extensive maintenance session focused on filtration, flow, and system reliability. Completed a near-total sump drain (~100%) and a reduced ~50% display water change to avoid over-stressing the system during heavy maintenance. 🔧 Filtration &amp; Cleaning: Rinsed coarse and medium sponges in the filter stack; Rinsed pre-return sponge/filter due to clogging; Removed spent Purigen (replacement needed). Due to the level of cleaning (including tap water exposure), Stability was dosed to support bacterial recovery. Prime was also dosed during refill as usual. ⚙️ Mechanical Fix — Overflow Issue: Check valve in return line was stuck open due to debris; Disassembled and cleaned the valve; Restored proper function (pending confirmation under test). This was likely allowing unintended backflow, causing sump overfill during shutdown events. 🌱 Plant Management: Planned trimming of tiger lotus postponed to avoid stacking stress with major maintenance; System showing strong plant growth despite reduced bioload. 🧪 Forward Plan (System Experiment): Replace nitrate test kit; Begin observing natural nitrate accumulation under current lower bioload; Potential shift toward nitrate-driven water changes instead of fixed schedule and smaller display changes (~25% or less) while maintaining sump maintenance. 📌 System Status: Bioload reduced compared to previous months; Plant growth accelerating; Filtration refreshed; Mechanical reliability improved (pending validation). System entering a “controlled observation phase.”">
@@ -30,7 +74,6 @@
   <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-03-desktop-2">
   <link rel="stylesheet" href="/css/journal.css">
   <script src="/js/nav.js?v=1.1.0" defer></script>
-  <script src="/assets/js/consent-mode.js" defer></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",

@@ -2,11 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- TTG consent stack START (Consent Mode v2 defaults must stay first; do not defer or move) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    // Consent Mode v2 defaults. The region-specific rule (EEA + UK + CH) takes precedence
+    // over the global rule; Google's CMP updates consent there once the visitor chooses.
+    gtag('consent', 'default', {
+      ad_storage: 'granted',
+      analytics_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted'
+    });
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      region: ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB', 'CH'],
+      wait_for_update: 500
+    });
+    gtag('set', 'ads_data_redaction', true);
+    gtag('set', 'url_passthrough', true);
+  </script>
+  <!-- Google CMP (Funding Choices) -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-9905718149811880?ers=1"></script>
+  <script>
+    (function() {
+      function signalGooglefcPresent() {
+        if (!window.frames['googlefcPresent']) {
+          if (document.body) {
+            var iframe = document.createElement('iframe');
+            iframe.style.cssText = 'display:none';
+            iframe.name = 'googlefcPresent';
+            document.body.appendChild(iframe);
+          } else {
+            setTimeout(signalGooglefcPresent, 0);
+          }
+        }
+      }
+      signalGooglefcPresent();
+    })();
+  </script>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KTRVCMQN');</script>
+  <!-- End Google Tag Manager -->
+  <script src="/assets/js/consent-mode.js?v=1.6.0" defer></script>
+  <!-- TTG consent stack END -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://www.googletagmanager.com">
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KTRVCMQN');</script>
-  <!-- End Google Tag Manager -->
   <title>Which Aquarium Hitchhikers Are Actually Dangerous?</title>
   <meta name="description" content="Not all aquarium bugs are harmful. Learn which aquarium hitchhikers—like hydra, planaria, leeches, and nymphs—are actually dangerous to fish and shrimp.">
   <meta name="author" content="The Tank Guide">
@@ -18,7 +66,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" as="style"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/css/blogs-bundle.min.css?v=2026-09-03-desktop-2"><link rel="stylesheet" href="/css/blog-single-column.css?v=1.0.0"><link rel="stylesheet" href="/css/faq-accordion.css?v=1.0.0">
   <style>.table-scroll-container{box-sizing:border-box;width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;margin:1.5rem 0}.table-scroll-container table{width:max(100%,780px);min-width:780px;border-collapse:collapse}.table-scroll-container th,.table-scroll-container td{padding:.75rem;text-align:left;vertical-align:top}.table-scroll-container caption{text-align:left;font-weight:700;padding:0 0 .65rem}</style>
-  <script defer src="/js/nav.js?v=1.1.0"></script><script src="/assets/js/consent-mode.js?v=1.5.2" defer></script>
+  <script defer src="/js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">{
     "@context":"https://schema.org","@graph":[
       {"@type":"Organization","@id":"https://thetankguide.com/#fishkeepinglifeco","name":"FishKeepingLifeCo","alternateName":["Fish Keeping Life Co","fishkeepinglife"],"description":"FishKeepingLifeCo is the parent company and publisher of The Tank Guide.","url":"https://thetankguide.com/","logo":{"@type":"ImageObject","url":"https://thetankguide.com/assets/img/Logo-Master-512x512.PNG","width":512,"height":512},"brand":{"@id":"https://thetankguide.com/#brand"},"owns":{"@id":"https://thetankguide.com/#website"},"sameAs":["https://www.instagram.com/FishKeepingLifeCo","https://www.tiktok.com/@FishKeepingLifeCo","https://x.com/fishkeepinglife","https://www.youtube.com/@fishkeepinglifeco","https://www.facebook.com/fishkeepinglifeco"]},
