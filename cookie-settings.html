@@ -285,7 +285,7 @@
 
       var prefs = getConsentFromToggles();
       if (saveConsent(prefs)) {
-        showStatus('All cookies enabled and saved.');
+        showStatus('All optional site preferences turned on and saved in this browser.');
       } else {
         showStatus('Error saving preferences. Please refresh and try again.');
       }
@@ -298,7 +298,7 @@
 
       var prefs = getConsentFromToggles();
       if (saveConsent(prefs)) {
-        showStatus('Only essential cookies are enabled.');
+        showStatus('Optional site preferences turned off and saved in this browser.');
       } else {
         showStatus('Error saving preferences. Please refresh and try again.');
       }
