@@ -81,8 +81,10 @@
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://thetankguide.com/#organization",
+        "@id": "https://thetankguide.com/#fishkeepinglifeco",
         "name": "FishKeepingLifeCo",
+        "alternateName": ["Fish Keeping Life Co", "fishkeepinglife"],
+        "description": "FishKeepingLifeCo is the parent company and publisher of The Tank Guide.",
         "url": "https://thetankguide.com/",
         "logo": {
           "@type": "ImageObject",
@@ -90,23 +92,37 @@
           "width": 512,
           "height": 512
         },
+        "brand": {"@id": "https://thetankguide.com/#brand"},
+        "owns": {"@id": "https://thetankguide.com/#website"},
         "sameAs": [
           "https://www.instagram.com/FishKeepingLifeCo",
           "https://www.tiktok.com/@FishKeepingLifeCo",
-          "https://www.facebook.com/fishkeepinglifeco",
           "https://x.com/fishkeepinglife",
           "https://www.youtube.com/@fishkeepinglifeco",
-          "https://www.etsy.com/shop/FishKeepingLifeShop?etsrc=sdt"
+          "https://www.facebook.com/fishkeepinglifeco"
         ]
+      },
+      {
+        "@type": "Brand",
+        "@id": "https://thetankguide.com/#brand",
+        "name": "The Tank Guide",
+        "url": "https://thetankguide.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://thetankguide.com/assets/img/Logo-Master-512x512.PNG"
+        },
+        "parentOrganization": {"@id": "https://thetankguide.com/#fishkeepinglifeco"}
       },
       {
         "@type": "WebSite",
         "@id": "https://thetankguide.com/#website",
         "url": "https://thetankguide.com/",
         "name": "The Tank Guide",
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
-        },
+        "description": "The Tank Guide is an educational aquarium website offering tools, guides, and beginner-friendly resources.",
+        "publisher": {"@id": "https://thetankguide.com/#fishkeepinglifeco"},
+        "creator": {"@id": "https://thetankguide.com/#fishkeepinglifeco"},
+        "brand": {"@id": "https://thetankguide.com/#brand"},
+        "owner": {"@id": "https://thetankguide.com/#fishkeepinglifeco"},
         "inLanguage": "en-US"
       },
       {
@@ -119,7 +135,7 @@
           "@id": "https://thetankguide.com/#website"
         },
         "publisher": {
-          "@id": "https://thetankguide.com/#organization"
+          "@id": "https://thetankguide.com/#fishkeepinglifeco"
         },
         "breadcrumb": {
           "@id": "https://thetankguide.com/store/#breadcrumb"
@@ -158,133 +174,73 @@
             "@type": "ListItem",
             "position": 1,
             "item": {
-              "@id": "https://thetankguide.com/store/#book-life-in-balance"
+              "@id": "https://thetankguide.com/books/life-in-balance/#book"
             }
           },
           {
             "@type": "ListItem",
             "position": 2,
             "item": {
-              "@id": "https://thetankguide.com/store/#book-coloring-book-volume-1"
+              "@id": "https://thetankguide.com/books/coloring-book-vol-1/#book"
             }
           },
           {
             "@type": "ListItem",
             "position": 3,
             "item": {
-              "@id": "https://thetankguide.com/store/#book-coloring-book-volume-2"
+              "@id": "https://thetankguide.com/books/coloring-book-vol-2/#book"
             }
           },
           {
             "@type": "ListItem",
             "position": 4,
             "item": {
-              "@id": "https://thetankguide.com/store/#book-daily-tank-journal"
+              "@id": "https://thetankguide.com/books/daily-tank-journal/#book"
             }
           },
           {
             "@type": "ListItem",
             "position": 5,
             "item": {
-              "@id": "https://thetankguide.com/store/#book-daily-tank-journal-planted-edition"
+              "@id": "https://thetankguide.com/books/daily-tank-journal-planted/#book"
             }
           }
         ]
       },
       {
         "@type": "Book",
-        "@id": "https://thetankguide.com/store/#book-life-in-balance",
+        "@id": "https://thetankguide.com/books/life-in-balance/#book",
         "name": "Life in Balance: The Hidden Magic of Aquariums",
-        "description": "A beginner-friendly guide that simplifies aquarium science through an engaging story. Perfect for families and new hobbyists starting their first tank.",
-        "image": "https://thetankguide.com/assets/books/book-cover-web.jpg",
-        "url": "https://amzn.to/4oPo5sF",
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "author": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "bookFormat": "https://schema.org/Paperback",
-        "offers": {
-          "@type": "Offer",
-          "url": "https://amzn.to/4oPo5sF"
-        }
+        "url": "https://thetankguide.com/books/life-in-balance/",
+        "image": "https://thetankguide.com/assets/books/book-cover-web.jpg"
       },
       {
         "@type": "Book",
-        "@id": "https://thetankguide.com/store/#book-coloring-book-volume-1",
+        "@id": "https://thetankguide.com/books/coloring-book-vol-1/#book",
         "name": "Life in Balance Coloring Book Volume 1",
-        "description": "The coloring book that teaches real fishkeeping science. Kids and adults learn about bettas, community fish, and healthy tank ecosystems.",
-        "image": "https://thetankguide.com/assets/books/Front%20of%20coloring%20book%20vol.1.jpeg",
         "url": "https://thetankguide.com/books/coloring-book-vol-1/",
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "author": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "bookFormat": "https://schema.org/Paperback",
-        "offers": {
-          "@type": "Offer",
-          "url": "https://thetankguide.com/books/coloring-book-vol-1/"
-        }
+        "image": "https://thetankguide.com/assets/books/Front%20of%20coloring%20book%20vol.1.jpeg"
       },
       {
         "@type": "Book",
-        "@id": "https://thetankguide.com/store/#book-coloring-book-volume-2",
+        "@id": "https://thetankguide.com/books/coloring-book-vol-2/#book",
         "name": "Life in Balance Coloring Book Volume 2",
-        "description": "Dive deeper into the freshwater world with shrimp, snails, and aquatic plants while learning the hidden magic behind balanced tank ecosystems.",
-        "image": "https://thetankguide.com/assets/books/coloring-book-vol2-cover-front.jpg",
-        "url": "https://amzn.to/3LHR6aZ",
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "author": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "bookFormat": "https://schema.org/Paperback",
-        "offers": {
-          "@type": "Offer",
-          "url": "https://amzn.to/3LHR6aZ"
-        }
+        "url": "https://thetankguide.com/books/coloring-book-vol-2/",
+        "image": "https://thetankguide.com/assets/books/coloring-book-vol2-cover-front.jpg"
       },
       {
         "@type": "Book",
-        "@id": "https://thetankguide.com/store/#book-daily-tank-journal",
+        "@id": "https://thetankguide.com/books/daily-tank-journal/#book",
         "name": "The Daily Tank Journal",
-        "description": "Bring calm clarity to daily care. Spot patterns, track water quality, and keep your freshwater aquarium healthy—one day at a time.",
-        "image": "https://thetankguide.com/assets/books/daily-tank-journal-unplanted-cover-front.jpg",
-        "url": "https://amzn.to/4o6oK7V",
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "author": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "bookFormat": "https://schema.org/Paperback",
-        "offers": {
-          "@type": "Offer",
-          "url": "https://amzn.to/4o6oK7V"
-        }
+        "url": "https://thetankguide.com/books/daily-tank-journal/",
+        "image": "https://thetankguide.com/assets/books/daily-tank-journal-unplanted-cover-front.jpg"
       },
       {
         "@type": "Book",
-        "@id": "https://thetankguide.com/store/#book-daily-tank-journal-planted-edition",
+        "@id": "https://thetankguide.com/books/daily-tank-journal-planted/#book",
         "name": "The Daily Tank Journal: Planted Edition",
-        "description": "Turn maintenance into a rewarding habit. Track CO₂, lighting, nutrients, and plant growth with structured pages designed for planted tanks.",
-        "image": "https://thetankguide.com/assets/books/daily-tank-journal-planted-cover-front.jpg",
-        "url": "https://amzn.to/3LSH72B",
-        "publisher": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "author": {
-          "@id": "https://thetankguide.com/#organization"
-        },
-        "bookFormat": "https://schema.org/Paperback",
-        "offers": {
-          "@type": "Offer",
-          "url": "https://amzn.to/3LSH72B"
-        }
+        "url": "https://thetankguide.com/books/daily-tank-journal-planted/",
+        "image": "https://thetankguide.com/assets/books/daily-tank-journal-planted-cover-front.jpg"
       }
     ]
   }
