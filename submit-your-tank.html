@@ -968,6 +968,14 @@
             <input type="hidden" name="pricing_breakdown" id="pricingHidden" value="" />
             <input type="hidden" name="total_price" id="totalPrice" value="0" />
             <input type="hidden" name="duplicate_flag" id="duplicateFlag" value="false" />
+            <div class="ft-field">
+              <div class="cf-turnstile" data-sitekey="0x4AAAAAAFYL1izh-TK-lIa9" data-theme="dark"></div>
+              <p class="ft-help small">This security check helps prevent automated spam.</p>
+            </div>
+            <div class="sr-only" aria-hidden="true">
+              <label for="website">Leave this field empty</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
           </section>
 
           <section class="ft-step" data-step="6" aria-label="Step 6: Confirmation">
@@ -1012,7 +1020,8 @@
 
         <!-- Cloudinary Upload Widget -->
         <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
-        <script src="/assets/js/feature-your-tank.js?v=1.0.3" defer></script>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        <script src="/assets/js/feature-your-tank.js?v=1.0.4" defer></script>
 
 
       </section>
