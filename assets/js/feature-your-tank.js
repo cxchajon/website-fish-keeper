@@ -16,6 +16,7 @@
   // Configuration
   const CONFIG = {
     formspreeEndpoint: 'https://formspree.io/f/xangqlww',
+    confirmationEndpoint: 'https://ttg-confirmation-email.fishkeepinglifeco.workers.dev/confirm',
     cloudinaryCloudName: 'fishkeepinglifeco',
     cloudinaryUploadPreset: 'feature-your-tank',
     stripePublishableKey: 'pk_test_PLACEHOLDER', // Not implemented yet
@@ -759,6 +760,15 @@
       return true;
     }
 
+    if (step === 5) {
+      const turnstileResponse = form?.querySelector('[name="cf-turnstile-response"]');
+      if (!turnstileResponse || !turnstileResponse.value) {
+        showError('Please complete the security check before submitting.');
+        return false;
+      }
+      return true;
+    }
+
     if (step === 4) {
       // Validate consent checkboxes
       const licenseConfirm = document.getElementById('licenseConfirm');
@@ -976,8 +986,17 @@
         // Keep only last 10 submissions
         localStorage.setItem('ttg-feature-submissions', JSON.stringify(existingSubmissions.slice(-10)));
 
+        // Send a separate visitor confirmation. The Formspree submission remains successful
+        // even if the email service is temporarily unavailable.
+        let confirmationEmailSent = false;
+        try {
+          confirmationEmailSent = await sendConfirmationEmail();
+        } catch (confirmationError) {
+          console.error('Confirmation email error:', confirmationError);
+        }
+
         // Show confirmation
-        showConfirmation();
+        showConfirmation(confirmationEmailSent);
         showStep(6);
       } else {
         const data = await response.json().catch(() => ({}));
@@ -996,9 +1015,29 @@
   }
 
   /**
+   * Send the visitor a confirmation email through the protected Cloudflare Worker.
+   */
+  async function sendConfirmationEmail() {
+    const turnstileResponse = form?.querySelector('[name="cf-turnstile-response"]');
+    const response = await fetch(CONFIG.confirmationEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: document.getElementById('email')?.value || '',
+        name: document.getElementById('name')?.value || '',
+        tankName: document.getElementById('tank_name')?.value || '',
+        turnstileToken: turnstileResponse?.value || '',
+        website: document.getElementById('website')?.value || ''
+      })
+    });
+
+    return response.ok;
+  }
+
+  /**
    * Show confirmation details
    */
-  function showConfirmation() {
+  function showConfirmation(confirmationEmailSent) {
     const confirmationDetails = document.getElementById('confirmationDetails');
     const checkoutMessage = document.getElementById('checkoutMessage');
 
@@ -1018,9 +1057,13 @@
 
     if (checkoutMessage) {
       if (total === 0) {
-        checkoutMessage.innerHTML = '<strong>✓ Your free submission is complete!</strong> Check your email for confirmation. We\'ll review your submission and create your feature within 5-7 business days.';
+        checkoutMessage.innerHTML = confirmationEmailSent
+          ? '<strong>✓ Your free submission is complete!</strong> Check your email for confirmation. We\'ll review your submission and create your feature within 5-7 business days.'
+          : '<strong>✓ Your free submission is complete!</strong> Your confirmation email may be delayed, but your submission was received. We\'ll review it within 5-7 business days.';
       } else {
-        checkoutMessage.innerHTML = `<strong>💳 Payment Required: $${total}</strong><br>We\'ll email you a secure Stripe payment link to complete your purchase. Your submission is saved and will be processed once payment is received. Expect your feature to go live within 5-7 business days after payment.`;
+        checkoutMessage.innerHTML = confirmationEmailSent
+          ? `<strong>💳 Payment Required: ${total}</strong><br>We\'ll email you a secure Stripe payment link to complete your purchase. Your submission is saved and will be processed once payment is received. Expect your feature to go live within 5-7 business days after payment.`
+          : `<strong>💳 Payment Required: ${total}</strong><br>Your submission was received, but the confirmation email may be delayed. We\'ll still send your secure Stripe payment link. Your feature will be processed after payment.`;
       }
     }
 
