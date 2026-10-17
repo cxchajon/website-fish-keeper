@@ -1030,7 +1030,7 @@
       return '';
     }
 
-    window.turnstile.reset(widget);
+    window.turnstile.reset();
 
     const deadline = Date.now() + 30000;
     while (Date.now() < deadline) {
