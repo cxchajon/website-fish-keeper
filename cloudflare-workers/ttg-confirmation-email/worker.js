@@ -44,6 +44,15 @@ export default {
       return json({ ok: false, error: 'Not found' }, 404, origin);
     }
 
+    const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const rateLimit = await env.CONFIRM_RATE_LIMITER.limit({
+      key: 'confirm:' + clientIp
+    });
+
+    if (!rateLimit.success) {
+      return json({ ok: false, error: 'Too many submissions. Please try again in a minute.' }, 429, origin);
+    }
+
     const contentLength = Number(request.headers.get('Content-Length') || 0);
     if (contentLength > 10000) {
       return json({ ok: false, error: 'Request too large' }, 413, origin);
