@@ -990,7 +990,14 @@
         // even if the email service is temporarily unavailable.
         let confirmationEmailSent = false;
         try {
-          confirmationEmailSent = await sendConfirmationEmail();
+          // Formspree has already redeemed the first Turnstile token. Cloudflare
+          // tokens are single-use, so obtain a fresh token for the email Worker.
+          const confirmationToken = await getFreshTurnstileToken();
+          if (confirmationToken) {
+            confirmationEmailSent = await sendConfirmationEmail(confirmationToken);
+          } else {
+            console.error('Confirmation email error: unable to obtain a fresh Turnstile token');
+          }
         } catch (confirmationError) {
           console.error('Confirmation email error:', confirmationError);
         }
@@ -1015,10 +1022,33 @@
   }
 
   /**
+   * Reset Turnstile after Formspree consumes its token and wait for a fresh token.
+   */
+  async function getFreshTurnstileToken() {
+    const widget = form?.querySelector('.cf-turnstile');
+    if (!widget || !window.turnstile || typeof window.turnstile.reset !== 'function') {
+      return '';
+    }
+
+    window.turnstile.reset(widget);
+
+    const deadline = Date.now() + 30000;
+    while (Date.now() < deadline) {
+      const responseField = form?.querySelector('[name="cf-turnstile-response"]');
+      const token = responseField?.value || '';
+      if (token) {
+        return token;
+      }
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+
+    return '';
+  }
+
+  /**
    * Send the visitor a confirmation email through the protected Cloudflare Worker.
    */
-  async function sendConfirmationEmail() {
-    const turnstileResponse = form?.querySelector('[name="cf-turnstile-response"]');
+  async function sendConfirmationEmail(turnstileToken) {
     const response = await fetch(CONFIG.confirmationEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1026,7 +1056,7 @@
         email: document.getElementById('email')?.value || '',
         name: document.getElementById('name')?.value || '',
         tankName: document.getElementById('tank_name')?.value || '',
-        turnstileToken: turnstileResponse?.value || '',
+        turnstileToken,
         website: document.getElementById('website')?.value || ''
       })
     });
