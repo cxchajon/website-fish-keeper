@@ -53,6 +53,15 @@ export default {
       return json({ ok: false, error: 'Too many submissions. Please try again in a minute.' }, 429, origin);
     }
 
+    const contentType = (request.headers.get('Content-Type') || '')
+      .split(';', 1)[0]
+      .trim()
+      .toLowerCase();
+
+    if (contentType !== 'application/json') {
+      return json({ ok: false, error: 'Content-Type must be application/json' }, 415, origin);
+    }
+
     const contentLength = Number(request.headers.get('Content-Length') || 0);
     if (contentLength > 10000) {
       return json({ ok: false, error: 'Request too large' }, 413, origin);
@@ -62,6 +71,10 @@ export default {
     try {
       body = await request.json();
     } catch {
+      return json({ ok: false, error: 'Invalid request' }, 400, origin);
+    }
+
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return json({ ok: false, error: 'Invalid request' }, 400, origin);
     }
 
