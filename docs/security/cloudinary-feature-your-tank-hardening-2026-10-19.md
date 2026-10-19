@@ -30,7 +30,8 @@ This record intentionally excludes API credentials, exact private metadata value
 - Removed GIF from the upload widget allowlist so the UI accepts only JPG, JPEG, PNG, and WebP.
 - Added explicit metadata-stripping transformations to visitor-photo delivery URLs.
 - Changed social-preview and JSON-LD delivery for the published tank photo to a transformed JPEG URL.
-- Added transformed delivery for other direct Cloudinary originals on the published tank page.
+- Added transformed delivery for the working direct Cloudinary original on the published tank page.
+- Left the existing `Sump_zqity5` reference unchanged because both its original and transformed URLs return 404 and no matching Cloudinary asset was found. This is a pre-existing missing asset, not a regression from this change.
 - Bumped the Feature Your Tank script cache version from 1.0.6 to 1.0.7.
 
 ## Planned preset after-state
