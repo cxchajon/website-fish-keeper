@@ -124,7 +124,7 @@
         sources: ['local', 'camera'],
         multiple: true,
         maxFiles: 5,
-        clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
         maxFileSize: 10000000, // 10MB
         folder: 'feature-your-tank',
         tags: ['tank-submission'],
