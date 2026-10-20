@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ttg-upload-authorizer",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-19",
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "UPLOAD_SESSIONS",
+        "class_name": "UploadSession"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["UploadSession"]
+    }
+  ]
+  // Deliberately no rate-limit namespace IDs are committed. Before deployment,
+  // add UPLOAD_AUTH_RATE_LIMITER and UPLOAD_SIGN_RATE_LIMITER bindings using
+  // account-created namespace IDs described in README.md. The Worker fails
+  // closed with HTTP 503 until both bindings are present.
+}
