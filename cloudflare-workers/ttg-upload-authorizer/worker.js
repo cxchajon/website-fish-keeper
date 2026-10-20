@@ -19,7 +19,6 @@ const ALLOWED_HOSTNAMES = new Set([
 
 const CLOUDINARY_CLOUD_NAME = 'fishkeepinglifeco';
 const CLOUDINARY_UPLOAD_PRESET = 'feature-your-tank-signed-v1';
-const CLOUDINARY_FOLDER = 'feature-your-tank';
 const TURNSTILE_ACTION = 'ttg_upload_authorize';
 const SESSION_TTL_MS = 10 * 60 * 1000;
 const MAX_UPLOADS_PER_SESSION = 5;
@@ -219,32 +218,31 @@ function uploadParams(publicId, batchId, timestamp) {
   const tags = ['tank-submission', 'ttg-pending', `ttg-batch-${batchId}`];
   const context = `ttg_batch=${batchId}|ttg_state=pending`;
 
-  // The worker owns every Cloudinary parameter which has security impact.
+  // Dynamic Folder placement is fixed in the signed upload preset. The Upload
+  // Widget's prepareUploadParams callback cannot return asset_folder or
+  // public_id_prefix, so sending either here would be ignored or unreliable.
+  // The signed preset is itself included in this signature, preventing a
+  // browser from switching to a different preset.
   const paramsToSign = {
     context,
-    folder: CLOUDINARY_FOLDER,
     overwrite: 'false',
     public_id: publicId,
     source: 'uw',
     tags,
     timestamp: String(timestamp),
-    unique_filename: 'true',
-    upload_preset: CLOUDINARY_UPLOAD_PRESET,
-    use_filename: 'false'
+    upload_preset: CLOUDINARY_UPLOAD_PRESET
   };
 
   return {
     paramsToSign,
     widgetParams: {
       context,
-      folder: CLOUDINARY_FOLDER,
       overwrite: false,
       publicId,
       resourceType: 'image',
       tags,
-      uniqueFilename: true,
       uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-      useFilename: false
+      uploadSignatureTimestamp: timestamp
     }
   };
 }
@@ -331,10 +329,13 @@ async function prepareSignature(request, env, origin, options) {
 
   return response({
     ok: true,
-    apiKey: env.CLOUDINARY_API_KEY,
     cloudName: CLOUDINARY_CLOUD_NAME,
-    signature,
-    uploadParams: generated.widgetParams
+    // This object can be passed to the Upload Widget callback unchanged.
+    uploadParams: {
+      apiKey: env.CLOUDINARY_API_KEY,
+      signature,
+      ...generated.widgetParams
+    }
   }, 200, origin);
 }
 

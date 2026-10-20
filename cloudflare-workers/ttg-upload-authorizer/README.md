@@ -7,7 +7,7 @@ This Worker is Phase 1 of The Tank Guide's signed Cloudinary upload design. It i
 1. `POST /authorize` validates one upload-specific Turnstile token.
 2. It checks `success`, the exact production hostname, and the `ttg_upload_authorize` action.
 3. On success, it creates a private Durable Object session which expires after ten minutes and can authorize at most five assets.
-4. `POST /prepare` consumes one session slot and returns a Cloudinary Upload Widget `prepareUploadParams` response containing server-owned parameters and a SHA-1 upload signature.
+4. `POST /prepare` consumes one session slot and returns one callback-ready Cloudinary Upload Widget `prepareUploadParams` object containing server-owned parameters, the Widget's timestamp, and a SHA-1 upload signature.
 5. The browser then uploads bytes directly to Cloudinary. No image data is sent through this Worker.
 
 The session capability is an opaque ID plus a random token. It is intended to live only in browser memory. The Cloudinary signature is valid under Cloudinary's one-hour timestamp rule, but its fixed random public ID and `overwrite=false` mean replay cannot create additional assets with new IDs.
@@ -37,11 +37,14 @@ Create a new signed-only preset named `feature-your-tank-signed-v1`. Do not alte
 - `overwrite` disabled
 - Original filename use disabled and unique filenames enabled
 - No video, raw uploads, add-ons, eager transformations, or auto-tagging
-- The current `feature-your-tank` asset destination convention
+- Dynamic Folders destination: `asset_folder` = `feature-your-tank`
+- Enable **Use asset folder as public ID prefix**. Leave the legacy `folder` field empty and do not set a separate `public_id_prefix`.
 
-This Worker signs the current legacy `folder` convention, `feature-your-tank`. Before activation, compare it against the Cloudinary dashboard. If the account uses Dynamic Folders, change the one server-owned destination field to `assetFolder` in both `uploadParams()` and the approved signed preset; do not send both fields.
+The connected Cloudinary product environment uses Dynamic Folders: existing Feature Your Tank assets have `asset_folder: feature-your-tank` and public IDs beginning `feature-your-tank/`. In this mode, `folder` is legacy compatibility behavior and must not be added to new code. The new signed preset is the single owner of the matching storage-folder and public-ID-prefix behavior: `asset_folder` chooses the Console location, and **Use asset folder as public ID prefix** prepends the same value to the server-generated public ID. The Worker therefore sends a pathless random `public_id` and signs the fixed preset name; a browser cannot select another preset or override its placement without invalidating the signature.
 
-Cloudinary applies directly supplied signed parameters ahead of most preset values. That is why the Worker creates and signs every security-relevant parameter and accepts no browser-supplied Cloudinary upload fields.
+Do not return `assetFolder`, `publicIdPrefix`, or `useAssetFolderAsPublicIdPrefix` from `prepareUploadParams`. Cloudinary's documented callback contract does not support those values. The Worker returns only callback-supported fields, including `apiKey`, `signature`, and `uploadSignatureTimestamp`.
+
+Cloudinary applies directly supplied signed parameters ahead of most preset values. The Worker accepts no browser-supplied Cloudinary upload fields and signs every direct upload parameter it returns; the signed preset owns the remaining fixed restrictions, including the Dynamic Folder destination.
 
 ## Future website integration (not included here)
 
@@ -50,8 +53,11 @@ The upload-step widget will:
 1. obtain one `ttg_upload_authorize` Turnstile token;
 2. call `/authorize` once;
 3. keep the session ID and token only in memory;
-4. call `/prepare` from the official Upload Widget `prepareUploadParams` callback once per file;
-5. pass the response's `signature`, `apiKey`, and `uploadParams` to the callback.
+4. configure the Widget with the fixed `cloudName: 'fishkeepinglifeco'` and disable advanced options that expose preset, public-ID, or tags controls;
+5. call `/prepare` from the official Upload Widget `prepareUploadParams` callback once per file, passing the Widget-provided `timestamp` and the fixed `source: 'uw'` to the Worker;
+6. pass `response.uploadParams` to the Widget callback unchanged. It already contains `apiKey`, `signature`, `uploadPreset`, and the matching `uploadSignatureTimestamp`.
+
+The Widget's `prepareUploadParams` callback must not add, remove, or override any Cloudinary upload parameter. Cloudinary validates the signature against the final upload request. The Worker signs `context`, `overwrite=false`, its random `public_id`, `source=uw`, `tags`, the Widget's timestamp, and the signed preset. `api_key`, `cloud_name`, `resource_type`, and the file itself are required transport values but are not part of Cloudinary's signature string.
 
 The current Formspree token and post-Formspree fresh confirmation-email token remain independent. Upload authorization must not reset or consume either one.
 

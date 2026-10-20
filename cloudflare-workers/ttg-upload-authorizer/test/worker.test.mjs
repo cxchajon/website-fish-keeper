@@ -210,7 +210,7 @@ test('enforces per-IP authorization rate limiting', async () => {
   assert.equal((await handleRequest(request('/authorize', { turnstileToken: 'two' }), env, options)).status, 429);
 });
 
-test('prepares an official Upload Widget signed-upload response with server-owned parameters', async () => {
+test('prepares a callback-ready Upload Widget signed-upload response with server-owned parameters', async () => {
   const now = Date.now();
   const env = makeEnv();
   const options = runtime(now);
@@ -224,28 +224,50 @@ test('prepares an official Upload Widget signed-upload response with server-owne
 
   assert.equal(response.status, 200);
   assert.equal(data.ok, true);
-  assert.equal(data.apiKey, 'test-api-key');
   assert.equal(data.cloudName, 'fishkeepinglifeco');
-  assert.equal(data.uploadParams.folder, 'feature-your-tank');
+  assert.equal(data.uploadParams.apiKey, 'test-api-key');
   assert.equal(data.uploadParams.uploadPreset, 'feature-your-tank-signed-v1');
   assert.equal(data.uploadParams.overwrite, false);
   assert.equal(data.uploadParams.resourceType, 'image');
+  assert.equal(data.uploadParams.uploadSignatureTimestamp, Math.floor(now / 1_000));
   assert.match(data.uploadParams.publicId, /^feature-[A-Za-z0-9_-]+-[A-Za-z0-9_-]+$/);
   assert.ok(data.uploadParams.tags.includes('ttg-pending'));
-  assert.match(data.signature, /^[a-f0-9]{40}$/);
+  assert.match(data.uploadParams.signature, /^[a-f0-9]{40}$/);
+  assert.equal('folder' in data.uploadParams, false);
+  assert.equal('assetFolder' in data.uploadParams, false);
+  assert.equal('publicIdPrefix' in data.uploadParams, false);
 });
 
-test('uses the Upload Widget timestamp and Cloudinary-compatible canonical signature', async () => {
+test('signs the exact Dynamic Folder preset request that the Upload Widget will send', async () => {
+  const now = Date.now();
+  const env = makeEnv();
+  const options = runtime(now);
+  const authorized = await issueSession(env, options);
+  const timestamp = Math.floor(now / 1_000);
+  const response = await handleRequest(
+    request('/prepare', prepareBody(authorized.session, timestamp)),
+    env,
+    options
+  );
+  const { uploadParams } = await response.json();
+
+  // The Dashboard's signed preset owns asset_folder and
+  // use_asset_folder_as_public_id_prefix. Neither is part of this browser
+  // request, while source=uw must be signed even though the Widget adds it.
   const signature = await cloudinarySignature({
-    public_id: 'asset',
+    context: uploadParams.context,
+    overwrite: 'false',
+    public_id: uploadParams.publicId,
     source: 'uw',
-    timestamp: '1700000000',
-    upload_preset: 'feature-your-tank-signed-v1',
-    api_key: 'excluded',
+    tags: uploadParams.tags,
+    timestamp: String(uploadParams.uploadSignatureTimestamp),
+    upload_preset: uploadParams.uploadPreset,
+    api_key: uploadParams.apiKey,
     cloud_name: 'excluded',
     resource_type: 'image'
-  }, 'secret');
-  assert.equal(signature, 'a3deabb47e291893a4f77db1db0ac8eb77c205e5');
+  }, 'test-api-secret');
+
+  assert.equal(signature, uploadParams.signature);
 });
 
 test('rejects expired sessions and timestamps outside the widget freshness window', async () => {
