@@ -18,7 +18,7 @@ function configuredFeatureScript({
       "uploadAuthorizerEndpoint: 'https://ttg-upload-authorizer.fishkeepinglifeco.workers.dev',",
       `uploadAuthorizerEndpoint: ${JSON.stringify(uploadAuthorizerEndpoint)},`
     )
-    .replace("uploadTurnstileSiteKey: '',", `uploadTurnstileSiteKey: ${JSON.stringify(uploadTurnstileSiteKey)},`)
+    .replace(/uploadTurnstileSiteKey:\s*'[^']*',/, `uploadTurnstileSiteKey: ${JSON.stringify(uploadTurnstileSiteKey)},`)
     .replace("uploadTurnstileAction: 'ttg_upload_authorize',", `uploadTurnstileAction: ${JSON.stringify(uploadTurnstileAction)},`);
 }
 

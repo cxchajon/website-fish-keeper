@@ -31,7 +31,10 @@ import {
     // deployed the authorizer and configured a dedicated Turnstile site key.
     signedUploadsEnabled: false,
     uploadAuthorizerEndpoint: 'https://ttg-upload-authorizer.fishkeepinglifeco.workers.dev',
-    uploadTurnstileSiteKey: '',
+    // Public key for the dedicated TTG Feature Tank Upload Authorization
+    // Turnstile widget. This is safe to publish; its matching secret stays
+    // exclusively in the upload-authorizer Worker's encrypted secret store.
+    uploadTurnstileSiteKey: '0x4AAAAAAFedsxK57qmT49WA',
     uploadTurnstileAction: 'ttg_upload_authorize',
     stripePublishableKey: 'pk_test_PLACEHOLDER', // Not implemented yet
   };
