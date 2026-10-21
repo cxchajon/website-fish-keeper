@@ -11,14 +11,35 @@
       }
     ]
   },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": ["UploadSession"]
+  "exports": {
+    "UploadSession": {
+      "type": "durable-object",
+      "storage": "sqlite"
     }
-  ]
-  // Deliberately no rate-limit namespace IDs are committed. Before deployment,
-  // add UPLOAD_AUTH_RATE_LIMITER and UPLOAD_SIGN_RATE_LIMITER bindings using
-  // account-created namespace IDs described in README.md. The Worker fails
-  // closed with HTTP 503 until both bindings are present.
+  },
+  "ratelimits": [
+    {
+      "name": "UPLOAD_AUTH_RATE_LIMITER",
+      "namespace_id": "74002",
+      "simple": {
+        "limit": 3,
+        "period": 60
+      }
+    },
+    {
+      "name": "UPLOAD_SIGN_RATE_LIMITER",
+      "namespace_id": "74003",
+      "simple": {
+        "limit": 15,
+        "period": 60
+      }
+    }
+  ],
+  "secrets": {
+    "required": [
+      "CLOUDINARY_API_KEY",
+      "CLOUDINARY_API_SECRET",
+      "TURNSTILE_SECRET_KEY"
+    ]
+  }
 }
