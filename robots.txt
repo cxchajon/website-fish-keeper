@@ -1,4 +1,2 @@
 User-agent: *
-Allow: /
-
-Sitemap: https://thetankguide.com/sitemap.xml
+Disallow: /

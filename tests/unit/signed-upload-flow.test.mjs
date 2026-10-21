@@ -246,13 +246,22 @@ test('fails closed before a network call when the Widget supplies an invalid tim
 test('the dormant website integration preserves the existing unsigned configuration and Formspree endpoint', async () => {
   const source = await readFile(new URL('../../assets/js/feature-your-tank.js', import.meta.url), 'utf8');
   const page = await readFile(new URL('../../submit-your-tank.html', import.meta.url), 'utf8');
+  const stagingConfig = await readFile(new URL('../../assets/js/staging-feature-your-tank-config.js', import.meta.url), 'utf8');
+  const stagingHeaders = await readFile(new URL('../../_headers', import.meta.url), 'utf8');
 
   assert.match(source, /signedUploadsEnabled:\s*false/);
   assert.match(source, /cloudinaryUploadPreset:\s*'feature-your-tank'/);
   assert.match(source, /formspreeEndpoint:\s*'https:\/\/formspree\.io\/f\/xangqlww'/);
   assert.match(source, /confirmationEndpoint:\s*'https:\/\/ttg-confirmation-email\.fishkeepinglifeco\.workers\.dev\/confirm'/);
+  assert.match(source, /submissionsEnabled:\s*true/);
   assert.match(source, /folder:\s*'feature-your-tank'/);
   assert.match(page, /id="uploadSecurityCheck"[^>]*hidden/);
-  assert.match(page, /feature-your-tank\.js\?v=1\.0\.8" type="module"/);
+  assert.match(page, /feature-your-tank\.js\?v=1\.0\.9" type="module"/);
   assert.doesNotMatch(page, /id="uploadTurnstile" class="cf-turnstile"/);
+  assert.match(stagingConfig, /signedUploadsEnabled:\s*true/);
+  assert.match(stagingConfig, /ttg-upload-authorizer-staging\.fishkeepinglifeco\.workers\.dev/);
+  assert.match(stagingConfig, /submissionsEnabled:\s*false/);
+  assert.match(stagingConfig, /formspreeEndpoint:\s*''/);
+  assert.match(stagingConfig, /confirmationEndpoint:\s*''/);
+  assert.match(stagingHeaders, /X-Robots-Tag:\s*noindex, nofollow, noarchive, nosnippet/);
 });

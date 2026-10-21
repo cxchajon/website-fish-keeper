@@ -4,7 +4,9 @@ import { readFile } from 'node:fs/promises';
 const CLOUDINARY_WIDGET_URL = 'https://widget.cloudinary.com/v2.0/global/all.js';
 const TURNSTILE_URL = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
 const AUTHORIZER_ENDPOINT = 'https://ttg-upload-authorizer.example';
+const STAGING_AUTHORIZER_ENDPOINT = 'https://ttg-upload-authorizer-staging.fishkeepinglifeco.workers.dev';
 const FEATURE_SCRIPT = await readFile(new URL('../assets/js/feature-your-tank.js', import.meta.url), 'utf8');
+const STAGING_CONFIG_SCRIPT = await readFile(new URL('../assets/js/staging-feature-your-tank-config.js', import.meta.url), 'utf8');
 
 function configuredFeatureScript({
   signedUploadsEnabled = true,
@@ -52,6 +54,11 @@ async function assertNoUnsignedWidget(page) {
 
 test.describe('Feature Your Tank upload mode', () => {
   test.beforeEach(async ({ page }) => {
+    // The default test fixture exercises production's dormant configuration.
+    // Individual staging tests opt into the real staging-only override below.
+    await page.route(/\/assets\/js\/staging-feature-your-tank-config\.js(?:\?.*)?$/, async (route) => {
+      await route.fulfill({ contentType: 'application/javascript', body: '' });
+    });
     await page.route(CLOUDINARY_WIDGET_URL, async (route) => {
       await route.fulfill({
         contentType: 'application/javascript',
@@ -125,6 +132,34 @@ test.describe('Feature Your Tank upload mode', () => {
     await expect(page.locator('#selectedFiles')).toContainText('1 photo selected');
     await expect(page.locator('#selectedFiles img')).toHaveCount(1);
     expect(authorizerRequests).toEqual([]);
+  });
+
+  test('the staging-only override selects the staging authorizer and never initializes the unsigned widget', async ({ page }) => {
+    await page.route(/\/assets\/js\/staging-feature-your-tank-config\.js(?:\?.*)?$/, async (route) => {
+      await route.fulfill({ contentType: 'application/javascript', body: STAGING_CONFIG_SCRIPT });
+    });
+    await page.route(`${STAGING_AUTHORIZER_ENDPOINT}/authorize`, (route) => route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ok: true,
+        session: {
+          id: 'session-000000000000000000000001',
+          token: 's'.repeat(43),
+          expiresAt: Date.now() + 60_000,
+          maxUploads: 5
+        }
+      })
+    }));
+
+    await page.goto('/submit-your-tank.html');
+    await revealPhotoStep(page);
+    await page.locator('#photoUploadTrigger').click();
+
+    await expect.poll(() => page.evaluate(() => window.__ttgUploadWidgets.length)).toBe(1);
+    const options = await page.evaluate(() => window.__ttgUploadWidgetOptions);
+    expect(options.uploadPreset).toBe('feature-your-tank-signed-v1');
+    expect(await page.evaluate(() => typeof window.__ttgUploadWidgetOptions.prepareUploadParams)).toBe('function');
+    await assertNoUnsignedWidget(page);
   });
 
   const failClosedScenarios = [

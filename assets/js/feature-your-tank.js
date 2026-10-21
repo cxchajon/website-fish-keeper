@@ -21,6 +21,16 @@ import {
 (function() {
   'use strict';
 
+  // A deployment may provide public, non-secret overrides before this module
+  // loads. Production has no override file, so its default behavior remains
+  // exactly as configured below. The isolated staging branch uses this only to
+  // point upload authorization at its own Worker and to disable submissions.
+  const deploymentConfig = (
+    typeof window !== 'undefined' &&
+    window.TTG_FEATURE_TANK_CONFIG &&
+    typeof window.TTG_FEATURE_TANK_CONFIG === 'object'
+  ) ? window.TTG_FEATURE_TANK_CONFIG : {};
+
   // Configuration
   const CONFIG = {
     formspreeEndpoint: 'https://formspree.io/f/xangqlww',
@@ -36,7 +46,11 @@ import {
     // exclusively in the upload-authorizer Worker's encrypted secret store.
     uploadTurnstileSiteKey: '0x4AAAAAAFedsxK57qmT49WA',
     uploadTurnstileAction: 'ttg_upload_authorize',
+    // Submissions stay enabled in production. The staging-only override sets
+    // this false so it cannot contact Formspree or the email Worker.
+    submissionsEnabled: true,
     stripePublishableKey: 'pk_test_PLACEHOLDER', // Not implemented yet
+    ...deploymentConfig,
   };
 
   // State
@@ -1118,6 +1132,15 @@ import {
    * Submit form to Formspree
    */
   async function submitForm() {
+    if (CONFIG.submissionsEnabled !== true) {
+      showError('Staging mode: form submission is disabled. No submission or confirmation email was sent.');
+      if (nextBtn) {
+        nextBtn.disabled = false;
+        nextBtn.textContent = 'Submit & Pay';
+      }
+      return;
+    }
+
     try {
       // Disable submit button
       if (nextBtn) {

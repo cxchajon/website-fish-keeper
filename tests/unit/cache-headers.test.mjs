@@ -79,5 +79,6 @@ test('site-wide security headers are still present', () => {
     'x-xss-protection': '1; mode=block',
     'referrer-policy': 'strict-origin-when-cross-origin',
     'permissions-policy': 'geolocation=(), microphone=(), camera=()',
+    'x-robots-tag': 'noindex, nofollow, noarchive, nosnippet',
   });
 });
