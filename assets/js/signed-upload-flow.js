@@ -24,12 +24,43 @@ export function createRequestId() {
   return `ttg-upload-${base64Url(bytes)}`;
 }
 
+function isTrustedAuthorizerEndpoint(value) {
+  if (typeof value !== 'string') return false;
+  try {
+    const endpoint = new URL(value);
+    return endpoint.protocol === 'https:' &&
+      Boolean(endpoint.hostname) &&
+      !endpoint.username &&
+      !endpoint.password &&
+      !endpoint.search &&
+      !endpoint.hash;
+  } catch {
+    return false;
+  }
+}
+
+function isTurnstileSiteKey(value) {
+  return typeof value === 'string' && /^0x[A-Za-z0-9_-]{20,}$/.test(value);
+}
+
+// The migration choice and its configuration validity are deliberately
+// separate. A true flag selects signed mode even when configuration is bad,
+// so a staging error can never silently re-enable unsigned uploads.
 export function isSignedUploadEnabled(config) {
-  return config?.signedUploadsEnabled === true &&
-    typeof config.uploadAuthorizerEndpoint === 'string' &&
-    config.uploadAuthorizerEndpoint.startsWith('https://') &&
-    typeof config.uploadTurnstileSiteKey === 'string' &&
-    config.uploadTurnstileSiteKey.length > 0;
+  return config?.signedUploadsEnabled === true;
+}
+
+export function isUnsignedUploadEnabled(config) {
+  return config?.signedUploadsEnabled === false;
+}
+
+export function hasValidSignedUploadConfiguration(config) {
+  return isSignedUploadEnabled(config) &&
+    isTrustedAuthorizerEndpoint(config.uploadAuthorizerEndpoint) &&
+    isTurnstileSiteKey(config.uploadTurnstileSiteKey) &&
+    config.uploadTurnstileAction === 'ttg_upload_authorize' &&
+    typeof config.cloudinaryCloudName === 'string' &&
+    /^[a-z0-9_-]{1,64}$/i.test(config.cloudinaryCloudName);
 }
 
 async function readJson(response) {
@@ -114,7 +145,7 @@ async function prepareWithOneSafeRetry(endpoint, body, fetchImpl) {
 }
 
 export async function authorizeUpload({ endpoint, turnstileToken, fetchImpl = fetch }) {
-  if (typeof endpoint !== 'string' || !endpoint.startsWith('https://') || typeof turnstileToken !== 'string' || !turnstileToken) {
+  if (!isTrustedAuthorizerEndpoint(endpoint) || typeof turnstileToken !== 'string' || !turnstileToken) {
     throw new Error('Upload authorization is unavailable.');
   }
   const data = await postJson(`${endpoint}/authorize`, { turnstileToken }, fetchImpl);
@@ -135,7 +166,7 @@ export function createPrepareUploadParamsHandler({
   onError = () => {}
 }) {
   if (
-    typeof endpoint !== 'string' || !endpoint.startsWith('https://') ||
+    !isTrustedAuthorizerEndpoint(endpoint) ||
     !isRecord(session) || typeof cloudName !== 'string' || !cloudName
   ) {
     throw new Error('Secure upload setup is unavailable.');

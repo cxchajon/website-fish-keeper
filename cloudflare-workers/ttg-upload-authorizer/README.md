@@ -28,8 +28,9 @@ It never returns the Cloudinary API secret.
 
 The browser-side helper retries one transient prepare request once with the
 same request ID. It does not retry 4xx responses, and it never invokes the
-Widget callback after a failed authorization. This prevents an unsigned
-fallback while the signed feature is enabled.
+Widget callback after a failed authorization. The unsigned uploader is chosen
+only when `signedUploadsEnabled` is explicitly `false`; a true but incomplete
+signed configuration displays an error and fails closed.
 
 ## Source configuration
 

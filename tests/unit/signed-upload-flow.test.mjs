@@ -5,6 +5,8 @@ import test from 'node:test';
 import {
   authorizeUpload,
   createPrepareUploadParamsHandler,
+  hasValidSignedUploadConfiguration,
+  isUnsignedUploadEnabled,
   isSignedUploadEnabled
 } from '../../assets/js/signed-upload-flow.js';
 
@@ -36,17 +38,39 @@ function signedResponse({ publicId = 'feature-batch-random', timestamp = 1_700_0
   };
 }
 
-test('signed uploads stay disabled unless every staging-only client setting is intentionally enabled', () => {
+test('only an explicit false flag selects unsigned uploads; true selects signed mode even with bad configuration', () => {
   assert.equal(isSignedUploadEnabled({ signedUploadsEnabled: false }), false);
+  assert.equal(isUnsignedUploadEnabled({ signedUploadsEnabled: false }), true);
+  assert.equal(isSignedUploadEnabled({}), false);
+  assert.equal(isUnsignedUploadEnabled({}), false);
   assert.equal(isSignedUploadEnabled({
     signedUploadsEnabled: true,
     uploadAuthorizerEndpoint: ENDPOINT,
     uploadTurnstileSiteKey: ''
+  }), true);
+  assert.equal(hasValidSignedUploadConfiguration({
+    signedUploadsEnabled: true,
+    uploadAuthorizerEndpoint: ENDPOINT,
+    uploadTurnstileSiteKey: ''
+  }), false);
+  assert.equal(hasValidSignedUploadConfiguration({
+    signedUploadsEnabled: true,
+    uploadAuthorizerEndpoint: 'http://ttg-upload-authorizer.example',
+    uploadTurnstileSiteKey: '0x4AAAAA-test-site-key',
+    uploadTurnstileAction: 'ttg_upload_authorize',
+    cloudinaryCloudName: CLOUD_NAME
   }), false);
   assert.equal(isSignedUploadEnabled({
     signedUploadsEnabled: true,
     uploadAuthorizerEndpoint: ENDPOINT,
     uploadTurnstileSiteKey: '0x4AAAAA-test-site-key'
+  }), true);
+  assert.equal(hasValidSignedUploadConfiguration({
+    signedUploadsEnabled: true,
+    uploadAuthorizerEndpoint: ENDPOINT,
+    uploadTurnstileSiteKey: '0x4AAAAA-test-site-key',
+    uploadTurnstileAction: 'ttg_upload_authorize',
+    cloudinaryCloudName: CLOUD_NAME
   }), true);
 });
 
@@ -67,6 +91,40 @@ test('authorization sends only the dedicated Turnstile token and returns a bound
   assert.equal(requests[0].url, `${ENDPOINT}/authorize`);
   assert.deepEqual(requests[0].body, { turnstileToken: 'dedicated-upload-turnstile-token' });
   assert.equal(requests[0].init.credentials, 'omit');
+});
+
+test('authorization fails closed for invalid endpoints and expired or malformed Worker sessions', async () => {
+  let calls = 0;
+  await assert.rejects(authorizeUpload({
+    endpoint: 'http://ttg-upload-authorizer.example',
+    turnstileToken: 'dedicated-upload-turnstile-token',
+    fetchImpl: async () => {
+      calls += 1;
+      return Response.json({ ok: true });
+    }
+  }));
+  assert.equal(calls, 0);
+
+  await assert.rejects(authorizeUpload({
+    endpoint: ENDPOINT,
+    turnstileToken: 'dedicated-upload-turnstile-token',
+    fetchImpl: async () => Response.json({
+      ok: true,
+      session: { ...session(), expiresAt: Date.now() - 1 }
+    })
+  }));
+
+  await assert.rejects(authorizeUpload({
+    endpoint: ENDPOINT,
+    turnstileToken: 'dedicated-upload-turnstile-token',
+    fetchImpl: async () => Response.json({ ok: true })
+  }));
+
+  await assert.rejects(authorizeUpload({
+    endpoint: ENDPOINT,
+    turnstileToken: 'dedicated-upload-turnstile-token',
+    fetchImpl: async () => Response.json({ ok: true, session: { id: 'malformed' } })
+  }));
 });
 
 test('Upload Widget retry of the same request object reuses its opaque request ID', async () => {
@@ -134,6 +192,26 @@ test('does not call the Widget callback after a rejected prepare response', asyn
     cloudName: CLOUD_NAME,
     makeRequestId: () => 'ttg-upload-request-id-000002',
     fetchImpl: async () => Response.json({ ok: false }, { status: 429 }),
+    onError: (error) => errors.push(error)
+  });
+
+  await handler(() => {
+    callbackCalled = true;
+  }, { timestamp: 1_700_000_000 });
+
+  assert.equal(callbackCalled, false);
+  assert.equal(errors.length, 1);
+});
+
+test('does not call the Widget callback after a malformed signing response', async () => {
+  let callbackCalled = false;
+  const errors = [];
+  const handler = createPrepareUploadParamsHandler({
+    endpoint: ENDPOINT,
+    session: session(),
+    cloudName: CLOUD_NAME,
+    makeRequestId: () => 'ttg-upload-request-id-000005',
+    fetchImpl: async () => Response.json({ ok: true, cloudName: CLOUD_NAME, uploadParams: {} }),
     onError: (error) => errors.push(error)
   });
 

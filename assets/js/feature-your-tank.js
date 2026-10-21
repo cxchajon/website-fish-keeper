@@ -1,6 +1,8 @@
 import {
   authorizeUpload,
   createPrepareUploadParamsHandler,
+  hasValidSignedUploadConfiguration,
+  isUnsignedUploadEnabled,
   isSignedUploadEnabled
 } from './signed-upload-flow.js';
 
@@ -140,6 +142,12 @@ import {
       return;
     }
 
+    if (!isUnsignedUploadEnabled(CONFIG)) {
+      cloudinaryWidget = null;
+      showError('Photo upload configuration is unavailable. Please try again later.');
+      return;
+    }
+
     try {
       cloudinaryWidget = window.cloudinary.createUploadWidget({
         cloudName: CONFIG.cloudinaryCloudName,
@@ -183,6 +191,11 @@ import {
   function openCloudinaryWidget() {
     if (isSignedUploadEnabled(CONFIG)) {
       openSignedCloudinaryWidget();
+      return;
+    }
+
+    if (!isUnsignedUploadEnabled(CONFIG)) {
+      showError('Photo upload configuration is unavailable. Please try again later.');
       return;
     }
 
@@ -288,6 +301,12 @@ import {
    * Widget. No unsigned fallback exists while this feature is enabled.
    */
   async function openSignedCloudinaryWidget() {
+    if (!hasValidSignedUploadConfiguration(CONFIG)) {
+      activeUploadSession = null;
+      showError('Secure photo upload is unavailable. Please try again later.');
+      return;
+    }
+
     if (typeof window.cloudinary === 'undefined') {
       showError('Photo upload widget not initialized. Please refresh the page.');
       return;
