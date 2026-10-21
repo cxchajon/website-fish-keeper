@@ -6,16 +6,6 @@
  * The production entry point supplies the actual DurableObject base class.
  */
 
-const ALLOWED_ORIGINS = new Set([
-  'https://thetankguide.com',
-  'https://www.thetankguide.com'
-]);
-
-const ALLOWED_HOSTNAMES = new Set([
-  'thetankguide.com',
-  'www.thetankguide.com'
-]);
-
 export const CLOUDINARY_CLOUD_NAME = 'fishkeepinglifeco';
 export const CLOUDINARY_UPLOAD_PRESET = 'feature-your-tank-signed-v1';
 export const TURNSTILE_ACTION = 'ttg_upload_authorize';
@@ -35,6 +25,56 @@ function isRecord(value) {
 
 function hasOnlyKeys(value, allowedKeys) {
   return Object.keys(value).every((key) => allowedKeys.has(key));
+}
+
+function configuredOrigins(value) {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const origins = new Set();
+  for (const raw of value.split(',').map((entry) => entry.trim())) {
+    if (!raw) return null;
+    try {
+      const origin = new URL(raw);
+      if (
+        origin.protocol !== 'https:' ||
+        origin.username ||
+        origin.password ||
+        origin.pathname !== '/' ||
+        origin.search ||
+        origin.hash ||
+        origin.origin !== raw
+      ) return null;
+      origins.add(origin.origin);
+    } catch {
+      return null;
+    }
+  }
+  return origins.size ? origins : null;
+}
+
+function configuredHostnames(value) {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const hostnames = new Set();
+  for (const raw of value.split(',').map((entry) => entry.trim().toLowerCase())) {
+    if (!/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(raw)) {
+      return null;
+    }
+    hostnames.add(raw);
+  }
+  return hostnames.size ? hostnames : null;
+}
+
+// Origins and Siteverify hostnames are ordinary, environment-specific Worker
+// bindings. Requiring both binds a staging deployment to its own hostname and
+// makes a missing or malformed policy fail closed instead of inheriting the
+// production allow-list.
+function accessPolicy(env) {
+  const origins = configuredOrigins(env.ALLOWED_ORIGINS);
+  const hostnames = configuredHostnames(env.ALLOWED_HOSTNAMES);
+  if (!origins || !hostnames) return null;
+  for (const origin of origins) {
+    if (!hostnames.has(new URL(origin).hostname)) return null;
+  }
+  return { origins, hostnames };
 }
 
 function corsHeaders(origin) {
@@ -156,7 +196,7 @@ export async function cloudinarySignature(params, apiSecret) {
   return digestHex('SHA-1', `${canonical}${apiSecret}`);
 }
 
-async function verifyTurnstile(token, request, env, fetchImpl) {
+async function verifyTurnstile(token, request, env, policy, fetchImpl) {
   const form = new URLSearchParams({
     secret: env.TURNSTILE_SECRET_KEY,
     response: token,
@@ -178,7 +218,8 @@ async function verifyTurnstile(token, request, env, fetchImpl) {
   return Boolean(
     verification &&
     verification.success === true &&
-    ALLOWED_HOSTNAMES.has(verification.hostname) &&
+    typeof verification.hostname === 'string' &&
+    policy.hostnames.has(verification.hostname.toLowerCase()) &&
     verification.action === TURNSTILE_ACTION
   );
 }
@@ -247,7 +288,7 @@ function uploadParams(publicId, batchId, timestamp) {
   };
 }
 
-async function authorize(request, env, origin, options) {
+async function authorize(request, env, origin, policy, options) {
   if (!requiredBindingsPresent(env)) return genericError(503, origin);
 
   const rateLimit = await enforceRateLimit(env.UPLOAD_AUTH_RATE_LIMITER, `upload-auth:${getClientIp(request)}`);
@@ -259,7 +300,7 @@ async function authorize(request, env, origin, options) {
   const token = typeof body.turnstileToken === 'string' ? body.turnstileToken.trim() : '';
   if (!token || token.length > 2_048) return genericError(400, origin);
 
-  const verified = await verifyTurnstile(token, request, env, options.fetchImpl);
+  const verified = await verifyTurnstile(token, request, env, policy, options.fetchImpl);
   if (!verified) return genericError(400, origin);
 
   const sessionToken = randomToken();
@@ -345,7 +386,9 @@ async function prepareSignature(request, env, origin, options) {
 
 export async function handleRequest(request, env, options = {}) {
   const origin = request.headers.get('Origin') || '';
-  if (!ALLOWED_ORIGINS.has(origin)) return genericError(403);
+  const policy = accessPolicy(env);
+  if (!policy) return genericError(503);
+  if (!policy.origins.has(origin)) return genericError(403);
 
   const url = new URL(request.url);
   const knownPath = url.pathname === '/authorize' || url.pathname === '/prepare';
@@ -364,7 +407,7 @@ export async function handleRequest(request, env, options = {}) {
   };
 
   return url.pathname === '/authorize'
-    ? authorize(request, env, origin, runtime)
+    ? authorize(request, env, origin, policy, runtime)
     : prepareSignature(request, env, origin, runtime);
 }
 

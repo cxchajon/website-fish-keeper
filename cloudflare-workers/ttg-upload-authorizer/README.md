@@ -47,15 +47,33 @@ resources.
 | `CLOUDINARY_API_SECRET` | Required encrypted Worker secret | Used only to make server-side signatures. |
 | `TURNSTILE_SECRET_KEY` | Required encrypted Worker secret | Used only for the dedicated upload Turnstile verification. |
 
-The two rate-limit namespace IDs are deliberately distinct, so their counters
-cannot be shared accidentally. Before the first deployment, verify in the
-Cloudflare dashboard that IDs `74002` and `74003` do not conflict with another
-Worker in this account. Do not substitute production secrets into this
+The two production rate-limit namespace IDs are deliberately distinct, so their
+counters cannot be shared accidentally. Cloudflare does not display Rate Limit
+bindings in its dashboard; before deployment, inspect the configuration of
+every existing Worker in the account to confirm that `74002` and `74003` are
+unused. Do not substitute production secrets into this
 repository, source files, browser configuration, logs, or chat.
+
+## Staging isolation
+
+`wrangler deploy --env staging` creates the separate
+`ttg-upload-authorizer-staging` Worker and its own SQLite-backed Durable
+Object namespace. It has separate rate-limit namespaces (`74004` and `74005`)
+and accepts only `https://staging.thetankguide.com`; Siteverify must report the
+matching `staging.thetankguide.com` hostname. It therefore cannot authorize a
+token minted on either production hostname.
+
+Before any staging deployment, provision the `staging.thetankguide.com`
+hostname and a staging-only website build. The dedicated root-domain Turnstile
+widget covers this subdomain, but the Worker still enforces the staging host
+server-side. Define the three required encrypted secrets separately for the
+staging environment. Do not reuse its endpoint or its nonsecret configuration
+in production.
 
 ## Required dashboard setup before controlled staging
 
-No step below has been performed by this pull request.
+The source setup below is intentionally reviewable. Service configuration and
+deployment still require an authenticated owner action.
 
 1. Create a new signed-only Cloudinary preset named
    `feature-your-tank-signed-v1`; leave the current unsigned
@@ -71,15 +89,15 @@ No step below has been performed by this pull request.
      prefix** enabled;
    - no legacy `folder`, separate `public_id_prefix`, video/raw access,
      add-ons, eager transformations, or auto-tagging.
-3. Create a dedicated Turnstile widget/site key for the upload authorizer and
-   restrict it to `thetankguide.com` and `www.thetankguide.com`. It must render
-   with action `ttg_upload_authorize`.
-4. Deploy the Worker only after setting the three values above as encrypted
-   Worker secrets. Confirm that the configured Worker URL is the one used by
-   staging.
-5. On a staging-only website build, set `signedUploadsEnabled: true` and add
-   the dedicated Turnstile site key. Keep those two changes out of production
-   until a controlled end-to-end test passes.
+3. Create the dedicated Turnstile widget/site key for the upload authorizer on
+   `thetankguide.com`. It must render with action `ttg_upload_authorize`; a
+   root hostname also covers `www` and staging subdomains.
+4. Deploy only the `staging` Worker environment after setting the three values
+   above as encrypted secrets *for that environment*. Confirm the staging
+   Worker URL is the one used by the staging build.
+5. On a staging-only website build, set `signedUploadsEnabled: true`, add the
+   dedicated Turnstile site key, and use the staging Worker URL. Keep all three
+   changes out of production until controlled end-to-end tests pass.
 
 ## Rollback
 

@@ -3,6 +3,10 @@
   "name": "ttg-upload-authorizer",
   "main": "worker.js",
   "compatibility_date": "2026-10-19",
+  "vars": {
+    "ALLOWED_ORIGINS": "https://thetankguide.com,https://www.thetankguide.com",
+    "ALLOWED_HOSTNAMES": "thetankguide.com,www.thetankguide.com"
+  },
   "durable_objects": {
     "bindings": [
       {
@@ -41,5 +45,47 @@
       "CLOUDINARY_API_SECRET",
       "TURNSTILE_SECRET_KEY"
     ]
+  },
+  "env": {
+    "staging": {
+      "workers_dev": true,
+      "vars": {
+        "ALLOWED_ORIGINS": "https://staging.thetankguide.com",
+        "ALLOWED_HOSTNAMES": "staging.thetankguide.com"
+      },
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "UPLOAD_SESSIONS",
+            "class_name": "UploadSession"
+          }
+        ]
+      },
+      "ratelimits": [
+        {
+          "name": "UPLOAD_AUTH_RATE_LIMITER",
+          "namespace_id": "74004",
+          "simple": {
+            "limit": 3,
+            "period": 60
+          }
+        },
+        {
+          "name": "UPLOAD_SIGN_RATE_LIMITER",
+          "namespace_id": "74005",
+          "simple": {
+            "limit": 15,
+            "period": 60
+          }
+        }
+      ],
+      "secrets": {
+        "required": [
+          "CLOUDINARY_API_KEY",
+          "CLOUDINARY_API_SECRET",
+          "TURNSTILE_SECRET_KEY"
+        ]
+      }
+    }
   }
 }

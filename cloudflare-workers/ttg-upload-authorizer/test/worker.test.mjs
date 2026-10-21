@@ -10,6 +10,8 @@ import {
 } from '../worker-core.js';
 
 const ORIGIN = 'https://thetankguide.com';
+const PRODUCTION_ORIGINS = 'https://thetankguide.com,https://www.thetankguide.com';
+const PRODUCTION_HOSTNAMES = 'thetankguide.com,www.thetankguide.com';
 
 class FakeRateLimiter {
   constructor(limit = 100) {
@@ -105,14 +107,14 @@ class FakeSessionsNamespace {
   }
 }
 
-function turnstileFetchFactory() {
+function turnstileFetchFactory({ hostname = 'thetankguide.com' } = {}) {
   const usedTokens = new Set();
   return async (_url, init) => {
     const fields = new URLSearchParams(init.body);
     const token = fields.get('response');
     const result = {
       success: true,
-      hostname: 'thetankguide.com',
+      hostname,
       action: 'ttg_upload_authorize'
     };
 
@@ -125,13 +127,21 @@ function turnstileFetchFactory() {
   };
 }
 
-function makeEnv({ authLimit = 100, signLimit = 100, secrets = true } = {}) {
+function makeEnv({
+  authLimit = 100,
+  signLimit = 100,
+  secrets = true,
+  origins = PRODUCTION_ORIGINS,
+  hostnames = PRODUCTION_HOSTNAMES
+} = {}) {
   const auth = new FakeRateLimiter(authLimit);
   const sign = new FakeRateLimiter(signLimit);
   return {
     CLOUDINARY_API_KEY: secrets ? 'test-api-key' : '',
     CLOUDINARY_API_SECRET: secrets ? 'test-api-secret' : '',
     TURNSTILE_SECRET_KEY: secrets ? 'test-turnstile-secret' : '',
+    ALLOWED_ORIGINS: origins,
+    ALLOWED_HOSTNAMES: hostnames,
     UPLOAD_SESSIONS: new FakeSessionsNamespace(),
     UPLOAD_AUTH_RATE_LIMITER: auth,
     UPLOAD_SIGN_RATE_LIMITER: sign,
@@ -221,6 +231,35 @@ test('rejects untrusted origins and only grants CORS to production origins', asy
   const preflight = await handleRequest(request('/authorize', undefined, { method: 'OPTIONS' }), makeEnv(), runtime());
   assert.equal(preflight.status, 204);
   assert.equal(preflight.headers.get('access-control-allow-origin'), ORIGIN);
+});
+
+test('uses an isolated staging hostname policy and never falls back to production', async () => {
+  const origin = 'https://staging.thetankguide.com';
+  const env = makeEnv({ origins: origin, hostnames: 'staging.thetankguide.com' });
+  const response = await handleRequest(
+    request('/authorize', { turnstileToken: 'staging-token' }, { origin }),
+    env,
+    { fetchImpl: turnstileFetchFactory({ hostname: 'staging.thetankguide.com' }), nowMs: () => Date.now() }
+  );
+  assert.equal(response.status, 201);
+
+  const productionTokenAtStaging = await handleRequest(
+    request('/authorize', { turnstileToken: 'production-token-at-staging' }, { origin }),
+    env,
+    runtime()
+  );
+  assert.equal(productionTokenAtStaging.status, 400);
+
+  const productionOrigin = await handleRequest(
+    request('/authorize', { turnstileToken: 'production-token' }),
+    env,
+    runtime()
+  );
+  assert.equal(productionOrigin.status, 403);
+
+  delete env.ALLOWED_HOSTNAMES;
+  const missingPolicy = await handleRequest(request('/authorize', { turnstileToken: 'missing-policy' }), env, runtime());
+  assert.equal(missingPolicy.status, 503);
 });
 
 test('fails closed when secrets or rate-limit bindings are missing', async () => {
@@ -445,12 +484,29 @@ test('declares unique rate-limit namespaces and an SQLite-backed Durable Object 
   const configPath = new URL('../wrangler.jsonc', import.meta.url);
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const rateLimits = new Map(config.ratelimits.map((binding) => [binding.name, binding]));
+  const stagingRateLimits = new Map(config.env.staging.ratelimits.map((binding) => [binding.name, binding]));
 
   assert.deepEqual(rateLimits.get('UPLOAD_AUTH_RATE_LIMITER').simple, { limit: 3, period: 60 });
   assert.deepEqual(rateLimits.get('UPLOAD_SIGN_RATE_LIMITER').simple, { limit: 15, period: 60 });
   assert.notEqual(
     rateLimits.get('UPLOAD_AUTH_RATE_LIMITER').namespace_id,
     rateLimits.get('UPLOAD_SIGN_RATE_LIMITER').namespace_id
+  );
+  assert.equal(config.vars.ALLOWED_ORIGINS, PRODUCTION_ORIGINS);
+  assert.equal(config.vars.ALLOWED_HOSTNAMES, PRODUCTION_HOSTNAMES);
+  assert.equal(config.env.staging.vars.ALLOWED_ORIGINS, 'https://staging.thetankguide.com');
+  assert.equal(config.env.staging.vars.ALLOWED_HOSTNAMES, 'staging.thetankguide.com');
+  assert.deepEqual(config.env.staging.durable_objects.bindings, [{
+    name: 'UPLOAD_SESSIONS',
+    class_name: 'UploadSession'
+  }]);
+  assert.notEqual(
+    stagingRateLimits.get('UPLOAD_AUTH_RATE_LIMITER').namespace_id,
+    stagingRateLimits.get('UPLOAD_SIGN_RATE_LIMITER').namespace_id
+  );
+  assert.notEqual(
+    stagingRateLimits.get('UPLOAD_AUTH_RATE_LIMITER').namespace_id,
+    rateLimits.get('UPLOAD_AUTH_RATE_LIMITER').namespace_id
   );
   assert.deepEqual(config.exports.UploadSession, { type: 'durable-object', storage: 'sqlite' });
 
