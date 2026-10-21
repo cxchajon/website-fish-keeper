@@ -63,8 +63,10 @@ No step below has been performed by this pull request.
 2. In Dynamic Folders, configure the signed preset with:
    - allowed formats `jpg,jpeg,png,webp`;
    - incoming transformation `c_limit,w_4000,h_4000/fl_force_strip`;
-   - signed uploads, overwrite disabled, original filename disabled, and
-     unique filename enabled;
+   - signed uploads, overwrite disabled, original filename disabled, and a
+     random public-ID policy. `unique_filename` is irrelevant when
+     `use_filename` is disabled; the Worker supplies a separate
+     cryptographically random public ID for every authorized upload;
    - `asset_folder` `feature-your-tank` with **Use asset folder as public ID
      prefix** enabled;
    - no legacy `folder`, separate `public_id_prefix`, video/raw access,
