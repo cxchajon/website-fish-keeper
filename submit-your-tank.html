@@ -897,6 +897,10 @@
               <div class="ft-field">
                 <label for="photoUpload" class="ft-label">Upload Photos (3 required)</label>
                 <button type="button" id="photoUploadTrigger" class="btn-primary" aria-controls="photoUpload">Upload Photos</button>
+                <div id="uploadSecurityCheck" class="ft-field" hidden aria-live="polite">
+                  <p class="ft-help">Complete the upload security check to open the photo uploader.</p>
+                  <div id="uploadTurnstile"></div>
+                </div>
                 <input type="file" id="photoUpload" name="photos" accept="image/*" multiple aria-describedby="photoHelper" />
                 <small class="ft-help" id="photoHelper">Free tier includes 3 photo slots (hero + 2). Check below to add two more. <strong>Tap multiple photos to select them all.</strong></small>
                 <div id="selectedFiles" class="upload-preview" aria-live="polite"></div>
@@ -1021,7 +1025,7 @@
         <!-- Cloudinary Upload Widget -->
         <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-        <script src="/assets/js/feature-your-tank.js?v=1.0.7" defer></script>
+        <script src="/assets/js/feature-your-tank.js?v=1.0.8" type="module"></script>
 
 
       </section>

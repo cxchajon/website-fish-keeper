@@ -1,77 +1,126 @@
 # `ttg-upload-authorizer`
 
-This Worker is Phase 1 of The Tank Guide's signed Cloudinary upload design. It is not routed or used by the production website in this pull request.
+This Worker is the server-side authorization boundary for the future signed
+Cloudinary upload flow. It is not deployed or routed by this change, and the
+website feature flag remains disabled by default.
 
-## What it does
+Images continue from the visitor's browser directly to Cloudinary. The Worker
+does not receive image bytes, original filenames, form data, or email details.
+It never returns the Cloudinary API secret.
 
-1. `POST /authorize` validates one upload-specific Turnstile token.
-2. It checks `success`, the exact production hostname, and the `ttg_upload_authorize` action.
-3. On success, it creates a private Durable Object session which expires after ten minutes and can authorize at most five assets.
-4. `POST /prepare` consumes one session slot and returns one callback-ready Cloudinary Upload Widget `prepareUploadParams` object containing server-owned parameters, the Widget's timestamp, and a SHA-1 upload signature.
-5. The browser then uploads bytes directly to Cloudinary. No image data is sent through this Worker.
+## Request flow
 
-The session capability is an opaque ID plus a random token. It is intended to live only in browser memory. The Cloudinary signature is valid under Cloudinary's one-hour timestamp rule, but its fixed random public ID and `overwrite=false` mean replay cannot create additional assets with new IDs.
+1. The opt-in browser code renders a dedicated `ttg_upload_authorize`
+   Turnstile widget. It does not reuse the existing Formspree or confirmation
+   email Turnstile token.
+2. `POST /authorize` validates Turnstile `success`, the exact production
+   hostname, and the exact action. It creates one private ten-minute session
+   with at most five upload claims.
+3. The Upload Widget invokes `prepareUploadParams` for each file. The browser
+   sends only its session capability, the Widget-provided timestamp,
+   `source: "uw"`, and an opaque request ID to `POST /prepare`.
+4. The Durable Object maps the request ID to a server-generated random public
+   ID. The first claim consumes one slot; a retry with the same request ID gets
+   the same public ID without consuming another slot.
+5. The Worker signs the exact Cloudinary parameters that will be uploaded:
+   `context`, `overwrite=false`, server-generated `public_id`, `source=uw`,
+   fixed tags, the Widget timestamp, and the fixed signed preset name.
 
-## Deployment bindings
+The browser-side helper retries one transient prepare request once with the
+same request ID. It does not retry 4xx responses, and it never invokes the
+Widget callback after a failed authorization. The unsigned uploader is chosen
+only when `signedUploadsEnabled` is explicitly `false`; a true but incomplete
+signed configuration displays an error and fails closed.
 
-Create these bindings before deploying. Do not commit values to GitHub.
+## Source configuration
 
-| Binding | Type | Notes |
+`wrangler.jsonc` now declares the following resources. Running `wrangler deploy
+--dry-run` validates them locally but does not create or change Cloudflare
+resources.
+
+| Binding | Source configuration | Purpose |
 | --- | --- | --- |
-| `CLOUDINARY_API_KEY` | Worker secret | Returned only to the future Upload Widget; Cloudinary treats API keys as public identifiers, but keeping it out of repository configuration avoids accidental copying. |
-| `CLOUDINARY_API_SECRET` | Worker secret | Required only by this Worker to generate Cloudinary signatures. |
-| `TURNSTILE_SECRET_KEY` | Worker secret | The secret paired with the upload-specific Turnstile widget. |
-| `UPLOAD_SESSIONS` | SQLite-backed Durable Object namespace | Bound to `UploadSession`; migration `v1` creates it. |
-| `UPLOAD_AUTH_RATE_LIMITER` | Worker Rate Limiting binding | Configure 3 requests per 60 seconds per IP key. |
-| `UPLOAD_SIGN_RATE_LIMITER` | Worker Rate Limiting binding | Configure 15 requests per 60 seconds per IP key. |
+| `UPLOAD_SESSIONS` | `UploadSession` declarative export with `storage: "sqlite"` | Private session and idempotency claim store. |
+| `UPLOAD_AUTH_RATE_LIMITER` | Namespace `74002`, 3 requests / 60 seconds | Limits Turnstile authorization attempts by the Worker’s IP key. |
+| `UPLOAD_SIGN_RATE_LIMITER` | Namespace `74003`, 15 requests / 60 seconds | Limits signature preparation requests by the Worker’s IP key. |
+| `CLOUDINARY_API_KEY` | Required encrypted Worker secret | Returned only as the Cloudinary Upload Widget API key. |
+| `CLOUDINARY_API_SECRET` | Required encrypted Worker secret | Used only to make server-side signatures. |
+| `TURNSTILE_SECRET_KEY` | Required encrypted Worker secret | Used only for the dedicated upload Turnstile verification. |
 
-The two rate-limit namespace IDs are account-specific and intentionally absent from `wrangler.jsonc`. The code treats a missing binding as a safe `503`, not an unprotected upload route.
+The two production rate-limit namespace IDs are deliberately distinct, so their
+counters cannot be shared accidentally. Cloudflare does not display Rate Limit
+bindings in its dashboard; before deployment, inspect the configuration of
+every existing Worker in the account to confirm that `74002` and `74003` are
+unused. Do not substitute production secrets into this
+repository, source files, browser configuration, logs, or chat.
 
-## Required Cloudinary dashboard work before activation
+## Staging isolation
 
-Create a new signed-only preset named `feature-your-tank-signed-v1`. Do not alter the working `feature-your-tank` preset during this phase. Configure the new preset to preserve the current protections:
+`wrangler deploy --env staging` creates the separate
+`ttg-upload-authorizer-staging` Worker and its own SQLite-backed Durable
+Object namespace. It has separate rate-limit namespaces (`74004` and `74005`)
+and accepts only `https://staging.thetankguide.com`; Siteverify must report the
+matching `staging.thetankguide.com` hostname. It therefore cannot authorize a
+token minted on either production hostname.
 
-- Allowed formats: `jpg,jpeg,png,webp`
-- Incoming transformation: `c_limit,w_4000,h_4000/fl_force_strip`
-- Signed upload mode
-- `overwrite` disabled
-- Original filename use disabled and unique filenames enabled
-- No video, raw uploads, add-ons, eager transformations, or auto-tagging
-- Dynamic Folders destination: `asset_folder` = `feature-your-tank`
-- Enable **Use asset folder as public ID prefix**. Leave the legacy `folder` field empty and do not set a separate `public_id_prefix`.
+Before any staging deployment, provision the `staging.thetankguide.com`
+hostname and a staging-only website build. The dedicated root-domain Turnstile
+widget covers this subdomain, but the Worker still enforces the staging host
+server-side. Define the three required encrypted secrets separately for the
+staging environment. Do not reuse its endpoint or its nonsecret configuration
+in production.
 
-The connected Cloudinary product environment uses Dynamic Folders: existing Feature Your Tank assets have `asset_folder: feature-your-tank` and public IDs beginning `feature-your-tank/`. In this mode, `folder` is legacy compatibility behavior and must not be added to new code. The new signed preset is the single owner of the matching storage-folder and public-ID-prefix behavior: `asset_folder` chooses the Console location, and **Use asset folder as public ID prefix** prepends the same value to the server-generated public ID. The Worker therefore sends a pathless random `public_id` and signs the fixed preset name; a browser cannot select another preset or override its placement without invalidating the signature.
+## Required dashboard setup before controlled staging
 
-Do not return `assetFolder`, `publicIdPrefix`, or `useAssetFolderAsPublicIdPrefix` from `prepareUploadParams`. Cloudinary's documented callback contract does not support those values. The Worker returns only callback-supported fields, including `apiKey`, `signature`, and `uploadSignatureTimestamp`.
+The source setup below is intentionally reviewable. Service configuration and
+deployment still require an authenticated owner action.
 
-Cloudinary applies directly supplied signed parameters ahead of most preset values. The Worker accepts no browser-supplied Cloudinary upload fields and signs every direct upload parameter it returns; the signed preset owns the remaining fixed restrictions, including the Dynamic Folder destination.
+1. Create a new signed-only Cloudinary preset named
+   `feature-your-tank-signed-v1`; leave the current unsigned
+   `feature-your-tank` preset unchanged.
+2. In Dynamic Folders, configure the signed preset with:
+   - allowed formats `jpg,jpeg,png,webp`;
+   - incoming transformation `c_limit,w_4000,h_4000/fl_force_strip`;
+   - signed uploads, overwrite disabled, original filename disabled, and a
+     random public-ID policy. `unique_filename` is irrelevant when
+     `use_filename` is disabled; the Worker supplies a separate
+     cryptographically random public ID for every authorized upload;
+   - `asset_folder` `feature-your-tank` with **Use asset folder as public ID
+     prefix** enabled;
+   - no legacy `folder`, separate `public_id_prefix`, video/raw access,
+     add-ons, eager transformations, or auto-tagging.
+3. Create the dedicated Turnstile widget/site key for the upload authorizer on
+   `thetankguide.com`. It must render with action `ttg_upload_authorize`; a
+   root hostname also covers `www` and staging subdomains.
+4. Deploy only the `staging` Worker environment after setting the three values
+   above as encrypted secrets *for that environment*. Confirm the staging
+   Worker URL is the one used by the staging build.
+5. On a staging-only website build, set `signedUploadsEnabled: true`, add the
+   dedicated Turnstile site key, and use the staging Worker URL. Keep all three
+   changes out of production until controlled end-to-end tests pass.
 
-## Future website integration (not included here)
+## Rollback
 
-The upload-step widget will:
+The committed website flag is `false`, so this pull request cannot switch
+production to signed uploads by itself. If a later staged activation fails,
+deploy a website build with `signedUploadsEnabled: false`. That restores the
+existing unsigned code path without changing presets, Cloudflare secrets,
+Durable Object data, historical image URLs, Formspree, or the confirmation
+email Worker. Do not disable the unsigned preset during the observation window.
 
-1. obtain one `ttg_upload_authorize` Turnstile token;
-2. call `/authorize` once;
-3. keep the session ID and token only in memory;
-4. configure the Widget with the fixed `cloudName: 'fishkeepinglifeco'` and disable advanced options that expose preset, public-ID, or tags controls;
-5. call `/prepare` from the official Upload Widget `prepareUploadParams` callback once per file, passing the Widget-provided `timestamp` and the fixed `source: 'uw'` to the Worker;
-6. pass `response.uploadParams` to the Widget callback unchanged. It already contains `apiKey`, `signature`, `uploadPreset`, and the matching `uploadSignatureTimestamp`.
+## Tests
 
-The Widget's `prepareUploadParams` callback must not add, remove, or override any Cloudinary upload parameter. Cloudinary validates the signature against the final upload request. The Worker signs `context`, `overwrite=false`, its random `public_id`, `source=uw`, `tags`, the Widget's timestamp, and the signed preset. `api_key`, `cloud_name`, `resource_type`, and the file itself are required transport values but are not part of Cloudinary's signature string.
+From this directory:
 
-The current Formspree token and post-Formspree fresh confirmation-email token remain independent. Upload authorization must not reset or consume either one.
+```text
+npm install
+npm run test
+npm run check:config
+```
 
-## Migration, observation, and rollback
-
-1. Deploy this Worker with no public route, then verify it through a controlled Worker URL using staging Turnstile credentials.
-2. Create and verify the signed Cloudinary preset separately.
-3. Add the website integration behind a reversible feature flag in a later pull request.
-4. Perform one authorized end-to-end test, including metadata stripping verification on actual stored bytes.
-5. Observe authorization failures, Cloudinary usage, pending assets, Formspree results, and confirmation emails for seven days.
-6. Keep the current unsigned preset available during the observation window.
-7. Roll back by disabling the new client feature flag; do not modify existing assets or URLs.
-8. Only after the observation window and owner approval, disable the old unsigned preset. Do not re-enable an unsigned preset as an automatic rollback action.
-
-## Test command
-
-Run `node --test cloudflare-workers/ttg-upload-authorizer/test/*.test.mjs` from the repository root. Tests use only mocked Turnstile, Durable Object, rate-limit, and time resources; they make no Cloudinary, email, or production calls.
+`test:unit` uses isolated mocks for Turnstile, rate limits, and the Worker
+boundary. `test:runtime` uses Cloudflare’s Vitest plugin and local `workerd`
+with the actual SQLite-backed Durable Object class. The runtime tests exercise
+the Durable Object inheritance contract, SQLite persistence, retry reuse,
+concurrent five-slot enforcement, and expiry. Neither suite sends network
+requests to Cloudinary, Turnstile, Formspree, Resend, or production.

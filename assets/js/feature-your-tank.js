@@ -1,3 +1,11 @@
+import {
+  authorizeUpload,
+  createPrepareUploadParamsHandler,
+  hasValidSignedUploadConfiguration,
+  isUnsignedUploadEnabled,
+  isSignedUploadEnabled
+} from './signed-upload-flow.js';
+
 /**
  * Feature Your Tank - Multi-step submission wizard
  * Version: 1.0.3
@@ -19,6 +27,15 @@
     confirmationEndpoint: 'https://ttg-confirmation-email.fishkeepinglifeco.workers.dev/confirm',
     cloudinaryCloudName: 'fishkeepinglifeco',
     cloudinaryUploadPreset: 'feature-your-tank',
+    // Production authorizes uploads through the dedicated Worker. If this
+    // configuration is unavailable or invalid, the signed path fails closed.
+    signedUploadsEnabled: true,
+    uploadAuthorizerEndpoint: 'https://ttg-upload-authorizer.fishkeepinglifeco.workers.dev',
+    // Public key for the dedicated TTG Feature Tank Upload Authorization
+    // Turnstile widget. This is safe to publish; its matching secret stays
+    // exclusively in the upload-authorizer Worker's encrypted secret store.
+    uploadTurnstileSiteKey: '0x4AAAAAAFgIpX6-3TZ_PvKh',
+    uploadTurnstileAction: 'ttg_upload_authorize',
     stripePublishableKey: 'pk_test_PLACEHOLDER', // Not implemented yet
   };
 
@@ -27,6 +44,8 @@
   const totalSteps = 6;
   let uploadedPhotos = [];
   let cloudinaryWidget = null;
+  let activeUploadSession = null;
+  let uploadTurnstileWidgetId = null;
 
   // DOM Elements
   const form = document.getElementById('featureForm');
@@ -41,6 +60,8 @@
   const duplicateWarning = document.getElementById('duplicateWarning');
   const duplicateFlag = document.getElementById('duplicateFlag');
   const creditSummary = document.getElementById('creditSummary');
+  const uploadSecurityCheck = document.getElementById('uploadSecurityCheck');
+  const uploadTurnstile = document.getElementById('uploadTurnstile');
 
   /**
    * Initialize the form wizard
@@ -112,13 +133,26 @@
    */
   function initCloudinaryWidget() {
     // Check if Cloudinary is available
-    if (typeof cloudinary === 'undefined') {
+    if (typeof window.cloudinary === 'undefined') {
       console.error('Cloudinary widget not loaded. Please ensure the Cloudinary script is included.');
       return;
     }
 
+    if (isSignedUploadEnabled(CONFIG)) {
+      // The signed Widget is created only after an upload-specific Turnstile
+      // token has produced a short-lived server session.
+      cloudinaryWidget = null;
+      return;
+    }
+
+    if (!isUnsignedUploadEnabled(CONFIG)) {
+      cloudinaryWidget = null;
+      showError('Photo upload configuration is unavailable. Please try again later.');
+      return;
+    }
+
     try {
-      cloudinaryWidget = cloudinary.createUploadWidget({
+      cloudinaryWidget = window.cloudinary.createUploadWidget({
         cloudName: CONFIG.cloudinaryCloudName,
         uploadPreset: CONFIG.cloudinaryUploadPreset,
         sources: ['local', 'camera'],
@@ -158,10 +192,149 @@
    * Open Cloudinary widget
    */
   function openCloudinaryWidget() {
+    if (isSignedUploadEnabled(CONFIG)) {
+      openSignedCloudinaryWidget();
+      return;
+    }
+
+    if (!isUnsignedUploadEnabled(CONFIG)) {
+      showError('Photo upload configuration is unavailable. Please try again later.');
+      return;
+    }
+
     if (cloudinaryWidget) {
       cloudinaryWidget.open();
     } else {
       showError('Photo upload widget not initialized. Please refresh the page.');
+    }
+  }
+
+  /**
+   * Obtain a dedicated upload authorization token. This is intentionally
+   * separate from the implicit Formspree/confirmation Turnstile widget.
+   */
+  function getUploadTurnstileToken() {
+    if (!uploadTurnstile || !uploadSecurityCheck || !window.turnstile || typeof window.turnstile.render !== 'function') {
+      return Promise.reject(new Error('Upload security check is unavailable.'));
+    }
+
+    uploadSecurityCheck.hidden = false;
+    uploadTurnstile.replaceChildren();
+    uploadTurnstileWidgetId = null;
+
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      let timeout;
+      const finish = (result) => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timeout);
+        if (uploadTurnstileWidgetId !== null && typeof window.turnstile.remove === 'function') {
+          window.turnstile.remove(uploadTurnstileWidgetId);
+        }
+        uploadTurnstileWidgetId = null;
+        uploadTurnstile.replaceChildren();
+        if (result instanceof Error) reject(result);
+        else resolve(result);
+      };
+      timeout = window.setTimeout(() => finish(new Error('Upload security check timed out.')), 30_000);
+
+      try {
+        uploadTurnstileWidgetId = window.turnstile.render(uploadTurnstile, {
+          sitekey: CONFIG.uploadTurnstileSiteKey,
+          action: CONFIG.uploadTurnstileAction,
+          theme: 'dark',
+          callback: (token) => finish(token),
+          'error-callback': () => finish(new Error('Upload security check failed.')),
+          'expired-callback': () => finish(new Error('Upload security check expired.'))
+        });
+      } catch (error) {
+        finish(error instanceof Error ? error : new Error('Upload security check failed.'));
+      }
+    });
+  }
+
+  function setUploadButtonBusy(busy) {
+    if (!photoUploadTrigger) return;
+    photoUploadTrigger.disabled = busy;
+    photoUploadTrigger.setAttribute('aria-busy', String(busy));
+  }
+
+  function createSignedCloudinaryWidget(session) {
+    return window.cloudinary.createUploadWidget({
+      cloudName: CONFIG.cloudinaryCloudName,
+      uploadPreset: 'feature-your-tank-signed-v1',
+      prepareUploadParams: createPrepareUploadParamsHandler({
+        endpoint: CONFIG.uploadAuthorizerEndpoint,
+        session,
+        cloudName: CONFIG.cloudinaryCloudName,
+        onError: () => {
+          activeUploadSession = null;
+          showError('Secure upload preparation failed. Please complete the upload security check again.');
+        }
+      }),
+      sources: ['local', 'camera'],
+      multiple: true,
+      maxFiles: 5,
+      clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+      maxFileSize: 10000000,
+      showPoweredBy: false,
+      cropping: false,
+      styles: {
+        palette: {
+          window: '#0b0f12',
+          windowBorder: '#3b82f6',
+          tabIcon: '#10b981',
+          menuIcons: '#10b981',
+          textDark: '#000000',
+          textLight: '#ffffff',
+          link: '#10b981',
+          inactiveTabIcon: '#555555',
+          error: '#f87171',
+          inProgress: '#3b82f6',
+          complete: '#10b981',
+          sourceBg: '#111820'
+        }
+      }
+    }, handleUploadResult);
+  }
+
+  /**
+   * Authorize one ten-minute, five-upload session before opening the signed
+   * Widget. No unsigned fallback exists while this feature is enabled.
+   */
+  async function openSignedCloudinaryWidget() {
+    if (!hasValidSignedUploadConfiguration(CONFIG)) {
+      activeUploadSession = null;
+      showError('Secure photo upload is unavailable. Please try again later.');
+      return;
+    }
+
+    if (typeof window.cloudinary === 'undefined') {
+      showError('Photo upload widget not initialized. Please refresh the page.');
+      return;
+    }
+
+    setUploadButtonBusy(true);
+    try {
+      if (!activeUploadSession || activeUploadSession.expiresAt <= Date.now()) {
+        const turnstileToken = await getUploadTurnstileToken();
+        activeUploadSession = await authorizeUpload({
+          endpoint: CONFIG.uploadAuthorizerEndpoint,
+          turnstileToken
+        });
+      }
+
+      cloudinaryWidget = createSignedCloudinaryWidget(activeUploadSession);
+      uploadSecurityCheck.hidden = true;
+      cloudinaryWidget.open();
+      hideError();
+    } catch (error) {
+      activeUploadSession = null;
+      console.error('Secure upload authorization failed:', error);
+      showError('Secure photo upload is temporarily unavailable. Please try again later.');
+    } finally {
+      setUploadButtonBusy(false);
     }
   }
 
