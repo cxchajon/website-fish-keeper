@@ -27,14 +27,14 @@ import {
     confirmationEndpoint: 'https://ttg-confirmation-email.fishkeepinglifeco.workers.dev/confirm',
     cloudinaryCloudName: 'fishkeepinglifeco',
     cloudinaryUploadPreset: 'feature-your-tank',
-    // This migration is intentionally dormant until controlled staging has
-    // deployed the authorizer and configured a dedicated Turnstile site key.
-    signedUploadsEnabled: false,
+    // Production authorizes uploads through the dedicated Worker. If this
+    // configuration is unavailable or invalid, the signed path fails closed.
+    signedUploadsEnabled: true,
     uploadAuthorizerEndpoint: 'https://ttg-upload-authorizer.fishkeepinglifeco.workers.dev',
     // Public key for the dedicated TTG Feature Tank Upload Authorization
     // Turnstile widget. This is safe to publish; its matching secret stays
     // exclusively in the upload-authorizer Worker's encrypted secret store.
-    uploadTurnstileSiteKey: '0x4AAAAAAFedsxK57qmT49WA',
+    uploadTurnstileSiteKey: '0x4AAAAAAFgIpX6-3TZ_PvKh',
     uploadTurnstileAction: 'ttg_upload_authorize',
     stripePublishableKey: 'pk_test_PLACEHOLDER', // Not implemented yet
   };

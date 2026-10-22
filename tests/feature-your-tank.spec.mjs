@@ -13,7 +13,7 @@ function configuredFeatureScript({
   uploadTurnstileAction = 'ttg_upload_authorize'
 } = {}) {
   return FEATURE_SCRIPT
-    .replace('signedUploadsEnabled: false,', `signedUploadsEnabled: ${JSON.stringify(signedUploadsEnabled)},`)
+    .replace(/signedUploadsEnabled:\s*(?:true|false),/, `signedUploadsEnabled: ${JSON.stringify(signedUploadsEnabled)},`)
     .replace(
       "uploadAuthorizerEndpoint: 'https://ttg-upload-authorizer.fishkeepinglifeco.workers.dev',",
       `uploadAuthorizerEndpoint: ${JSON.stringify(uploadAuthorizerEndpoint)},`
@@ -93,6 +93,7 @@ test.describe('Feature Your Tank upload mode', () => {
 
   test('keeps the existing unsigned widget and previews while signed uploads are disabled', async ({ page }) => {
     const authorizerRequests = [];
+    await configureFeatureScript(page, { signedUploadsEnabled: false });
     await page.on('request', (request) => {
       if (request.url().includes('ttg-upload-authorizer')) authorizerRequests.push(request.url());
     });

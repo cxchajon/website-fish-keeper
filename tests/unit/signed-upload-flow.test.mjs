@@ -243,11 +243,13 @@ test('fails closed before a network call when the Widget supplies an invalid tim
   assert.equal(errors.length, 1);
 });
 
-test('the dormant website integration preserves the existing unsigned configuration and Formspree endpoint', async () => {
+test('the production signed integration preserves the existing Formspree and confirmation-email workflows', async () => {
   const source = await readFile(new URL('../../assets/js/feature-your-tank.js', import.meta.url), 'utf8');
   const page = await readFile(new URL('../../submit-your-tank.html', import.meta.url), 'utf8');
 
-  assert.match(source, /signedUploadsEnabled:\s*false/);
+  assert.match(source, /signedUploadsEnabled:\s*true/);
+  assert.match(source, /uploadAuthorizerEndpoint:\s*'https:\/\/ttg-upload-authorizer\.fishkeepinglifeco\.workers\.dev'/);
+  assert.match(source, /uploadTurnstileSiteKey:\s*'0x4AAAAAAFgIpX6-3TZ_PvKh'/);
   assert.match(source, /cloudinaryUploadPreset:\s*'feature-your-tank'/);
   assert.match(source, /formspreeEndpoint:\s*'https:\/\/formspree\.io\/f\/xangqlww'/);
   assert.match(source, /confirmationEndpoint:\s*'https:\/\/ttg-confirmation-email\.fishkeepinglifeco\.workers\.dev\/confirm'/);
