@@ -5,7 +5,16 @@ name: Cross-Browser Tests
 on:
   schedule:
     - cron: "37 6 * * *"   # 06:37 UTC daily
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      grep:
+        description: Only run tests whose title matches this pattern (blank runs the whole suite)
+        required: false
+        default: ''
+      repeat_each:
+        description: Run each selected test this many times (to check a flaky test)
+        required: false
+        default: '1'
 
 permissions:
   contents: read
@@ -33,4 +42,19 @@ jobs:
           npx playwright install --with-deps ${{ matrix.project }}
 
       - name: Run browser suite
-        run: npx playwright test --project=${{ matrix.project }} --workers=4 --grep-invert @consent-eu
+        env:
+          GREP: ${{ inputs.grep }}
+          REPEAT_EACH: ${{ inputs.repeat_each || '1' }}
+        run: |
+          args=(--project=${{ matrix.project }} --workers=4 --grep-invert @consent-eu --trace=retain-on-failure --repeat-each="$REPEAT_EACH")
+          if [ -n "$GREP" ]; then args+=(--grep "$GREP"); fi
+          npx playwright test "${args[@]}"
+
+      # Screenshots and traces of failed tests; open a trace with `npx playwright show-trace`.
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.project }}
+          path: test-results/
+          retention-days: 7
