@@ -182,6 +182,26 @@ test.describe('Stocking Advisor accessibility flows', () => {
     }
   });
 
+  test('Add to Stock stays clickable while the recompute spinner shows', async ({ page }) => {
+    // Each edit shows a short "is-loading" spinner on Add until the recompute runs. A click in that
+    // window must still reach the button; it used to fall through to the row behind it.
+    const add = page.getByTestId('btn-add-species');
+    await add.scrollIntoViewIfNeeded();
+    await add.evaluate((button) => {
+      window.__addBusyHits = [];
+      new MutationObserver(() => {
+        if (!button.classList.contains('is-loading')) return;
+        const rect = button.getBoundingClientRect();
+        const hit = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+        window.__addBusyHits.push(hit === button || button.contains(hit));
+      }).observe(button, { attributes: true, attributeFilter: ['class'] });
+    });
+    await selectSpecies(page, SPECIES_QUERY);
+    await page.locator('#plan-qty').fill('8');
+    await expect.poll(() => page.evaluate(() => window.__addBusyHits.length)).toBeGreaterThan(0);
+    expect(await page.evaluate(() => window.__addBusyHits)).not.toContain(false);
+  });
+
   test('Gear CTA stores payload and navigates with keyboard activation', async ({ page }) => {
     await selectTank(page, 40);
 

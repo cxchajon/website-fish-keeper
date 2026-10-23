@@ -82,8 +82,11 @@ test.afterAll(async () => {
 
 async function gotoAndVerify(page, route, theme) {
   // Third-party scripts and beacons (ads, analytics) are not under test and fail CORS on localhost.
+  // Stylesheets get an empty CSS body: WebKit refuses to parse a stylesheet with no CSS MIME type.
   await page.route((url) => url.origin !== baseURL, (routeRequest) =>
-    routeRequest.fulfill({ status: 204, body: '' })
+    routeRequest.request().resourceType() === 'stylesheet'
+      ? routeRequest.fulfill({ status: 200, contentType: 'text/css', body: '' })
+      : routeRequest.fulfill({ status: 204, body: '' })
   );
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
