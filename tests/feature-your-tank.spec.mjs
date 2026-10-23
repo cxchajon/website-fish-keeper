@@ -247,6 +247,7 @@ test.describe('Feature Your Tank upload mode', () => {
   test('uses a fresh confirmation-only token after successful Formspree submission', async ({ page }) => {
     const formspreeRequests = [];
     const confirmationRequests = [];
+    await configureFeatureScript(page);
     await page.route(`${AUTHORIZER_ENDPOINT}/authorize`, (route) => route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({
