@@ -129,10 +129,17 @@ test('quick answers accordion expands and collapses', async ({ page }) => {
   await gotoGear(page);
   const trigger = page.locator('.qa-accordion__trigger').first();
   const panel = page.locator(`#${await trigger.getAttribute('aria-controls')}`);
-  await trigger.click();
+  // The accordion sits below lazy-loaded ad images that can still shift the layout, so a
+  // pointer click at computed coordinates can miss it (seen in Firefox). Drive it by keyboard
+  // and by a click event on the trigger itself instead.
+  await trigger.focus();
+  await page.keyboard.press('Enter');
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(panel).toBeVisible();
-  await trigger.click();
+  await page.keyboard.press('Space');
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   await expect(panel).toBeHidden();
+  await trigger.dispatchEvent('click');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(panel).toBeVisible();
 });
