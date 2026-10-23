@@ -2,6 +2,11 @@ const ALLOWED_ORIGINS = new Set([
   'https://thetankguide.com',
   'https://www.thetankguide.com'
 ]);
+const ALLOWED_TURNSTILE_HOSTNAMES = new Set([
+  'thetankguide.com',
+  'www.thetankguide.com'
+]);
+const CONFIRMATION_TURNSTILE_ACTION = 'ttg_confirmation';
 
 function corsHeaders(origin) {
   return {
@@ -25,6 +30,18 @@ function escapeHtml(value) {
   return String(value || '').replace(/[&<>"']/g, (character) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
   })[character]);
+}
+
+function isValidTurnstileVerification(result) {
+  return Boolean(
+    result &&
+    typeof result === 'object' &&
+    !Array.isArray(result) &&
+    result.success === true &&
+    typeof result.hostname === 'string' &&
+    ALLOWED_TURNSTILE_HOSTNAMES.has(result.hostname) &&
+    result.action === CONFIRMATION_TURNSTILE_ACTION
+  );
 }
 
 export default {
@@ -87,7 +104,7 @@ export default {
       return json({ ok: true }, 200, origin);
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || !turnstileToken) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || !turnstileToken || turnstileToken.length > 2048) {
       return json({ ok: false, error: 'Invalid submission' }, 400, origin);
     }
 
@@ -97,13 +114,21 @@ export default {
       remoteip: request.headers.get('CF-Connecting-IP') || ''
     });
 
-    const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      body: verification
-    });
-    const turnstile = await turnstileResponse.json();
+    let turnstile;
+    try {
+      const turnstileResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        body: verification
+      });
+      if (!turnstileResponse.ok) {
+        return json({ ok: false, error: 'Security check failed' }, 400, origin);
+      }
+      turnstile = await turnstileResponse.json();
+    } catch {
+      return json({ ok: false, error: 'Security check failed' }, 400, origin);
+    }
 
-    if (!turnstile.success) {
+    if (!isValidTurnstileVerification(turnstile)) {
       return json({ ok: false, error: 'Security check failed' }, 400, origin);
     }
 
