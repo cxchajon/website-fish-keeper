@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Page Moved | The Tank Guide</title>
   <meta name="robots" content="noindex,follow">
-  <meta http-equiv="refresh" content="0; url=/university/">
-  <link rel="canonical" href="https://thetankguide.com/university/">
-  <script>location.replace("/university/");</script>
+  <!-- Targets /university/index.html, not /university/: an edge rule that still 301s /university/
+       to this file would otherwise bounce the visitor between the two URLs forever. -->
+  <meta http-equiv="refresh" content="0; url=/university/index.html">
+  <link rel="canonical" href="https://thetankguide.com/university/index.html">
+  <script>location.replace("/university/index.html");</script>
 </head>
 <body>
   <main>
