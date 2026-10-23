@@ -89,7 +89,9 @@ async function gotoAndVerify(page, route, theme) {
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => {
     if (message.type() === 'error') {
-      errors.push(message.text());
+      // Name the resource for network errors such as "Failed to load resource: … 404".
+      const source = message.location().url;
+      errors.push(source ? `${message.text()} (${source})` : message.text());
     }
   });
 
