@@ -34,6 +34,26 @@ async function selectTank(page, gallons) {
   return control;
 }
 
+async function selectSpecies(page, query) {
+  const speciesInput = page.getByTestId('species-search');
+  await waitForOptions(speciesInput);
+  await speciesInput.focus();
+  await page.keyboard.type('neon');
+  const optionValue = await speciesInput.evaluate((el, source) => {
+    const matcher = new RegExp(source, 'i');
+    const match = Array.from(el.options).find((opt) => matcher.test(opt.textContent || ''));
+    return match ? match.value : '';
+  }, query.source);
+  if (optionValue) {
+    await speciesInput.selectOption(optionValue);
+  }
+}
+
+async function addSpecies(page, query) {
+  await selectSpecies(page, query);
+  await page.getByTestId('btn-add-species').click();
+}
+
 async function focusByTab(page, target, { maxTabs = 40, reset = true } = {}) {
   if (reset) {
     await page.locator('body').click({ position: { x: 1, y: 1 } });
@@ -92,7 +112,10 @@ test.describe('Stocking Advisor accessibility flows', () => {
     const facts = page.locator('[data-role="tank-spec"]');
     await expect(facts).toContainText(/40/);
 
+    // The stock meters stay collapsed until the first species is added.
     const bars = page.locator('[data-testid="stock-bars"] .env-bar__fill').first();
+    await expect(bars).toBeHidden();
+    await addSpecies(page, SPECIES_QUERY);
     await expect(bars).toBeVisible();
     await capture(page, testInfo, 'tank-selection.png');
   });
@@ -101,28 +124,16 @@ test.describe('Stocking Advisor accessibility flows', () => {
     await selectTank(page, 29);
 
     const bars = page.locator('[data-testid="stock-bars"] .env-bar__fill').first();
-    await expect(bars).toBeVisible();
+    await expect(bars).toBeHidden();
     const baselineWidth = await bars.evaluate((el) => el.style.width || '');
 
-    const speciesInput = page.getByTestId('species-search');
-    await waitForOptions(speciesInput);
-    await speciesInput.focus();
-    await page.keyboard.type('neon');
-    const optionValue = await speciesInput.evaluate((el, query) => {
-      const matcher = new RegExp(query, 'i');
-      const match = Array.from(el.options).find((opt) => matcher.test(opt.textContent || ''));
-      return match ? match.value : '';
-    }, SPECIES_QUERY.source);
-    if (optionValue) {
-      await speciesInput.selectOption(optionValue);
-    }
-
-    await page.getByTestId('btn-add-species').click();
+    await addSpecies(page, SPECIES_QUERY);
 
     const list = page.getByTestId('species-list');
     await expect(list.locator('[data-testid="species-row"]').first()).toContainText(/neon/i, {
       timeout: 6000,
     });
+    await expect(bars).toBeVisible();
     await expect.poll(async () => bars.evaluate((el) => el.style.width || '')).not.toBe(baselineWidth);
     await capture(page, testInfo, 'species-added.png');
 
@@ -133,66 +144,41 @@ test.describe('Stocking Advisor accessibility flows', () => {
 
     await expect(list.locator('[data-testid="species-row"]')).toHaveCount(0);
     await expect(list).toContainText(/No stock yet/i);
+    await expect(bars).toBeHidden();
     await capture(page, testInfo, 'species-removed.png');
   });
 
-test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
+  test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
     await selectTank(page, 29);
-
-    const popover = page.locator('.ttg-popover');
-    await expect(popover).not.toBeVisible();
+    // The bioload guide lives on the stock meters, which render once stock exists.
+    await addSpecies(page, SPECIES_QUERY);
 
     const targets = [
-      {
-        name: 'Tank Size header',
-        locator: page.locator('#tank-size-card .card-header .info-btn'),
-        text: 'Pick a standard tank size to get accurate capacity, footprint, and weight.',
-      },
-      {
-        name: 'Planted toggle',
-        locator: page.locator('#tank-size-card .toggle-title .info-btn'),
-        text: 'Planted tanks allow higher bioload and provide stability. Toggle ON if you keep live plants.',
-      },
-      {
-        name: 'Current Stock header',
-        locator: page.locator('#stock-list-card .card-header .info-btn'),
-        text: 'This list shows species you’ve added and their quantities. Use +/− to adjust and Remove to clear.',
-      },
-      {
-        name: 'Environmental Recommendations header',
-        locator: page.locator('#env-card .card-header .info-btn'),
-        text: 'Derived from your selected stock. Ranges reflect compatible overlaps across all species.',
-      },
-      {
-        name: 'Bioload bar',
-        locator: page.locator('#env-bars .env-bar__label .info-btn').first(),
-        text: 'Approximate stocking level for your tank size. Stay in green for better stability.',
-      },
-      {
-        name: 'Aggression bar',
-        locator: page.locator('#env-bars .env-bar__label .info-btn').nth(1),
-        text: 'Estimated compatibility risk. Adding aggressive or territorial species will raise this.',
-      },
+      { name: 'Tank Size header', panel: '#pop-tank-size', text: 'Tank size picker' },
+      { name: 'Filter product', panel: '#pop-filter-product', text: 'Picking a filter' },
+      { name: 'Turnover', panel: '#turnover-tip', text: 'Estimated turnover' },
+      { name: 'Stocking checklist', panel: '#pop-stocking-checklist', text: 'Responsible Stocking Checklist' },
+      { name: 'Environmental Recommendations header', panel: '#pop-env-info', text: 'Environmental Card Guide' },
+      { name: 'Bioload gauge', panel: '#bioload-info-panel', text: 'Bioload capacity guide' },
     ];
 
     for (const target of targets) {
-      await expect.soft(target.locator, `${target.name} info button`).toBeVisible();
+      const trigger = page.locator(`.info-btn[aria-controls="${target.panel.slice(1)}"]`);
+      const panel = page.locator(target.panel);
+      await expect.soft(trigger, `${target.name} info button`).toBeVisible();
+      await expect(panel).toBeHidden();
 
-      await target.locator.focus();
-      await page.keyboard.press('Enter');
-      await expect(popover).toBeVisible();
-      await expect(popover).toContainText(target.text);
+      for (const key of ['Enter', 'Space']) {
+        await trigger.focus();
+        await page.keyboard.press(key);
+        await expect(panel, `${target.name} opens with ${key}`).toBeVisible();
+        await expect(panel).toContainText(target.text);
+        await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 
-      await page.keyboard.press('Escape');
-      await expect(popover).not.toBeVisible();
-
-      await target.locator.focus();
-      await page.keyboard.press('Space');
-      await expect(popover).toBeVisible();
-      await expect(popover).toContainText(target.text);
-
-      await page.keyboard.press('Escape');
-      await expect(popover).not.toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(panel, `${target.name} closes with Escape`).toBeHidden();
+        await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      }
     }
   });
 
@@ -203,12 +189,9 @@ test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
     const cta = page.getByTestId('btn-gear');
     await expect(cta).toBeFocused();
 
-    const navigationPromise = page.waitForURL(/\/gear\.html$/);
+    await expect(cta).toHaveAttribute('href', /\/gear\/\?tank_g=40(&|$)/);
     await page.keyboard.press('Enter');
-    await expect
-      .poll(async () => page.evaluate(() => sessionStorage.getItem('ttg_stocking_state')))
-      .not.toBeNull();
-    await navigationPromise;
+    await page.waitForURL(/\/gear\/\?tank_g=40(&|$)/);
 
     const payloadRaw = await page.evaluate(() => sessionStorage.getItem('ttg_stocking_state'));
     expect(payloadRaw).toBeTruthy();
@@ -220,11 +203,17 @@ test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
 
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await page.goBack();
-    await expect(page).toHaveURL(/\/stocking\.html$/);
+    await expect(page).toHaveURL(/\/stocking-advisor\.html$/);
   });
 
   test('Tab order includes primary interactive controls', async ({ page }, testInfo) => {
-    const sequence = await recordFocusSequence(page, 12);
+    // "Add to Stock" stays disabled (and out of the tab order) until a species is chosen.
+    await expect(page.getByTestId('btn-add-species')).toBeDisabled();
+    await selectSpecies(page, SPECIES_QUERY);
+    await expect(page.getByTestId('btn-add-species')).toBeEnabled();
+
+    // The shared site navigation comes first in the tab order, ahead of the tool's controls.
+    const sequence = await recordFocusSequence(page, 60);
     await testInfo.attach('focus-sequence.json', {
       body: JSON.stringify(sequence, null, 2),
       contentType: 'application/json',
@@ -234,6 +223,8 @@ test('Contextual info buttons reveal guidance on demand', async ({ page }) => {
     for (const id of expected) {
       expect(normalized).toContain(id);
     }
+    const positions = expected.map((id) => normalized.indexOf(id));
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
   });
 });
 

@@ -1,0 +1,36 @@
+name: Cross-Browser Tests
+
+# The pull request check (site-validation.yml) runs the browser suite in Chromium only. This runs
+# the same suite in Firefox and WebKit every night and on demand; it changes no files.
+on:
+  schedule:
+    - cron: "37 6 * * *"   # 06:37 UTC daily
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  browsers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [firefox, webkit]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and browser
+        run: |
+          npm ci
+          npx playwright install --with-deps ${{ matrix.project }}
+
+      - name: Run browser suite
+        run: npx playwright test --project=${{ matrix.project }} --workers=4 --grep-invert @consent-eu

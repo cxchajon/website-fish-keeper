@@ -81,6 +81,10 @@ test.afterAll(async () => {
 });
 
 async function gotoAndVerify(page, route, theme) {
+  // Third-party scripts and beacons (ads, analytics) are not under test and fail CORS on localhost.
+  await page.route((url) => url.origin !== baseURL, (routeRequest) =>
+    routeRequest.fulfill({ status: 204, body: '' })
+  );
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => {
@@ -90,12 +94,12 @@ async function gotoAndVerify(page, route, theme) {
   });
 
   const cssResponsePromise = page.waitForResponse((response) =>
-    response.url().includes('css/style.css?v=1.0.10')
+    response.url().includes('/css/app.bundle.css')
   );
 
   await page.goto(`${baseURL}${route}`);
   const cssResponse = await cssResponsePromise;
-  expect(cssResponse.status(), `${route} should load css/style.css`).toBe(200);
+  expect(cssResponse.status(), `${route} should load css/app.bundle.css`).toBe(200);
 
   const nav = page.locator('#global-nav');
   await expect(nav, `${route} should render the shared nav`).toBeVisible();
@@ -155,12 +159,13 @@ test('stocking, gear, and media share the nav layout', async ({ page }) => {
   await gotoAndVerify(page, '/media.html', 'light');
 });
 
-test('index page remains free of the global nav', async ({ page }) => {
+test('index page loads the shared bundle and renders the global nav once', async ({ page }) => {
   const cssResponsePromise = page.waitForResponse((response) =>
-    response.url().includes('css/style.css?v=1.0.10')
+    response.url().includes('/css/app.bundle.css')
   );
   await page.goto(`${baseURL}/index.html`);
   const cssResponse = await cssResponsePromise;
-  expect(cssResponse.status(), 'index should load css/style.css').toBe(200);
-  await expect(page.locator('#global-nav')).toHaveCount(0);
+  expect(cssResponse.status(), 'index should load css/app.bundle.css').toBe(200);
+  await expect(page.locator('#global-nav')).toHaveCount(1);
+  await expect(page.locator('#global-nav')).toBeVisible();
 });
