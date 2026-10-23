@@ -81,7 +81,13 @@ test.describe('Feature Your Tank upload mode', () => {
           window.turnstile = {
             reset() {},
             render(_target, options) {
-              queueMicrotask(() => options.callback('dedicated-upload-turnstile-token'));
+              window.__ttgTurnstileRenders = window.__ttgTurnstileRenders || [];
+              window.__ttgTurnstileRenders.push(options);
+              queueMicrotask(() => options.callback(
+                options.action === 'ttg_confirmation'
+                  ? 'confirmation-turnstile-token'
+                  : 'dedicated-upload-turnstile-token'
+              ));
               return 'test-widget';
             },
             remove() {}
@@ -237,4 +243,84 @@ test.describe('Feature Your Tank upload mode', () => {
     await expect(page.locator('#errorMessage')).toContainText('Secure upload preparation failed.');
     await assertNoUnsignedWidget(page);
   });
+
+  test('uses a fresh confirmation-only token after successful Formspree submission', async ({ page }) => {
+    const formspreeRequests = [];
+    const confirmationRequests = [];
+    await page.route(`${AUTHORIZER_ENDPOINT}/authorize`, (route) => route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        ok: true,
+        session: {
+          id: 'session-000000000000000000000001',
+          token: 's'.repeat(43),
+          expiresAt: Date.now() + 60_000,
+          maxUploads: 5
+        }
+      })
+    }));
+    await page.route('https://formspree.io/f/xangqlww', async (route) => {
+      formspreeRequests.push(route.request());
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) });
+    });
+    await page.route('https://ttg-confirmation-email.fishkeepinglifeco.workers.dev/confirm', async (route) => {
+      confirmationRequests.push(route.request());
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) });
+    });
+
+    await page.goto('/submit-your-tank.html');
+    await page.locator('#nextBtn').click();
+    await page.locator('#name').fill('Staging Tester');
+    await page.locator('#email').fill('staging@example.invalid');
+    await page.locator('#tank_name').fill('Mocked Staging Tank');
+    await page.locator('#tank_size').fill('29');
+    await page.locator('input[name="environment"][value="planted"]').check();
+    await page.locator('#newTankConfirm').check();
+    await page.locator('#nextBtn').click();
+
+    await page.locator('#photoUploadTrigger').click();
+    await expect.poll(() => page.evaluate(() => window.__ttgUploadWidgets.length)).toBe(1);
+    await page.evaluate(() => {
+      for (let index = 0; index < 3; index += 1) {
+        window.__ttgUploadWidgetCallback(null, {
+          event: 'success',
+          info: {
+            secure_url: `https://res.cloudinary.com/fishkeepinglifeco/image/upload/mock-${index}.jpg`,
+            public_id: `mock-${index}`,
+            width: 1200,
+            height: 800
+          }
+        });
+      }
+    });
+    await expect(page.locator('#selectedFiles')).toContainText('3 photos selected');
+    await page.locator('#nextBtn').click();
+    await page.locator('#licenseConfirm').check();
+    await page.locator('#guidelinesConfirm').check();
+    await page.locator('#contactConsent').check();
+    await page.locator('#pricingConfirm').check();
+    await page.locator('#nextBtn').click();
+    await page.evaluate(() => {
+      const token = document.createElement('input');
+      token.name = 'cf-turnstile-response';
+      token.value = 'formspree-turnstile-token';
+      document.querySelector('#featureForm').append(token);
+    });
+
+    await page.locator('#nextBtn').dblclick();
+    await expect(page.locator('.ft-step[data-step="6"]')).toBeVisible();
+
+    expect(formspreeRequests).toHaveLength(1);
+    expect(formspreeRequests[0].postData() || '').toContain('formspree-turnstile-token');
+    expect(confirmationRequests).toHaveLength(1);
+    expect(JSON.parse(confirmationRequests[0].postData())).toMatchObject({
+      email: 'staging@example.invalid',
+      turnstileToken: 'confirmation-turnstile-token'
+    });
+    expect(await page.evaluate(() => window.__ttgTurnstileRenders.map((options) => options.action))).toEqual([
+      'ttg_upload_authorize',
+      'ttg_confirmation'
+    ]);
+  });
+
 });
