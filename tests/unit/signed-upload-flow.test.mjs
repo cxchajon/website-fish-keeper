@@ -253,8 +253,17 @@ test('the production signed integration preserves the existing Formspree and con
   assert.match(source, /cloudinaryUploadPreset:\s*'feature-your-tank'/);
   assert.match(source, /formspreeEndpoint:\s*'https:\/\/formspree\.io\/f\/xangqlww'/);
   assert.match(source, /confirmationEndpoint:\s*'https:\/\/ttg-confirmation-email\.fishkeepinglifeco\.workers\.dev\/confirm'/);
+  assert.match(source, /confirmationTurnstileSiteKey:\s*'0x4AAAAAAFYL1izh-TK-lIa9'/);
+  assert.match(source, /confirmationTurnstileAction:\s*'ttg_confirmation'/);
+  assert.match(source, /getFreshConfirmationTurnstileToken/);
+  assert.match(source, /action:\s*CONFIG\.confirmationTurnstileAction/);
+  assert.match(source, /appearance:\s*'interaction-only'/);
+  assert.match(source, /confirmationEmailPromise/);
+  assert.ok(source.indexOf('if (response.ok)') < source.indexOf('getFreshConfirmationTurnstileToken()'));
+  assert.doesNotMatch(source, /window\.turnstile\.reset\(\)/);
   assert.match(source, /folder:\s*'feature-your-tank'/);
   assert.match(page, /id="uploadSecurityCheck"[^>]*hidden/);
-  assert.match(page, /feature-your-tank\.js\?v=1\.0\.8" type="module"/);
+  assert.match(page, /id="confirmationTurnstile"[^>]*hidden/);
+  assert.match(page, /feature-your-tank\.js\?v=1\.0\.9" type="module"/);
   assert.doesNotMatch(page, /id="uploadTurnstile" class="cf-turnstile"/);
 });

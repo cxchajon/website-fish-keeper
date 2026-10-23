@@ -25,6 +25,10 @@ import {
   const CONFIG = {
     formspreeEndpoint: 'https://formspree.io/f/xangqlww',
     confirmationEndpoint: 'https://ttg-confirmation-email.fishkeepinglifeco.workers.dev/confirm',
+    // The Formspree widget below remains unchanged. This configuration is used
+    // only for the fresh, post-Formspree confirmation-email token.
+    confirmationTurnstileSiteKey: '0x4AAAAAAFYL1izh-TK-lIa9',
+    confirmationTurnstileAction: 'ttg_confirmation',
     cloudinaryCloudName: 'fishkeepinglifeco',
     cloudinaryUploadPreset: 'feature-your-tank',
     // Production authorizes uploads through the dedicated Worker. If this
@@ -46,6 +50,8 @@ import {
   let cloudinaryWidget = null;
   let activeUploadSession = null;
   let uploadTurnstileWidgetId = null;
+  let confirmationTurnstileWidgetId = null;
+  let confirmationEmailPromise = null;
 
   // DOM Elements
   const form = document.getElementById('featureForm');
@@ -62,6 +68,7 @@ import {
   const creditSummary = document.getElementById('creditSummary');
   const uploadSecurityCheck = document.getElementById('uploadSecurityCheck');
   const uploadTurnstile = document.getElementById('uploadTurnstile');
+  const confirmationTurnstile = document.getElementById('confirmationTurnstile');
 
   /**
    * Initialize the form wizard
@@ -1111,7 +1118,13 @@ import {
       lines.push('Extra photos for additional tanks selected');
     }
 
-    reviewList.innerHTML = lines.map(line => `<div>${line}</div>`).join('');
+    // Submission fields are visitor-controlled. Render them as text nodes so
+    // the review screen cannot interpret a display name or URL as HTML.
+    reviewList.replaceChildren(...lines.map((line) => {
+      const item = document.createElement('div');
+      item.textContent = line;
+      return item;
+    }));
   }
 
   /**
@@ -1163,9 +1176,9 @@ import {
         // even if the email service is temporarily unavailable.
         let confirmationEmailSent = false;
         try {
-          // Formspree has already redeemed the first Turnstile token. Cloudflare
-          // tokens are single-use, so obtain a fresh token for the email Worker.
-          const confirmationToken = await getFreshTurnstileToken();
+          // Formspree has already redeemed its token. Cloudflare tokens are
+          // single-use, so obtain a separate, action-scoped token for the email Worker.
+          const confirmationToken = await getFreshConfirmationTurnstileToken();
           if (confirmationToken) {
             confirmationEmailSent = await sendConfirmationEmail(confirmationToken);
           } else {
@@ -1195,46 +1208,78 @@ import {
   }
 
   /**
-   * Reset Turnstile after Formspree consumes its token and wait for a fresh token.
+   * Render a separate confirmation-only Turnstile widget after Formspree succeeds.
+   * Its token is never used for Formspree or upload authorization.
    */
-  async function getFreshTurnstileToken() {
-    const widget = form?.querySelector('.cf-turnstile');
-    if (!widget || !window.turnstile || typeof window.turnstile.reset !== 'function') {
-      return '';
+  function getFreshConfirmationTurnstileToken() {
+    if (!confirmationTurnstile || !window.turnstile || typeof window.turnstile.render !== 'function' ||
+        !CONFIG.confirmationTurnstileSiteKey || !CONFIG.confirmationTurnstileAction) {
+      return Promise.resolve('');
     }
 
-    window.turnstile.reset();
+    if (confirmationTurnstileWidgetId !== null && typeof window.turnstile.remove === 'function') {
+      window.turnstile.remove(confirmationTurnstileWidgetId);
+    }
+    confirmationTurnstileWidgetId = null;
+    confirmationTurnstile.replaceChildren();
+    confirmationTurnstile.hidden = false;
 
-    const deadline = Date.now() + 30000;
-    while (Date.now() < deadline) {
-      const responseField = form?.querySelector('[name="cf-turnstile-response"]');
-      const token = responseField?.value || '';
-      if (token) {
-        return token;
+    return new Promise((resolve) => {
+      let settled = false;
+      const finish = (token = '') => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timeout);
+        if (confirmationTurnstileWidgetId !== null && typeof window.turnstile.remove === 'function') {
+          window.turnstile.remove(confirmationTurnstileWidgetId);
+        }
+        confirmationTurnstileWidgetId = null;
+        confirmationTurnstile.replaceChildren();
+        confirmationTurnstile.hidden = true;
+        resolve(String(token || ''));
+      };
+      const timeout = window.setTimeout(() => finish(), 30000);
+
+      try {
+        const widgetId = window.turnstile.render(confirmationTurnstile, {
+          sitekey: CONFIG.confirmationTurnstileSiteKey,
+          action: CONFIG.confirmationTurnstileAction,
+          theme: 'dark',
+          appearance: 'interaction-only',
+          callback: (token) => finish(token),
+          'error-callback': () => finish(),
+          'expired-callback': () => finish()
+        });
+        if (settled && typeof window.turnstile.remove === 'function') {
+          window.turnstile.remove(widgetId);
+        } else {
+          confirmationTurnstileWidgetId = widgetId;
+        }
+      } catch {
+        finish();
       }
-      await new Promise(resolve => setTimeout(resolve, 250));
-    }
-
-    return '';
+    });
   }
 
   /**
    * Send the visitor a confirmation email through the protected Cloudflare Worker.
    */
   async function sendConfirmationEmail(turnstileToken) {
-    const response = await fetch(CONFIG.confirmationEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: document.getElementById('email')?.value || '',
-        name: document.getElementById('name')?.value || '',
-        tankName: document.getElementById('tank_name')?.value || '',
-        turnstileToken,
-        website: document.getElementById('website')?.value || ''
-      })
-    });
+    if (!confirmationEmailPromise) {
+      confirmationEmailPromise = fetch(CONFIG.confirmationEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('email')?.value || '',
+          name: document.getElementById('name')?.value || '',
+          tankName: document.getElementById('tank_name')?.value || '',
+          turnstileToken,
+          website: document.getElementById('website')?.value || ''
+        })
+      }).then((response) => response.ok);
+    }
 
-    return response.ok;
+    return confirmationEmailPromise;
   }
 
   /**
@@ -1250,12 +1295,20 @@ import {
     const tankName = document.getElementById('tank_name')?.value || '';
 
     if (confirmationDetails) {
-      confirmationDetails.innerHTML = `
-        <p class="ft-help"><strong>Submitted by:</strong> ${name}</p>
-        <p class="ft-help"><strong>Email:</strong> ${email}</p>
-        <p class="ft-help"><strong>Tank:</strong> ${tankName}</p>
-        <p class="ft-help"><strong>Total:</strong> $${total}</p>
-      `;
+      const detail = (label, value) => {
+        const line = document.createElement('p');
+        const labelElement = document.createElement('strong');
+        line.className = 'ft-help';
+        labelElement.textContent = label;
+        line.append(labelElement, ` ${value}`);
+        return line;
+      };
+      confirmationDetails.replaceChildren(
+        detail('Submitted by:', name),
+        detail('Email:', email),
+        detail('Tank:', tankName),
+        detail('Total:', `$${total}`)
+      );
     }
 
     if (checkoutMessage) {
