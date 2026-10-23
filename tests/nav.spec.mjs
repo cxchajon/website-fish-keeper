@@ -26,7 +26,7 @@ async function startServer() {
   server = http.createServer(async (req, res) => {
     try {
       const requestUrl = new URL(req.url ?? '/', 'http://127.0.0.1');
-      let filePath = requestUrl.pathname;
+      let filePath = decodeURIComponent(requestUrl.pathname);
       if (filePath.endsWith('/')) {
         filePath = path.join(filePath, 'index.html');
       }

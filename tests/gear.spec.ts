@@ -24,7 +24,7 @@ let server: http.Server;
 async function serveStatic(req: http.IncomingMessage, res: http.ServerResponse) {
   try {
     const requestUrl = new URL(req.url ?? '/', 'http://127.0.0.1');
-    let filePath = requestUrl.pathname;
+    let filePath = decodeURIComponent(requestUrl.pathname);
     if (filePath.endsWith('/')) {
       filePath = join(filePath, 'index.html');
     }
