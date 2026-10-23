@@ -22,7 +22,9 @@ permissions:
 jobs:
   browsers:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # WebKit's system packages come from the Ubuntu mirror, which can be slow enough to take most
+    # of half an hour on its own; the run is nightly, so allow for it.
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -37,11 +39,13 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies and browser
+        timeout-minutes: 35
         run: |
           npm ci
           npx playwright install --with-deps ${{ matrix.project }}
 
       - name: Run browser suite
+        timeout-minutes: 30
         env:
           GREP: ${{ inputs.grep }}
           REPEAT_EACH: ${{ inputs.repeat_each || '1' }}
