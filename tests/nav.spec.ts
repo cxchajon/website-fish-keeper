@@ -80,6 +80,14 @@ test.afterAll(async () => {
 });
 
 async function gotoAbout(page) {
+  // Third-party scripts and beacons (ads, analytics) are not under test; their live responses vary
+  // (e.g. a Google Ads endpoint answering a script request with a non-script type in WebKit).
+  // Stylesheets get an empty CSS body: WebKit refuses to parse a stylesheet with no CSS MIME type.
+  await page.route((url) => url.origin !== baseURL, (route) =>
+    route.request().resourceType() === 'stylesheet'
+      ? route.fulfill({ status: 200, contentType: 'text/css', body: '' })
+      : route.fulfill({ status: 204, body: '' })
+  );
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => {
