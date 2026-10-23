@@ -3185,7 +3185,6 @@ body.ttg-tooltip-lock {
 
 #stocking-page #plan-add.is-loading {
   position: relative;
-  pointer-events: none;
   opacity: 0.72;
 }
 
@@ -6913,7 +6912,6 @@ body.ttg-tooltip-lock {
 
 #stocking-page #plan-add.is-loading {
   position: relative;
-  pointer-events: none;
   opacity: 0.72;
 }
 
