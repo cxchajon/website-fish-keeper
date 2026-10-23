@@ -24,7 +24,7 @@ let server: http.Server;
 async function serveStatic(req: http.IncomingMessage, res: http.ServerResponse) {
   try {
     const requestUrl = new URL(req.url ?? '/', 'http://127.0.0.1');
-    let filePath = requestUrl.pathname;
+    let filePath = decodeURIComponent(requestUrl.pathname);
     if (filePath.endsWith('/')) {
       filePath = join(filePath, 'index.html');
     }
@@ -85,46 +85,54 @@ async function gotoGear(page) {
       consoleErrors.push(message.text());
     }
   });
+  // Third-party scripts and beacons (ads, analytics) are not under test and fail CORS on localhost.
+  await page.route((url) => url.origin !== baseURL, (route) => route.fulfill({ status: 204, body: '' }));
   await page.goto(`${baseURL}/gear/`);
+  // The bundle controller sets the current tier in the same step that binds the tier and
+  // alternatives buttons, so it marks the page as interactive.
+  await page.waitForFunction(() => Boolean((window as any).currentSelectedTier));
   return consoleErrors;
 }
 
-const selectTankSize = async (page, value: string) => {
-  await page.selectOption('#context-tank-size', value);
-};
-
 test('gear guide loads without console errors', async ({ page }) => {
   const errors = await gotoGear(page);
-  await expect(errors).toEqual([]);
-  await expect(page.locator('[data-testid="context-bar"]')).toBeVisible();
-  await expect(page.locator('[data-testid="recommended-stack"] .recommended-card')).toHaveCount(4);
+  await expect(page.locator('.tier-selector .tier-btn')).toHaveCount(6);
+  await expect(page.locator('#gear-bundle .bundle-card').first()).toBeVisible();
+  await expect(page.locator('#bundle-tier-name')).toHaveText('20 Gallon');
+  expect(errors).toEqual([]);
 });
 
-test('context changes update filtration list', async ({ page }) => {
+test('choosing a tank size updates the gear bundle', async ({ page }) => {
   await gotoGear(page);
-  await selectTankSize(page, '75g');
-  await page.selectOption('#context-bio-load', 'Heavy');
-  const filtrationAccordion = page.locator('[data-testid="accordion-filtration"]');
-  await expect(filtrationAccordion).toBeVisible();
-  const cards = filtrationAccordion.locator('.product-card');
-  await expect(cards.first()).toBeVisible();
+  await page.locator('.tier-btn[data-tier="tier_55"]').click();
+  await expect(page.locator('.tier-btn[data-tier="tier_55"]')).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.tier-btn[data-tier="tier_20"]')).toHaveAttribute('aria-selected', 'false');
+  await expect(page.locator('#bundle-tier-name')).toHaveText('55 Gallon');
+  await expect(page.locator('#heater-spec')).toHaveText('300W adjustable');
+  await expect(page.locator('#filter-spec')).toHaveText('300-400 GPH');
 });
 
-test('why this pick drawer opens from recommended card', async ({ page }) => {
+test('see alternatives toggles the alternatives panel', async ({ page }) => {
   await gotoGear(page);
-  await page.locator('[data-testid="recommended-stack"] .recommended-card .btn.secondary').first().click();
-  const drawer = page.locator('[data-testid="why-pick-drawer"]');
-  await expect(drawer).toBeVisible();
-  await expect(drawer).not.toHaveClass(/is-hidden/);
-  await drawer.locator('button', { hasText: 'Close' }).click();
-  await expect(drawer).toHaveClass(/is-hidden/);
+  const toggle = page.locator('.bundle-card__alts-toggle[data-alts="temp-controller"]');
+  const panel = page.locator('#temp-controller-alts');
+  await expect(panel).toBeHidden();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(panel).toBeVisible();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(panel).toBeHidden();
 });
 
-test('tank smart modal toggles from CTA', async ({ page }) => {
+test('quick answers accordion expands and collapses', async ({ page }) => {
   await gotoGear(page);
-  await page.click('text=How to Buy a Tank Smart');
-  const modal = page.locator('[data-testid="tank-smart-modal"]');
-  await expect(modal).toHaveClass(/is-open/);
-  await modal.locator('button', { hasText: 'Close' }).click();
-  await expect(modal).not.toHaveClass(/is-open/);
+  const trigger = page.locator('.qa-accordion__trigger').first();
+  const panel = page.locator(`#${await trigger.getAttribute('aria-controls')}`);
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(panel).toBeVisible();
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(panel).toBeHidden();
 });

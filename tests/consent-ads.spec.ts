@@ -16,8 +16,8 @@ interface FlowResult {
 interface FlowConfig {
   id: string;
   label: string;
-  region: 'eu' | 'us';
-  action: 'accept' | 'reject' | 'ignore' | 'opt-out' | 'us-accept';
+  region: 'eu';
+  action: 'accept' | 'reject' | 'ignore';
   languages: string[];
   timezoneId: string;
   querySuffix: string;
@@ -60,32 +60,12 @@ const FLOWS: FlowConfig[] = [
     timezoneId: 'Europe/Dublin',
     querySuffix: '?e2e=true',
   },
-  {
-    id: 'us-accept',
-    label: 'US – ACCEPT',
-    region: 'us',
-    action: 'us-accept',
-    languages: ['en-US'],
-    timezoneId: 'America/New_York',
-    querySuffix: '?e2e=true',
-  },
-  {
-    id: 'us-opt-out',
-    label: 'US – OPT OUT',
-    region: 'us',
-    action: 'opt-out',
-    languages: ['en-US'],
-    timezoneId: 'America/New_York',
-    querySuffix: '?e2e=true',
-  },
 ];
 
 const results = new Map<string, Map<string, FlowResult>>();
 const pagesMissingStylesheet = new Set<string>();
 // Runtime evidence goes to Playwright's disposable output directory, never into tracked files.
 const reportFileName = 'consent-ads-report.md';
-
-test.describe.configure({ mode: 'serial', retries: 0 });
 
 async function ensureDir(dir: string) {
   await fs.promises.mkdir(dir, { recursive: true });
@@ -205,20 +185,13 @@ async function focusTrapActive(page: Page, banner: Locator) {
   return true;
 }
 
-async function locateConsentBanner(page: Page, region: 'eu' | 'us'): Promise<{ locator: Locator; found: boolean }> {
-  const candidates = region === 'eu'
-    ? [
-        '[data-consent="gdpr"]',
-        '[id*="consent"]',
-        '[class*="consent"]',
-        '[aria-label*="consent"]',
-      ]
-    : [
-        '[data-consent="us"]',
-        '[id*="privacy"]',
-        'text=/US\s+Privacy/i',
-        'text=/Do Not Sell/i',
-      ];
+async function locateConsentBanner(page: Page): Promise<{ locator: Locator; found: boolean }> {
+  const candidates = [
+    '[data-consent="gdpr"]',
+    '[id*="consent"]',
+    '[class*="consent"]',
+    '[aria-label*="consent"]',
+  ];
 
   for (const selector of candidates) {
     const locator = page.locator(selector).first();
@@ -290,7 +263,113 @@ async function runViewportChecks(page: Page) {
   await page.setViewportSize({ width: 1440, height: 900 });
 }
 
-test.describe('Consent and AdSense behavior audit', () => {
+// US and EU flows are separate groups, so a failure in one region never skips the other.
+//
+// EU: Google's CMP (Funding Choices) serves its consent message only on the registered domain to
+// visitors in the EEA, UK or Switzerland, so these flows cannot pass on a local server or a US CI
+// runner. They run on their own (npm run test:consent:eu) against the live site from such a
+// location, e.g. TTG_BASE_URL=https://thetankguide.com.
+//
+// US: Google shows no consent banner; the site's own Cookie Settings page records the visitor's
+// choice. Those flows are deterministic and run in the PR suite (npm run test:consent:us).
+const US_CONTEXT = { locale: 'en-US', timezoneId: 'America/New_York', viewport: { width: 1440, height: 900 } };
+const EEA_UK_CH_REGIONS = ['DE', 'FR', 'IE', 'GB', 'CH', 'NO'];
+
+async function blockThirdParty(page: Page) {
+  // Ads, the CMP and analytics are Google's, not under test here; answer them with empty bodies.
+  await page.route(
+    (url) => !['localhost', '127.0.0.1'].includes(url.hostname),
+    (route) => route.fulfill({ status: 204, body: '' }),
+  );
+}
+
+async function readConsentState(page: Page) {
+  return page.evaluate(() => {
+    let stored: Record<string, unknown> | null = null;
+    try {
+      stored = JSON.parse(localStorage.getItem('ttgConsentV2') || 'null');
+    } catch {
+      stored = null;
+    }
+    return {
+      adConsent: document.documentElement.getAttribute('data-ad-consent'),
+      adsDisabled: document.body.classList.contains('is-ads-disabled'),
+      stored,
+    };
+  });
+}
+
+async function expectConsentAcrossPages(page: Page, adConsent: 'granted' | 'denied') {
+  for (const pagePath of PAGES) {
+    await page.goto(pagePath, { waitUntil: 'domcontentloaded' });
+    await expect
+      .poll(() => readConsentState(page), { message: `${pagePath} keeps the saved choice` })
+      .toMatchObject({ adConsent, adsDisabled: adConsent === 'denied' });
+  }
+}
+
+test.describe('Consent and AdSense behavior audit — US', { tag: '@consent-us' }, () => {
+  test('US – ACCEPT', async ({ browser }) => {
+    const context = await browser.newContext(US_CONTEXT);
+    const page = await context.newPage();
+    await blockThirdParty(page);
+
+    await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+
+    // Consent Mode v2 defaults are the first dataLayer entries, ahead of Google Tag Manager:
+    // granted by default, denied (with wait_for_update) for the EEA, UK and Switzerland.
+    const dataLayer = await page.evaluate(() =>
+      ((window as any).dataLayer || []).map((entry: any) => Array.from(entry.length !== undefined ? entry : [entry])),
+    );
+    const defaults = dataLayer.filter((entry: any[]) => entry[0] === 'consent' && entry[1] === 'default');
+    expect(defaults).toHaveLength(2);
+    expect(defaults[0][2]).toMatchObject({ ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' });
+    expect(defaults[0][2].region).toBeUndefined();
+    expect(defaults[1][2]).toMatchObject({ ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', wait_for_update: 500 });
+    expect(defaults[1][2].region).toEqual(expect.arrayContaining(EEA_UK_CH_REGIONS));
+    const gtmIndex = dataLayer.findIndex((entry: any[]) => entry[0] && entry[0].event === 'gtm.js');
+    expect(gtmIndex).toBeGreaterThan(dataLayer.indexOf(defaults[1]));
+
+    // No first-party choice is saved yet, so ads are not suppressed.
+    await expect.poll(() => readConsentState(page)).toMatchObject({ adConsent: 'unset', adsDisabled: false, stored: null });
+
+    await page.goto('/cookie-settings.html', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'Allow all' }).click();
+    await expect.poll(() => readConsentState(page)).toMatchObject({
+      adConsent: 'granted',
+      stored: { ad_storage: 'granted', advertising: true },
+    });
+
+    await expectConsentAcrossPages(page, 'granted');
+    await context.close();
+  });
+
+  test('US – OPT OUT', async ({ browser }) => {
+    const context = await browser.newContext(US_CONTEXT);
+    const page = await context.newPage();
+    await blockThirdParty(page);
+
+    await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+    const optOutLink = page.locator('footer').getByRole('link', { name: 'Do Not Sell or Share My Personal Information' });
+    await optOutLink.click();
+    await expect(page).toHaveURL(/\/cookie-settings\.html#do-not-sell$/);
+    await expect(page.getByRole('heading', { name: 'Do Not Sell or Share My Personal Information' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Reject non-essential' }).click();
+    await expect.poll(() => readConsentState(page)).toMatchObject({
+      adConsent: 'denied',
+      adsDisabled: true,
+      stored: { ad_storage: 'denied', advertising: false },
+    });
+
+    await expectConsentAcrossPages(page, 'denied');
+    await context.close();
+  });
+});
+
+test.describe('Consent and AdSense behavior audit — EU', { tag: '@consent-eu' }, () => {
+  test.describe.configure({ mode: 'serial', retries: 0 });
+
   for (const flow of FLOWS) {
     test(flow.label, async ({ browser }, testInfo) => {
       test.setTimeout(45_000);
@@ -339,7 +418,7 @@ test.describe('Consent and AdSense behavior audit', () => {
         await verifyStylesheet(page, pagePath);
         await captureState(page, flow.id, pagePath, 'loaded', testInfo);
 
-        const bannerLookup = await locateConsentBanner(page, flow.region);
+        const bannerLookup = await locateConsentBanner(page);
         const banner = bannerLookup.locator;
         const bannerVisible = bannerLookup.found ? await banner.isVisible() : false;
         expect.soft(bannerVisible, 'Consent banner should be visible on first load').toBeTruthy();
@@ -351,7 +430,7 @@ test.describe('Consent and AdSense behavior audit', () => {
         let expectedConsent: 'granted' | 'denied' | null = null;
 
         if (pagePath === primaryPage) {
-          if (flow.action === 'accept' || flow.action === 'us-accept') {
+          if (flow.action === 'accept') {
             const acceptButton = await locateButton(banner, /accept|agree|allow/i);
             const acceptButtonCount = await acceptButton.count();
             expect.soft(acceptButtonCount, 'Accept button should exist').toBeGreaterThan(0);
@@ -400,22 +479,6 @@ test.describe('Consent and AdSense behavior audit', () => {
               notes.push('Unable to test focus trap without banner');
             }
             expectedConsent = null;
-          } else if (flow.action === 'opt-out') {
-            const trigger = await locateButton(page.locator('body'), /Do Not Sell|Do Not Share|US Privacy|opt out/i);
-            const triggerCount = await trigger.count();
-            expect.soft(triggerCount, 'Opt-out trigger should exist').toBeGreaterThan(0);
-            await trigger.focus();
-            await captureState(page, flow.id, pagePath, 'before-opt-out', testInfo);
-            await trigger.click();
-            const optOutButton = await locateButton(page.locator('body'), /opt out|confirm|reject|save/i);
-            const optOutCount = await optOutButton.count();
-            expect.soft(optOutCount, 'Opt-out confirmation should exist').toBeGreaterThan(0);
-            await optOutButton.focus();
-            await captureState(page, flow.id, pagePath, 'opt-out-dialog', testInfo);
-            await optOutButton.click();
-            await captureState(page, flow.id, pagePath, 'after-opt-out', testInfo);
-            expectedConsent = 'denied';
-            choice = 'Opt out';
           }
         } else {
           // Persistence checks on subsequent pages
@@ -441,11 +504,11 @@ test.describe('Consent and AdSense behavior audit', () => {
           expect.soft(storageKeys.length, 'LocalStorage should record consent state').toBeGreaterThan(0);
         }
 
-        if (flow.action === 'accept' || flow.action === 'us-accept') {
+        if (flow.action === 'accept') {
           expect.soft(adsVisible, 'Ads should render after acceptance').toBeTruthy();
         }
 
-        if (flow.action === 'reject' || flow.action === 'opt-out') {
+        if (flow.action === 'reject') {
           expect.soft(placeholdersVisible, 'Ad placeholders must remain visible after rejection').toBeTruthy();
         }
 
@@ -465,11 +528,11 @@ test.describe('Consent and AdSense behavior audit', () => {
             })
           : null;
 
-        if ((flow.action === 'reject' || flow.action === 'opt-out') && currentRequests.length) {
+        if ((flow.action === 'reject') && currentRequests.length) {
           expect.soft(npa, 'NPA flag should be present for rejected consent').toBe(true);
         }
 
-        if ((flow.action === 'accept' || flow.action === 'us-accept') && currentRequests.length) {
+        if ((flow.action === 'accept') && currentRequests.length) {
           expect.soft(npa, 'Personalized requests should omit npa=1').not.toBe(true);
         }
 
@@ -486,7 +549,7 @@ test.describe('Consent and AdSense behavior audit', () => {
         }
 
         const result: FlowResult = {
-          bannerShown,
+          bannerShown: bannerVisible,
           choice,
           dataFlag: datasetValue,
           adsVisible,
@@ -547,7 +610,7 @@ test.describe('Consent and AdSense behavior audit', () => {
     }
 
     const rejectNotes: string[] = [];
-    for (const flow of ['eu-reject', 'us-opt-out']) {
+    for (const flow of ['eu-reject']) {
       const flowResults = results.get(flow) || new Map();
       for (const pagePath of flowResults.keys()) {
         const entry = flowResults.get(pagePath);
@@ -558,7 +621,7 @@ test.describe('Consent and AdSense behavior audit', () => {
     }
 
     lines.push('');
-    lines.push('## Pages where placeholders disappeared after reject/opt-out');
+    lines.push('## Pages where placeholders disappeared after reject');
     lines.push('');
     if (rejectNotes.length) {
       for (const note of rejectNotes) {

@@ -4,8 +4,9 @@ test.describe('Navigation and footer smoke checks', () => {
   test('global nav loads and footer trust messaging appears', async ({ page }, testInfo) => {
     await page.goto('/');
 
-    await page.waitForSelector('#site-nav');
+    // nav.js swaps the #site-nav placeholder for the shared #global-nav header.
     await page.waitForSelector('#global-nav .site-links');
+    await expect(page.locator('#site-nav')).toHaveCount(0);
     const navLinks = page.locator('#global-nav .site-links a');
     expect(await navLinks.count()).toBeGreaterThan(3);
 
@@ -22,7 +23,9 @@ test.describe('Navigation and footer smoke checks', () => {
       'The Tank Guide on Facebook',
       'The Tank Guide on X (Twitter)',
       'The Tank Guide on YouTube',
-      'The Tank Guide on Amazon'
+      'The Tank Guide Assistant on ChatGPT',
+      'Shop our books on Amazon (opens in a new tab)',
+      'Shop FishKeepingLifeCo on Etsy (opens in a new tab)'
     ];
     for (const label of socialLabels) {
       await expect(footer.getByRole('link', { name: label })).toBeVisible();
@@ -36,11 +39,12 @@ test.describe('Navigation and footer smoke checks', () => {
 
     const defaultPrevented = await page.evaluate(() =>
       new Promise((resolve) => {
+        // Listen on window, after the event has bubbled past the site's document-level handler.
         const listener = (event) => {
-          document.removeEventListener('contextmenu', listener, true);
+          window.removeEventListener('contextmenu', listener);
           resolve(event.defaultPrevented);
         };
-        document.addEventListener('contextmenu', listener, true);
+        window.addEventListener('contextmenu', listener);
         const event = new MouseEvent('contextmenu', {
           bubbles: true,
           cancelable: true,
@@ -52,7 +56,7 @@ test.describe('Navigation and footer smoke checks', () => {
         }
         document.body.dispatchEvent(event);
         setTimeout(() => {
-          document.removeEventListener('contextmenu', listener, true);
+          window.removeEventListener('contextmenu', listener);
           resolve(false);
         }, 100);
       })
@@ -70,11 +74,12 @@ test.describe('Navigation and footer smoke checks', () => {
 
     const defaultPrevented = await page.evaluate(() =>
       new Promise((resolve) => {
+        // Listen on window, after the event has bubbled past the site's document-level handler.
         const listener = (event) => {
-          document.removeEventListener('contextmenu', listener, true);
+          window.removeEventListener('contextmenu', listener);
           resolve(event.defaultPrevented);
         };
-        document.addEventListener('contextmenu', listener, true);
+        window.addEventListener('contextmenu', listener);
         const event = new MouseEvent('contextmenu', {
           bubbles: true,
           cancelable: true,
@@ -86,7 +91,7 @@ test.describe('Navigation and footer smoke checks', () => {
         }
         document.body.dispatchEvent(event);
         setTimeout(() => {
-          document.removeEventListener('contextmenu', listener, true);
+          window.removeEventListener('contextmenu', listener);
           resolve(false);
         }, 100);
       })

@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Set PW_CHROMIUM_PATH to use a locally installed Chromium instead of Playwright's download.
+const chromiumLaunchOptions = process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {};
+
 export default defineConfig({
   testDir: 'tests',
   timeout: 60000,
@@ -15,7 +18,7 @@ export default defineConfig({
     video: 'off'
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: chromiumLaunchOptions } },
     { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
     { name: 'webkit',   use: { ...devices['Desktop Safari'] } }
   ],

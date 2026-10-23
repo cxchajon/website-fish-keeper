@@ -7,6 +7,7 @@ on:
 jobs:
   guard:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       PR_TITLE: ${{ github.event.pull_request.title }}
     steps:
@@ -41,9 +42,11 @@ jobs:
           fi
           echo "installed=${installed}" >> "$GITHUB_OUTPUT"
 
+      # Pull requests run the browser suite in Chromium only; Firefox and WebKit run nightly in
+      # cross-browser.yml.
       - name: Install Playwright browsers
         if: ${{ steps.install-deps.outputs.installed == 'true' }}
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
 
       - name: Run live guard
         if: ${{ steps.install-deps.outputs.installed == 'true' }}
@@ -51,4 +54,4 @@ jobs:
 
       - name: Run test suite
         if: ${{ steps.install-deps.outputs.installed == 'true' }}
-        run: npm test
+        run: npm test -- --project=chromium --workers=4
