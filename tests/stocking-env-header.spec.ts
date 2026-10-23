@@ -3,7 +3,8 @@ import { test, expect, devices } from '@playwright/test';
 const url = '/stocking-advisor.html';
 
 // iPhone 12 viewport and touch settings without forcing WebKit, so each browser project runs it.
-const { defaultBrowserType: _iphoneBrowser, ...iPhone12 } = devices['iPhone 12'];
+// Firefox has no mobile emulation (isMobile), so it gets the same viewport and touch input only.
+const { defaultBrowserType: _iphoneBrowser, isMobile: _iphoneIsMobile, ...iPhone12 } = devices['iPhone 12'];
 
 test.describe('Stocking Advisor — Env. Recommendations unified info icon', () => {
   test('desktop: single icon toggles the environmental card guide', async ({ page }, testInfo) => {
@@ -39,7 +40,10 @@ test.describe('Stocking Advisor — Env. Recommendations unified info icon', () 
 });
 
 test.describe('Stocking Advisor — Env. Recommendations unified info icon (mobile)', () => {
-  test.use(iPhone12);
+  test.use({
+    ...iPhone12,
+    isMobile: async ({ browserName }, use) => use(browserName !== 'firefox'),
+  });
 
   test('mobile: single icon works and aligns', async ({ page }, testInfo) => {
     await page.goto(url, { waitUntil: 'networkidle' });
