@@ -1118,7 +1118,13 @@ import {
       lines.push('Extra photos for additional tanks selected');
     }
 
-    reviewList.innerHTML = lines.map(line => `<div>${line}</div>`).join('');
+    // Submission fields are visitor-controlled. Render them as text nodes so
+    // the review screen cannot interpret a display name or URL as HTML.
+    reviewList.replaceChildren(...lines.map((line) => {
+      const item = document.createElement('div');
+      item.textContent = line;
+      return item;
+    }));
   }
 
   /**
@@ -1289,12 +1295,20 @@ import {
     const tankName = document.getElementById('tank_name')?.value || '';
 
     if (confirmationDetails) {
-      confirmationDetails.innerHTML = `
-        <p class="ft-help"><strong>Submitted by:</strong> ${name}</p>
-        <p class="ft-help"><strong>Email:</strong> ${email}</p>
-        <p class="ft-help"><strong>Tank:</strong> ${tankName}</p>
-        <p class="ft-help"><strong>Total:</strong> $${total}</p>
-      `;
+      const detail = (label, value) => {
+        const line = document.createElement('p');
+        const labelElement = document.createElement('strong');
+        line.className = 'ft-help';
+        labelElement.textContent = label;
+        line.append(labelElement, ` ${value}`);
+        return line;
+      };
+      confirmationDetails.replaceChildren(
+        detail('Submitted by:', name),
+        detail('Email:', email),
+        detail('Tank:', tankName),
+        detail('Total:', `$${total}`)
+      );
     }
 
     if (checkoutMessage) {

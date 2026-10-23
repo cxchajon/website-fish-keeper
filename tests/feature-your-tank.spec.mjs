@@ -244,6 +244,45 @@ test.describe('Feature Your Tank upload mode', () => {
     await assertNoUnsignedWidget(page);
   });
 
+  test('renders visitor-controlled review details as text, not HTML', async ({ page }) => {
+    await configureFeatureScript(page, { signedUploadsEnabled: false });
+    await page.goto('/submit-your-tank.html');
+    await page.locator('#nextBtn').click();
+    await page.locator('#name').fill('<img src=x onerror=alert(1)>');
+    await page.locator('#email').fill('safe@example.invalid');
+    await page.locator('#tank_name').fill('<b>Untrusted tank</b>');
+    await page.locator('#tank_size').fill('29');
+    await page.locator('input[name="environment"][value="planted"]').check();
+    await page.locator('#newTankConfirm').check();
+    await page.locator('#nextBtn').click();
+
+    await page.locator('#photoUploadTrigger').click();
+    await page.evaluate(() => {
+      for (let index = 0; index < 3; index += 1) {
+        window.__ttgUploadWidgetCallback(null, {
+          event: 'success',
+          info: {
+            secure_url: `https://res.cloudinary.com/fishkeepinglifeco/image/upload/mock-${index}.jpg`,
+            public_id: `mock-${index}`,
+            width: 1200,
+            height: 800
+          }
+        });
+      }
+    });
+    await page.locator('#nextBtn').click();
+    await page.locator('#licenseConfirm').check();
+    await page.locator('#guidelinesConfirm').check();
+    await page.locator('#contactConsent').check();
+    await page.locator('#pricingConfirm').check();
+    await page.locator('#nextBtn').click();
+
+    await expect(page.locator('#reviewList')).toContainText('<img src=x onerror=alert(1)>');
+    await expect(page.locator('#reviewList')).toContainText('<b>Untrusted tank</b>');
+    expect(await page.locator('#reviewList img').count()).toBe(0);
+    expect(await page.locator('#reviewList b').count()).toBe(0);
+  });
+
   test('uses a fresh confirmation-only token after successful Formspree submission', async ({ page }) => {
     const formspreeRequests = [];
     const confirmationRequests = [];
