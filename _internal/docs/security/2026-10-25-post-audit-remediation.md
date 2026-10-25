@@ -70,7 +70,9 @@ See `cloudflare-workers/ttg-confirmation-email/DEPLOYMENT.md` → "Abuse limits"
 - Turnstile hostname/action checks, the per-IP rate limit, sender and reply-to are unchanged; missing configuration fails closed.
 - Residual risk: a person who solves Turnstile on the real site can still send one fixed-wording confirmation to an address of their choice, at most 3 per address per day. Binding confirmations to a verified Formspree submission needs a backend redesign.
 - Tests: 35 Node unit tests (malicious text, repeats, caps, failures, legitimate confirmations) and 7 Workers-runtime ledger tests (concurrency, caps, release, 24 h expiry).
-- **Not deployed.** The owner must set `CONFIRM_DEDUP_KEY` first; then follow DEPLOYMENT.md.
+- **Not deployed (as of 2026-10-25).** PR #2266 merged as `8fc71b8`. The deployment session had no Cloudflare credentials, and its network policy denied `api.cloudflare.com` and the `workers.dev` endpoint, so it could not deploy or read the live version.
+  - Verified before deployment on `main`: 35 unit tests, 7 Workers-runtime tests and the `wrangler deploy --dry-run` pass. The `exports`-based SQLite Durable Object needs no `migrations` block with the pinned Wrangler 4.151.2. The live-verify probes pass against the real Worker code under `wrangler dev`, and a missing `CONFIRM_DEDUP_KEY` returns 503 there.
+  - Next steps for the owner: DEPLOYMENT.md → "Deploying the abuse limits" (Windows PowerShell), then the **Confirmation Email Live Verify** workflow. Record the previous and new version IDs here after deploying.
 
 ## Cloudinary signed preset `feature-your-tank-signed-v1`
 

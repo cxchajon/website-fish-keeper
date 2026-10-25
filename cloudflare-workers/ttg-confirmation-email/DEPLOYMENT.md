@@ -35,11 +35,26 @@ Residual risk: someone who solves Turnstile on the real site can still send one 
 
 ## Deploying the abuse limits
 
-1. Run `npm ci && npm test && npm run check:config` in this directory. The unit tests run in Node, and the ledger tests run in the Workers runtime.
-2. Set `CONFIRM_DEDUP_KEY` (see above) before deploying. Without it, the new version sends no email.
-3. Note the current version for rollback: `npx wrangler deployments list`. The 2026-10-23 closeout recorded production as `255ae13a-6ed8-4c25-9ff6-6bd0209bbc84`; use whatever the list shows at deploy time.
-4. Run `npx wrangler deploy`. The website needs no change, because the request and response contract is unchanged.
-5. Check the Worker logs for `Confirmation ledger is not configured`. A real submission should produce one email and one `/reserve` ledger call.
+Run every command from `cloudflare-workers/ttg-confirmation-email` on an up-to-date `main`, signed in to the Cloudflare account that owns `ttg-confirmation-email` (`npx wrangler whoami`). The PowerShell below works on Windows PowerShell 5.1 and PowerShell 7.
+
+1. **Check the code.** `npm ci; npm test; npm run check:config`. That runs 35 Node unit tests, 7 Workers-runtime ledger tests, and a dry run listing `CONFIRM_LEDGER`, `CONFIRM_RATE_LIMITER` and `DAILY_DELIVERY_CAP`.
+2. **Record the rollback point.** Run `npx wrangler deployments list` and note the version ID currently serving 100%. The 2026-10-23 closeout recorded `255ae13a-6ed8-4c25-9ff6-6bd0209bbc84`; trust the list over that note.
+3. **Check the existing secrets.** Run `npx wrangler secret list`. It shows names only. `TURNSTILE_SECRET_KEY` and `RESEND_API_KEY` must be listed. If `CONFIRM_DEDUP_KEY` is already listed, skip step 4 and do not rotate it.
+4. **Create `CONFIRM_DEDUP_KEY`.** This generates 32 random bytes as hex and pipes them straight into Wrangler, so the value is never printed or written to disk:
+
+   ```powershell
+   $bytes = New-Object byte[] 32
+   [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+   (($bytes | ForEach-Object { $_.ToString('x2') }) -join '') | npx wrangler secret put CONFIRM_DEDUP_KEY
+   Remove-Variable bytes
+   ```
+
+   `wrangler secret put` publishes a new version of the code that is **already deployed**, with the secret added. The current code ignores the new secret, so this step changes no behaviour and does not publish the new code. Confirm with `npx wrangler secret list`: three names are listed.
+5. **Deploy.** Run `npx wrangler deploy`. Its output must list `env.CONFIRM_LEDGER (ConfirmationLedger)` as a Durable Object. The SQLite class is declared through `exports` in `wrangler.jsonc`, which Wrangler 4.151 supports as the replacement for a `migrations` block (the two cannot be combined). The upload-authorizer uses the same form. Note the new version ID.
+6. **Verify production without sending email.** Run the **Confirmation Email Live Verify** workflow (Actions → Run workflow). Every probe is rejected before Resend. The bogus-token probe must return 400 "Security check failed"; a 503 means the ledger binding or `CONFIRM_DEDUP_KEY` is missing. Then run `npx wrangler tail` while loading `/submit-your-tank.html`, and check there are no exceptions and no `Confirmation ledger is not configured` lines.
+7. **Watch the next real submission.** A real visitor submission should produce one email and one `/reserve` call in the logs. Do not create a test submission on the live form.
+
+`DAILY_DELIVERY_CAP` is 50 per rolling 24 hours. Keep it at or below the Resend plan's daily allowance, which the plan page in the Resend dashboard shows (the free plan allows 100 a day). Change it in `wrangler.jsonc` and redeploy.
 
 ## Rollback
 
