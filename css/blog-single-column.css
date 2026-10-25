@@ -49,8 +49,18 @@ body.blog-single-column .blog-inline-figure--square {
   max-width: 420px;
 }
 
+body.blog-single-column .blog-inline-figure--book-cover {
+  width: clamp(180px, 32%, 280px);
+}
+
+body.blog-single-column .blog-inline-figure--aquarium-portrait {
+  width: 58%;
+  max-width: 420px;
+}
+
 body.blog-single-column .blog-inline-figure--landscape .tg-img,
-body.blog-single-column .blog-inline-figure--square .tg-img {
+body.blog-single-column .blog-inline-figure--square .tg-img,
+body.blog-single-column .blog-inline-figure--aquarium-portrait .tg-img {
   display: block;
   width: 100%;
   max-width: 100%;
