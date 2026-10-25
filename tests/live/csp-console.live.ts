@@ -2,11 +2,14 @@
 // Verify workflow). Opens key pages and records every Content-Security-Policy violation the browser
 // reports, plus whether the consent, tag-manager and ads scripts loaded. It never fills or submits a
 // form. Ad and click-tracking requests are aborted so the run serves no ads; CSP is enforced before
-// a request reaches the network, so violations are still reported.
+// a request reaches the network, so violations are still reported. Only the page's own document
+// counts: third-party iframes (e.g. Cloudflare Turnstile) enforce their own policies and log their
+// own violations, which this site's headers neither cause nor control.
 import { test, expect } from '@playwright/test';
 
 const PAGES = ['/', '/media.html', '/submit-your-tank.html', '/stocking-advisor.html', '/university/'];
 const AD_SERVING = /\/pagead\/(ads|adview|conversion|interaction)|doubleclick\.net|googleadservices\.com|\/pagead\/viewthroughconversion/;
+const VIOLATION_PREFIX = 'TTG-CSP-VIOLATION ';
 const SCRIPTS = {
   fundingChoices: /fundingchoicesmessages\.google\.com/,
   gtm: /googletagmanager\.com\/gtm\.js/,
@@ -19,18 +22,21 @@ for (const path of PAGES) {
     const loaded = new Set<string>();
 
     await page.route(AD_SERVING, (route) => route.abort());
+    // The top document's securitypolicyviolation event fires for every violation of this site's
+    // policy, whichever script (first- or third-party) caused it.
     page.on('console', (msg) => {
       const text = msg.text();
-      if (/Content[- ]Security[- ]Policy|Refused to (load|execute|connect|frame)/i.test(text)) violations.push(text);
+      if (text.startsWith(VIOLATION_PREFIX)) violations.push(text.slice(VIOLATION_PREFIX.length));
     });
     page.on('response', (res) => {
       for (const [name, re] of Object.entries(SCRIPTS)) if (re.test(res.url()) && res.ok()) loaded.add(name);
     });
-    await page.addInitScript(() => {
+    await page.addInitScript((prefix) => {
+      if (window.top !== window) return;
       document.addEventListener('securitypolicyviolation', (e) => {
-        console.warn(`Content-Security-Policy violation: ${e.violatedDirective} blocked ${e.blockedURI}`);
+        console.warn(`${prefix}${e.effectiveDirective} blocked ${e.blockedURI} (${e.disposition}) at ${e.sourceFile}:${e.lineNumber}`);
       });
-    });
+    }, VIOLATION_PREFIX);
 
     const res = await page.goto(path, { waitUntil: 'load' });
     await page.waitForTimeout(5000);
