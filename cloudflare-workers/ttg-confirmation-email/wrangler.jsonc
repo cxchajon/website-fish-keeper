@@ -3,6 +3,23 @@
   "name": "ttg-confirmation-email",
   "main": "worker.js",
   "compatibility_date": "2026-10-16",
+  "vars": {
+    "DAILY_DELIVERY_CAP": "50"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CONFIRM_LEDGER",
+        "class_name": "ConfirmationLedger"
+      }
+    ]
+  },
+  "exports": {
+    "ConfirmationLedger": {
+      "type": "durable-object",
+      "storage": "sqlite"
+    }
+  },
   "ratelimits": [
     {
       "name": "CONFIRM_RATE_LIMITER",
@@ -12,5 +29,12 @@
         "period": 60
       }
     }
-  ]
+  ],
+  "secrets": {
+    "required": [
+      "CONFIRM_DEDUP_KEY",
+      "RESEND_API_KEY",
+      "TURNSTILE_SECRET_KEY"
+    ]
+  }
 }

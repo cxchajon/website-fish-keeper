@@ -28,11 +28,32 @@ function request(body = {}, options = {}) {
   });
 }
 
-function env() {
+// Stands in for the ConfirmationLedger Durable Object (its own behaviour is covered by
+// test/runtime/ledger.test.mjs); records each call and answers /reserve with `decision`.
+function fakeLedger(decision = 'reserved', options = {}) {
+  const calls = [];
+  return {
+    calls,
+    idFromName: (name) => name,
+    get: () => ({
+      fetch: async (url, init) => {
+        const path = new URL(url).pathname;
+        calls.push({ path, body: JSON.parse(init.body) });
+        if (options.fail) return new Response(null, { status: 500 });
+        return Response.json(path === '/reserve' ? { decision } : { released: true });
+      }
+    })
+  };
+}
+
+function env(overrides = {}) {
   return {
     TURNSTILE_SECRET_KEY: 'test-secret',
     RESEND_API_KEY: 'test-resend-key',
-    CONFIRM_RATE_LIMITER: { limit: async () => ({ success: true }) }
+    CONFIRM_DEDUP_KEY: 'k'.repeat(64),
+    CONFIRM_LEDGER: fakeLedger(),
+    CONFIRM_RATE_LIMITER: { limit: async () => ({ success: true }) },
+    ...overrides
   };
 }
 
@@ -46,7 +67,7 @@ async function withFetchMock(handler, run) {
   }
 }
 
-async function runVerification(verification, requestOptions = {}) {
+async function runVerification(verification, requestOptions = {}, workerEnv = env()) {
   const calls = [];
   const response = await withFetchMock(async (url, init) => {
     calls.push({ url: String(url), init });
@@ -57,10 +78,11 @@ async function runVerification(verification, requestOptions = {}) {
       });
     }
     if (String(url) === 'https://api.resend.com/emails') {
-      return new Response(JSON.stringify({ id: 'email-test-id' }), { status: 200 });
+      if (requestOptions.resendNetworkError) throw new TypeError('network error');
+      return new Response(JSON.stringify({ id: 'email-test-id' }), { status: requestOptions.resendStatus || 200 });
     }
     throw new Error(`Unexpected fetch: ${url}`);
-  }, () => worker.fetch(request(requestOptions.body, requestOptions), env()));
+  }, () => worker.fetch(request(requestOptions.body, requestOptions), workerEnv));
   return { response, calls };
 }
 
@@ -114,4 +136,143 @@ test('failed and malformed Siteverify responses are rejected without Resend', as
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+function sentEmail(calls) {
+  const [call] = resendCalls(calls);
+  return { headers: call.init.headers, payload: JSON.parse(call.init.body) };
+}
+
+async function confirmWith(body) {
+  const { response, calls } = await runVerification(VALID_TURNSTILE, { body });
+  assert.equal(response.status, 200);
+  return sentEmail(calls).payload;
+}
+
+test('legitimate confirmation keeps sender, reply-to and the visitor name and tank', async () => {
+  const payload = await confirmWith({ name: "Zoë O'Brien", tankName: 'Riverbank 40 Breeder (Fluval 13.5)' });
+  assert.equal(payload.from, 'The Tank Guide <features@thetankguide.com>');
+  assert.equal(payload.reply_to, 'fishkeepinglifeco@thetankguide.com');
+  assert.deepEqual(payload.to, ['visitor@example.com']);
+  assert.match(payload.html, /Hi Zoë O&#039;Brien,/);
+  assert.match(payload.html, /Riverbank 40 Breeder \(Fluval 13\.5\)/);
+  assert.match(payload.text, /Tank: Riverbank 40 Breeder \(Fluval 13\.5\)/);
+  assert.match(payload.text, /you can ignore this email/);
+});
+
+for (const [label, field, value, leaked] of [
+  ['URL in name', 'name', 'Visit https://evil.example/login', /evil|https/],
+  ['bare domain in tank name', 'tankName', 'see evil-site.com now', /evil/],
+  ['www link in name', 'name', 'www example', /www/],
+  ['email address in tank name', 'tankName', 'reply to attacker@evil.example', /attacker|evil/],
+  ['phone number in name', 'name', 'Call 1 (800) 555-0199', /555/],
+  ['phishing instruction in tank name', 'tankName', 'Verify your account today', /Verify/i],
+  ['HTML in name', 'name', '<a href="https://evil.example">Bob</a>', /evil|href|<a/],
+  ['overlong tank name', 'tankName', 'A'.repeat(81), /AAAAAAAAAA/],
+  ['bidirectional override in name', 'name', 'Bob‮moc.live', /live|moc/],
+  ['full-width domain in tank name', 'tankName', 'ｅｖｉｌ．ｃｏｍ', /evil|ｅｖｉｌ/]
+]) {
+  test(`${label} is dropped from the email, which still sends with fixed wording`, async () => {
+    const payload = await confirmWith({ [field]: value });
+    assert.doesNotMatch(payload.html, leaked);
+    assert.doesNotMatch(payload.text, leaked);
+    if (field === 'name') assert.match(payload.html, /Hi there,/);
+    else assert.doesNotMatch(payload.html, /Tank:/);
+    assert.match(payload.html, /We received your Feature Your Tank submission/);
+  });
+}
+
+test('the ledger receives keyed hashes only, and Resend gets the delivery hash as its idempotency key', async () => {
+  const ledger = fakeLedger();
+  const { calls } = await runVerification(VALID_TURNSTILE, {}, env({ CONFIRM_LEDGER: ledger, DAILY_DELIVERY_CAP: '20' }));
+  assert.equal(ledger.calls.length, 1);
+  const [{ path, body }] = ledger.calls;
+  assert.equal(path, '/reserve');
+  assert.match(body.recipientHash, /^[a-f0-9]{64}$/);
+  assert.match(body.deliveryHash, /^[a-f0-9]{64}$/);
+  assert.equal(body.dailyCap, 20);
+  assert.doesNotMatch(JSON.stringify(body), /visitor|example|Test/);
+  assert.equal(sentEmail(calls).headers['Idempotency-Key'], body.deliveryHash);
+});
+
+test('separate tanks for one visitor share a recipient hash but not a delivery hash', async () => {
+  const ledger = fakeLedger();
+  const workerEnv = env({ CONFIRM_LEDGER: ledger });
+  await runVerification(VALID_TURNSTILE, { body: { tankName: 'Tank One' } }, workerEnv);
+  await runVerification(VALID_TURNSTILE, { body: { email: 'VISITOR@example.com ', tankName: 'Tank Two' } }, workerEnv);
+  const [first, second] = ledger.calls.map((call) => call.body);
+  assert.equal(first.recipientHash, second.recipientHash);
+  assert.notEqual(first.deliveryHash, second.deliveryHash);
+});
+
+test('an invalid daily cap setting falls back to the default', async () => {
+  const ledger = fakeLedger();
+  await runVerification(VALID_TURNSTILE, {}, env({ CONFIRM_LEDGER: ledger, DAILY_DELIVERY_CAP: 'lots' }));
+  assert.equal(ledger.calls[0].body.dailyCap, 50);
+});
+
+test('a repeated request for the same tank is reported as sent without a second email', async () => {
+  const { response, calls } = await runVerification(VALID_TURNSTILE, {}, env({ CONFIRM_LEDGER: fakeLedger('duplicate') }));
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { ok: true });
+  assert.equal(resendCalls(calls).length, 0);
+});
+
+for (const decision of ['recipient_limit', 'daily_limit']) {
+  test(`${decision} withholds the email with a generic 429`, async () => {
+    const { response, calls } = await runVerification(VALID_TURNSTILE, {}, env({ CONFIRM_LEDGER: fakeLedger(decision) }));
+    assert.equal(response.status, 429);
+    assert.deepEqual(await response.json(), { ok: false, error: 'Email could not be sent' });
+    assert.equal(resendCalls(calls).length, 0);
+  });
+}
+
+test('an unavailable ledger fails closed without Resend', async () => {
+  const { response, calls } = await runVerification(VALID_TURNSTILE, {}, env({ CONFIRM_LEDGER: fakeLedger('reserved', { fail: true }) }));
+  assert.equal(response.status, 503);
+  assert.equal(resendCalls(calls).length, 0);
+});
+
+for (const [label, overrides] of [
+  ['missing ledger binding', { CONFIRM_LEDGER: undefined }],
+  ['missing dedup key', { CONFIRM_DEDUP_KEY: undefined }],
+  ['short dedup key', { CONFIRM_DEDUP_KEY: 'short' }]
+]) {
+  test(`${label} fails closed before Turnstile and Resend`, async () => {
+    const { response, calls } = await runVerification(VALID_TURNSTILE, {}, env(overrides));
+    assert.equal(response.status, 503);
+    assert.equal(calls.length, 0);
+  });
+}
+
+for (const [label, options] of [
+  ['a Resend error', { resendStatus: 500 }],
+  ['a Resend network failure', { resendNetworkError: true }]
+]) {
+  test(`${label} returns 502 and releases the reservation for a retry`, async () => {
+    const ledger = fakeLedger();
+    const { response } = await runVerification(VALID_TURNSTILE, options, env({ CONFIRM_LEDGER: ledger }));
+    assert.equal(response.status, 502);
+    assert.deepEqual(ledger.calls.map((call) => call.path), ['/reserve', '/release']);
+    assert.equal(ledger.calls[1].body.deliveryHash, ledger.calls[0].body.deliveryHash);
+  });
+}
+
+test('the per-IP rate limit still applies before any other work', async () => {
+  const ledger = fakeLedger();
+  const { response, calls } = await runVerification(VALID_TURNSTILE, {}, env({
+    CONFIRM_LEDGER: ledger,
+    CONFIRM_RATE_LIMITER: { limit: async () => ({ success: false }) }
+  }));
+  assert.equal(response.status, 429);
+  assert.equal(calls.length, 0);
+  assert.equal(ledger.calls.length, 0);
+});
+
+test('a filled honeypot is answered as sent without Turnstile, ledger or Resend', async () => {
+  const ledger = fakeLedger();
+  const { response, calls } = await runVerification(VALID_TURNSTILE, { body: { website: 'spam' } }, env({ CONFIRM_LEDGER: ledger }));
+  assert.equal(response.status, 200);
+  assert.equal(calls.length, 0);
+  assert.equal(ledger.calls.length, 0);
 });
