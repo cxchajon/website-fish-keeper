@@ -24,7 +24,7 @@ The website must be published first because the strict Worker will reject tokens
 A valid `ttg_confirmation` Turnstile token proves that a person solved a challenge on thetankguide.com. It does not prove that the address belongs to them, or that a Formspree submission happened. The Worker therefore also:
 
 - echoes the visitor's name and tank name only when they read like a name: letters, digits, spaces and `' . , & ( ) # + -`, with no domain, email address, phone number, invisible or bidirectional characters, or instruction words such as "verify", "password", "click" or "call" (60 and 80 characters at most). Otherwise the email falls back to "Hi there" and leaves out the tank line. HTML is never accepted, and every echoed value is escaped.
-- sends at most one email per recipient and tank name in 24 hours. A repeat returns `{ ok: true }` without sending, and Resend gets the same `Idempotency-Key`.
+- sends at most one email per recipient and tank name in 24 hours. A repeat returns `{ ok: true }` without sending, and Resend gets the same `Idempotency-Key`. If Resend returns an error, the reservation is released so the visitor can retry. After a network failure the email may have gone out, so the reservation stays and counts toward the limits.
 - sends at most 3 emails per recipient, and `DAILY_DELIVERY_CAP` emails site-wide, per rolling 24 hours. A request over a limit gets a generic 429. The page then tells the visitor their confirmation may be delayed, and the Formspree submission is unaffected.
 - keeps the per-IP rate limit, strict Turnstile hostname/action checks, the fixed sender and the fixed reply-to.
 - fails closed (503, no email) if the ledger binding or `CONFIRM_DEDUP_KEY` is missing, or if the ledger is unavailable.

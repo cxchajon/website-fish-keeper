@@ -245,18 +245,20 @@ for (const [label, overrides] of [
   });
 }
 
-for (const [label, options] of [
-  ['a Resend error', { resendStatus: 500 }],
-  ['a Resend network failure', { resendNetworkError: true }]
-]) {
-  test(`${label} returns 502 and releases the reservation for a retry`, async () => {
-    const ledger = fakeLedger();
-    const { response } = await runVerification(VALID_TURNSTILE, options, env({ CONFIRM_LEDGER: ledger }));
-    assert.equal(response.status, 502);
-    assert.deepEqual(ledger.calls.map((call) => call.path), ['/reserve', '/release']);
-    assert.equal(ledger.calls[1].body.deliveryHash, ledger.calls[0].body.deliveryHash);
-  });
-}
+test('a Resend error response returns 502 and releases the reservation for a retry', async () => {
+  const ledger = fakeLedger();
+  const { response } = await runVerification(VALID_TURNSTILE, { resendStatus: 500 }, env({ CONFIRM_LEDGER: ledger }));
+  assert.equal(response.status, 502);
+  assert.deepEqual(ledger.calls.map((call) => call.path), ['/reserve', '/release']);
+  assert.equal(ledger.calls[1].body.deliveryHash, ledger.calls[0].body.deliveryHash);
+});
+
+test('a Resend network failure returns 502 but keeps the reservation, since the email may have been sent', async () => {
+  const ledger = fakeLedger();
+  const { response } = await runVerification(VALID_TURNSTILE, { resendNetworkError: true }, env({ CONFIRM_LEDGER: ledger }));
+  assert.equal(response.status, 502);
+  assert.deepEqual(ledger.calls.map((call) => call.path), ['/reserve']);
+});
 
 test('the per-IP rate limit still applies before any other work', async () => {
   const ledger = fakeLedger();

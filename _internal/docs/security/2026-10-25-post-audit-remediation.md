@@ -41,7 +41,7 @@ Equivalent API body: add this to the existing `rules` array with `PUT /repos/cxc
 
 No approval requirement should be added; single-maintainer merges keep working.
 
-Emergency recovery (once the check is required): repository admins have "always" bypass. A red check blocks the normal merge button; an admin can still tick "Merge without waiting for requirements to be met (bypass rules)" for a deliberate emergency merge. Integration id 1144995 also has "always" bypass and could not be identified from this session. If it is the Claude GitHub App, merges it performs through the API are not held by the required check. The owner should decide whether it keeps that bypass (Settings → Rules → Rulesets → the main ruleset → Bypass list).
+Emergency recovery (once the check is required): repository admins have "always" bypass. A red check blocks the normal merge button; an admin can still tick "Merge without waiting for requirements to be met (bypass rules)" for a deliberate emergency merge. The same admin bypass let `1ced605` (an image uploaded through the web UI on 2026-10-24) go straight to `main` without a PR. That is expected for an admin, but required checks will not apply to such commits. Integration id 1144995 also has "always" bypass and could not be identified from this session. If it is the Claude GitHub App, merges it performs through the API are not held by the required check. The owner should decide whether it keeps that bypass (Settings → Rules → Rulesets → the main ruleset → Bypass list).
 
 ## Cloudflare headers (live, 2026-10-25, from GitHub runners)
 

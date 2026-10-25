@@ -324,8 +324,10 @@ export default {
 
     if (!resendResponse || !resendResponse.ok) {
       console.error('Resend request failed', resendResponse ? resendResponse.status : 'network error');
-      // Free the reservation so the visitor's retry is not counted as a delivery.
-      await callLedger(env, '/release', { deliveryHash }).catch(() => {});
+      // Resend answered with an error, so nothing was sent: free the reservation for a retry. After a
+      // network failure the email may have been accepted, so the reservation stays and keeps counting
+      // toward the limits.
+      if (resendResponse) await callLedger(env, '/release', { deliveryHash }).catch(() => {});
       return json({ ok: false, error: 'Email could not be sent' }, 502, origin);
     }
 
