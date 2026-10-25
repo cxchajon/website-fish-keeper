@@ -6,6 +6,10 @@ on:
       - main
   pull_request:
 
+# github-script only reads the PR labels from the event payload.
+permissions:
+  contents: read
+
 jobs:
   guard:
     runs-on: ubuntu-latest

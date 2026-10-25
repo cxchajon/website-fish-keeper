@@ -10,7 +10,9 @@ permissions:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to Ubuntu 26.04, which Playwright 1.57 cannot install browser
+    # dependencies for ("Playwright does not support chromium on ubuntu26.04-x64").
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +37,7 @@ jobs:
 
       - name: Live behaviour checks
         if: always()
-        run: npx playwright test --config=playwright.live.config.ts
+        run: npx playwright test --config=playwright.live.config.ts stocking-advisor
 
       - name: Publish summary
         if: always()

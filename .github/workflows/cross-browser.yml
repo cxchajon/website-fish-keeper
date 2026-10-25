@@ -21,7 +21,9 @@ permissions:
 
 jobs:
   browsers:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to Ubuntu 26.04, which Playwright 1.57 cannot install browser
+    # dependencies for ("Playwright does not support chromium on ubuntu26.04-x64").
+    runs-on: ubuntu-24.04
     # WebKit's system packages come from the Ubuntu mirror, which can be slow enough to take most
     # of half an hour on its own; the run is nightly, so allow for it.
     timeout-minutes: 60
