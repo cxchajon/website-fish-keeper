@@ -1,0 +1,25 @@
+name: Confirmation Email Live Verify
+
+# Manual, read-only production check of the ttg-confirmation-email Worker: origin, method, type,
+# input and Turnstile rejections, the presence of the abuse-limit configuration, and rate limiting.
+# Every request is rejected before Resend, so no email is sent. Changes no files.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Probe the Worker
+        run: bash tests/live/confirmation-email-live.sh
+
+      - name: Publish summary
+        if: always()
+        run: cat live-verify/confirmation-email.md >> "$GITHUB_STEP_SUMMARY" || true

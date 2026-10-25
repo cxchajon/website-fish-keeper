@@ -7,6 +7,8 @@ const ALLOWED_TURNSTILE_HOSTNAMES = new Set([
   'www.thetankguide.com'
 ]);
 const CONFIRMATION_TURNSTILE_ACTION = 'ttg_confirmation';
+// Sent on every CORS response so a read-only live check can tell this revision from earlier ones.
+const POLICY_VERSION = 'abuse-limits-v1';
 
 // Abuse limits. A valid Turnstile token proves a person solved a challenge on the site, not that the
 // address belongs to them, so deliveries are also capped per recipient and site-wide. The ledger
@@ -142,6 +144,7 @@ function corsHeaders(origin) {
     'Access-Control-Allow-Headers': 'Content-Type',
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
+    'X-Confirmation-Policy': POLICY_VERSION,
     'Vary': 'Origin'
   };
 }
