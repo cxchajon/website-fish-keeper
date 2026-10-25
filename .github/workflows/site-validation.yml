@@ -9,6 +9,9 @@ permissions:
 
 jobs:
   guard:
+    # Stable check name for the main-branch ruleset's required status check. footer-lock.yml also
+    # has a job called "guard", so the job id alone is ambiguous; keep this name unchanged.
+    name: Site Validation
     # Pinned: ubuntu-latest moved to Ubuntu 26.04, which Playwright 1.57 cannot install browser
     # dependencies for ("Playwright does not support chromium on ubuntu26.04-x64").
     runs-on: ubuntu-24.04
