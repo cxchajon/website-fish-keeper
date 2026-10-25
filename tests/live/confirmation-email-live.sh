@@ -7,6 +7,7 @@ set -uo pipefail
 
 URL="${CONFIRM_URL:-https://ttg-confirmation-email.fishkeepinglifeco.workers.dev/confirm}"
 ORIGIN='https://thetankguide.com'
+EXPECTED_POLICY='abuse-limits-v1'
 OUT="${OUT_DIR:-live-verify}"
 mkdir -p "$OUT"
 SUMMARY="$OUT/confirmation-email.md"
@@ -44,6 +45,15 @@ probe 'untrusted origin (preflight)' 403 OPTIONS 'https://attacker.example' '' '
 probe 'no origin' 403 POST '' 'application/json' '{}'
 probe 'allowed origin preflight' 204 OPTIONS "$ORIGIN" '' ''
 grep -qi "^access-control-allow-origin: $ORIGIN" "$OUT/headers.txt" || { failures=$((failures + 1)); echo "| preflight allow-origin header | $ORIGIN | missing | | FAIL |" | tee -a "$SUMMARY"; }
+# Only the abuse-limits revision sends this marker; without it the remaining probes cannot tell the
+# deployed code from the previous Worker, which answers them identically.
+policy=$(tr -d '\r' < "$OUT/headers.txt" | awk 'tolower($0) ~ /^x-confirmation-policy:/ {sub(/^[^:]*:[ ]*/,""); print; exit}')
+if [ "$policy" = "$EXPECTED_POLICY" ]; then
+  echo "| deployed revision (X-Confirmation-Policy) | $EXPECTED_POLICY | $policy | | PASS |" | tee -a "$SUMMARY"
+else
+  failures=$((failures + 1))
+  echo "| deployed revision (X-Confirmation-Policy) | $EXPECTED_POLICY | ${policy:-absent: previous Worker still deployed} | | FAIL |" | tee -a "$SUMMARY"
+fi
 probe 'wrong method' 404 GET "$ORIGIN" '' ''
 pause
 probe 'wrong content type' 415 POST "$ORIGIN" 'text/plain' 'x'
@@ -52,8 +62,9 @@ probe 'invalid email' 400 POST "$ORIGIN" 'application/json' '{"email":"not-an-em
 pause
 probe 'missing Turnstile token' 400 POST "$ORIGIN" 'application/json' '{"email":"probe@example.invalid"}' 'Invalid submission'
 pause
-# Reaches the configuration check and then Siteverify, which rejects the bogus token. A 503 here
-# means CONFIRM_LEDGER or CONFIRM_DEDUP_KEY is missing.
+# On the abuse-limits revision (checked above), this reaches the configuration check and then
+# Siteverify, which rejects the bogus token. A 503 here means CONFIRM_LEDGER or CONFIRM_DEDUP_KEY
+# is missing.
 probe 'bogus Turnstile token (config present)' 400 POST "$ORIGIN" 'application/json' '{"email":"probe@example.invalid","name":"Probe","tankName":"Probe","turnstileToken":"ttg-live-verify-invalid-token"}' 'Security check failed'
 
 grep -qi '^x-content-type-options: nosniff' "$OUT/headers.txt" || { failures=$((failures + 1)); echo "| nosniff header | present | missing | | FAIL |" | tee -a "$SUMMARY"; }

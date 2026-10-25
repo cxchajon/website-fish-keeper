@@ -278,3 +278,11 @@ test('a filled honeypot is answered as sent without Turnstile, ledger or Resend'
   assert.equal(calls.length, 0);
   assert.equal(ledger.calls.length, 0);
 });
+
+test('responses to allowed origins carry the policy version marker used by the live check', async () => {
+  const { response } = await runVerification(VALID_TURNSTILE);
+  assert.equal(response.headers.get('X-Confirmation-Policy'), 'abuse-limits-v1');
+  const preflight = await worker.fetch(request({}, { method: 'OPTIONS', rawBody: null }), env());
+  assert.equal(preflight.status, 204);
+  assert.equal(preflight.headers.get('X-Confirmation-Policy'), 'abuse-limits-v1');
+});
