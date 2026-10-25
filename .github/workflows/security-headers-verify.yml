@@ -1,60 +1,56 @@
 name: Security Headers Verify
 
+# Read-only production check: the security headers and redirects Cloudflare serves for key pages,
+# and any Content-Security-Policy violations a browser reports on them. Changes no files and commits
+# nothing; results go to the job summary and a workflow artifact.
 on:
   schedule:
     - cron: "15 9 * * 0"   # Sundays 09:15 UTC
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 jobs:
   verify:
     name: Verify Cloudflare Security Headers
-    runs-on: ubuntu-latest
+    # Pinned for Playwright; see site-validation.yml.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install curl and jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl jq
+      - name: Fetch headers and redirects
+        run: bash tests/live/security-headers.sh
 
-      - name: Fetch headers from apex
-        run: |
-          echo "Fetching headers from thetankguide.com"
-          curl -sSI https://thetankguide.com > apex_headers.txt
+      - name: Set up Node.js
+        if: always()
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Fetch headers from www
+      - name: Install dependencies and Chromium
+        if: always()
         run: |
-          echo "Fetching headers from www.thetankguide.com"
-          curl -sSI https://www.thetankguide.com > www_headers.txt
+          npm ci
+          npx playwright install --with-deps chromium
 
-      - name: Combine and format JSON output
-        run: |
-          jq -n --rawfile apex apex_headers.txt --rawfile www www_headers.txt \
-            --arg now "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
-            '{timestamp: $now, apex: $apex, www: $www}' \
-            > security-headers-output.json
+      - name: Browser CSP check
+        if: always()
+        run: npx playwright test --config=playwright.live.config.ts csp-console
 
-      - name: Upload verification artifact
+      - name: Publish summary
+        if: always()
+        run: cat live-verify/security-headers.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: security-headers-verify
-          path: security-headers-output.json
-
-      - name: Append scheduled run entry to channel log
-        if: github.event_name == 'schedule'
-        run: |
-          timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-          mkdir -p _internal/docs
-          echo "✅ ${timestamp} — Scheduled security headers verification completed. Artifact: security-headers-verify" >> _internal/docs/CHANNEL_LOG.md
-
-      - name: Commit latest report into _internal/docs/security
-        run: |
-          mkdir -p _internal/docs/security
-          mv security-headers-output.json _internal/docs/security/security-headers-verify-latest.json
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add _internal/docs/security/security-headers-verify-latest.json _internal/docs/CHANNEL_LOG.md
-          git commit -m "chore(security): update security headers verification report" || echo "No changes to commit"
-          git push || echo "Push skipped (PR flow or no changes)"
+          path: |
+            live-verify/
+            test-results/
+          if-no-files-found: ignore
