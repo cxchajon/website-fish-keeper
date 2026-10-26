@@ -27,5 +27,6 @@ exclude:
   - stocking-tests-real/
   - scripts/
   - workers/
+  - research/
   - assets/data/gear/filters.summary.md
   - README.md
