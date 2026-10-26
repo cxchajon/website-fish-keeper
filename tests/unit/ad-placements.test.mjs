@@ -15,26 +15,100 @@ const PUBLISHER = 'ca-pub-9905718149811880';
 const LOADER = /<script[^>]+src="https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js[^"]*"/g;
 const RETIRED_SLOTS = ['8979116676'];
 
+const BLOG_PILOT = 'blogs/aquarium-heater-safety-temperature-controllers.html';
+const BLOG_END_OF_ARTICLE = '5598495275'; // TTG_Blog_EndOfArticle
+
+// Blog articles converted after the pilot: each article's one house-ad slot became
+// TTG_Blog_EndOfArticle in the same position. Value = data-full-width-responsive: false where an
+// ancestor (.blog-body, body) clips overflow, so a viewport-wide ad would be cropped on phones.
+const BLOG_BATCH_2 = {
+  'acclimating-shrimp-after-shipping-guide/index.html': true,
+  'aquarium-bacterial-bloom/index.html': true,
+  'aquarium-fertilizers-guide-liquid-root-tabs/index.html': false,
+  'aquarium-gh-kh-ph-explained/index.html': true,
+  'aquarium-livestock-sourcing-comparison/index.html': false,
+  'aquarium-plants-remove-nitrates/index.html': true,
+  'aquarium-worms-and-bugs/index.html': true,
+  'aquashella-2026-experience/index.html': true,
+  'beginner-carpeting-plants-low-tech/index.html': true,
+  'best-beginner-aquarium-plants/index.html': true,
+  'blog/holiday-gift-guide-aquarium-lovers.html': false,
+  'blogs/aquarium-filtration-for-beginners.html': true,
+  'blogs/betta-fish-in-a-community-tank.html': true,
+  'blogs/blackbeard/index.html': true,
+  'blogs/nitrogen-cycle/index.html': true,
+  'blogs/purigen/index.html': true,
+  'blogs/sick-fish-ich-freshwater-disease-guide/index.html': true,
+  'brown-aquarium-water-tannins/index.html': true,
+  'buying-shrimp-online-process-guide/index.html': true,
+  'cool-down-fish-tank/index.html': false,
+  'dangerous-aquarium-hitchhikers/index.html': true,
+  'diy-freshwater-sump-design-29-gallon/index.html': true,
+  'diy-sump-lessons-learned.html': true,
+  'first-year-of-fishkeepinglifeco/index.html': true,
+  'freshwater-aquarium-clean-up-crew-snail-welfare.html': true,
+  'green-aquarium-water/index.html': true,
+  'hard-water-vs-soft-water-aquarium-fish/index.html': true,
+  'high-tech-vs-low-tech-planted-aquarium/index.html': false,
+  'how-houseplants-grow-in-aquarium-water/index.html': false,
+  'how-to-raise-lower-aquarium-gh-kh-ph/index.html': true,
+  'neocaridina-shrimp-care/index.html': true,
+  'planted-aquarium-substrate-guide-aquasoil-dirt/index.html': true,
+  'prevent-aquarium-hitchhikers/index.html': true,
+  'reduce-aquarium-nitrates-pothos-guide.html': true,
+  'undergravel-filters-planted-tank-case-study/index.html': false,
+  'why-goldfish-are-misunderstood/index.html': false,
+  'why-is-my-aquarium-cloudy/index.html': true,
+};
+
+// Excluded from the blog batch: its products slot needs a separate affiliate-advertising decision.
+const EXCLUDED_BLOG = 'neocaridina-shrimp-diet-biofilm-guide/index.html';
+// Held back: between about 650px and 810px wide these articles' .blog-body is wider than the
+// viewport, so the slot's container overflows the screen and a responsive creative would be cropped.
+// They stay house ads until that layout is fixed.
+const HELD_BACK_BLOGS = ['best-houseplants-for-aquariums/index.html', 'growing-houseplants-in-aquarium/index.html'];
+
 // page -> data-ad-slot values that page may carry. Adding a unit anywhere else must update this list.
 const MANUAL_UNITS = {
-  'blogs/aquarium-heater-safety-temperature-controllers.html': ['5598495275'], // TTG_Blog_EndOfArticle
+  [BLOG_PILOT]: [BLOG_END_OF_ARTICLE],
   'gear/index.html': ['1762971638'], // TTG_Gear_Bottom
   'stocking-advisor.html': ['9758352395'], // TTG_StockingAdvisor_Bottom
+  ...Object.fromEntries(Object.keys(BLOG_BATCH_2).map((path) => [path, [BLOG_END_OF_ARTICLE]])),
 };
 
 // data-full-width-responsive per page. The blog's .blog-body clips overflow, so a viewport-wide
 // ad would be cropped on phones; the tool pages' containers already span the viewport.
 const FULL_WIDTH = {
-  'blogs/aquarium-heater-safety-temperature-controllers.html': 'false',
+  [BLOG_PILOT]: 'false',
   'gear/index.html': 'true',
   'stocking-advisor.html': 'true',
+  ...Object.fromEntries(Object.entries(BLOG_BATCH_2).map(([path, fullWidth]) => [path, String(fullWidth)])),
 };
 
 // House-ad slots on the converted pages that stay house ads in this phase.
 const KEPT_HOUSE_ADS = {
-  'blogs/aquarium-heater-safety-temperature-controllers.html': [],
+  [BLOG_PILOT]: [],
   'gear/index.html': ['ad-gear-top'],
   'stocking-advisor.html': ['ad-stocking-top', 'ad-stocking-mid'],
+  ...Object.fromEntries(Object.keys(BLOG_BATCH_2).map((path) => [path, []])),
+};
+
+// Every house-ad slot still on the site. Converting or removing one must update this list.
+const REMAINING_HOUSE_ADS = {
+  'about.html': ['ad-about-books', 'ad-about-beginners', 'ad-about-footer-top'],
+  'assistant.html': ['ad-assistant-mid', 'ad-assistant-bottom'],
+  'best-houseplants-for-aquariums/index.html': ['ad-best-houseplants-for-aquariums-rotator'],
+  'community-tanks.html': ['ad-community-tanks-store'],
+  'cycling-coach/index.html': ['ad-cycling-top', 'ad-cycling-bottom'],
+  'gear/index.html': ['ad-gear-top'],
+  'growing-houseplants-in-aquarium/index.html': ['ad-growing-houseplants-in-aquarium-rotator'],
+  'media.html': ['ad-media-feature-your-tank', 'ad-media-faq-top'],
+  'neocaridina-shrimp-diet-biofilm-guide/index.html': ['ad-neocaridina-diet-products-rotator'],
+  'podcast/index.html': ['ad-podcast-top', 'ad-podcast-bottom'],
+  'stocking-advisor.html': ['ad-stocking-top', 'ad-stocking-mid'],
+  'tanks/project-tank-000.html': ['ad-project-tank-000-bottom'],
+  'tools/snail-stock-recommender.html': ['ad-snail-recommender-bottom'],
+  'university/index.html': ['ad-university-waterchem-top', 'ad-university-waterchem-bottom'],
 };
 
 const HTML_FILES = execSync('git ls-files "*.html"', { cwd: ROOT, encoding: 'utf8' })
@@ -44,7 +118,9 @@ const HTML_FILES = execSync('git ls-files "*.html"', { cwd: ROOT, encoding: 'utf
 
 const adSlots = (html) => [...html.matchAll(/data-ad-slot="([^"]*)"/g)].map((m) => m[1]);
 const houseAdIds = (html) =>
-  [...html.matchAll(/<div\s+class="[^"]*ttg-house-ad-slot[^"]*"\s+id="([^"]+)"/g)].map((m) => m[1]);
+  [...html.matchAll(/<div\b[^>]*\bttg-house-ad-slot\b[^>]*>/g)].map((m) => (m[0].match(/\bid="([^"]+)"/) || [])[1]);
+const consentStack = (html) =>
+  html.slice(html.indexOf('<!-- TTG consent stack START'), html.indexOf('<!-- TTG consent stack END -->'));
 
 test('homepage has no AdSense loader, Google ad units or house-ad containers', () => {
   const html = read('index.html');
@@ -146,4 +222,35 @@ test('google-ads.css never caps or clips ad height and only collapses unfilled u
   assert.ok(!/overflow:\s*(hidden|clip)/.test(css), 'no overflow clipping');
   assert.match(css, /data-ad-status="unfilled"/);
   assert.ok(!/data-ad-status="filled"\][^{]*\{[^}]*display:\s*none/.test(css), 'filled ads are never hidden');
+});
+
+test('every converted blog article carries the pilot consent stack and loader verbatim', () => {
+  const pilotStack = consentStack(read(BLOG_PILOT));
+  assert.match(pilotStack, LOADER);
+  for (const path of Object.keys(BLOG_BATCH_2)) {
+    assert.equal(consentStack(read(path)), pilotStack, path);
+  }
+});
+
+test('remaining house-ad slots are exactly the expected inventory', () => {
+  const found = {};
+  for (const path of HTML_FILES) {
+    const ids = houseAdIds(read(path));
+    if (ids.length) found[path] = ids;
+  }
+  assert.deepEqual(found, REMAINING_HOUSE_ADS);
+});
+
+test('held-back blog articles keep their house ads and have no Google unit', () => {
+  for (const path of HELD_BACK_BLOGS) {
+    const html = read(path);
+    assert.equal(houseAdIds(html).length, 1, path);
+    assert.ok(!html.includes('adsbygoogle'), path);
+  }
+});
+
+test('excluded blog article keeps its house ad and has no Google unit', () => {
+  const html = read(EXCLUDED_BLOG);
+  assert.deepEqual(houseAdIds(html), ['ad-neocaridina-diet-products-rotator']);
+  assert.ok(!html.includes('adsbygoogle'));
 });
