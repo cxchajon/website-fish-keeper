@@ -60,19 +60,21 @@ const BLOG_BATCH_2 = [
   'why-is-my-aquarium-cloudy/index.html',
 ];
 
+// Held back from batch 2 until their .blog-body stopped overflowing the viewport between about
+// 641px and 830px wide. With that layout fixed, each article's one house-ad slot became
+// TTG_Blog_EndOfArticle in the same position, configured exactly like the pilot.
+const BLOG_HOUSEPLANTS = ['best-houseplants-for-aquariums/index.html', 'growing-houseplants-in-aquarium/index.html'];
+const CONVERTED_BLOGS = [...BLOG_BATCH_2, ...BLOG_HOUSEPLANTS];
+
 // Excluded from the blog batch: its products slot needs a separate affiliate-advertising decision.
 const EXCLUDED_BLOG = 'neocaridina-shrimp-diet-biofilm-guide/index.html';
-// Held back: between about 650px and 810px wide these articles' .blog-body is wider than the
-// viewport, so the slot's container overflows the screen and a responsive creative would be cropped.
-// They stay house ads until that layout is fixed.
-const HELD_BACK_BLOGS = ['best-houseplants-for-aquariums/index.html', 'growing-houseplants-in-aquarium/index.html'];
 
 // page -> data-ad-slot values that page may carry. Adding a unit anywhere else must update this list.
 const MANUAL_UNITS = {
   [BLOG_PILOT]: [BLOG_END_OF_ARTICLE],
   'gear/index.html': ['1762971638'], // TTG_Gear_Bottom
   'stocking-advisor.html': ['9758352395'], // TTG_StockingAdvisor_Bottom
-  ...Object.fromEntries(BLOG_BATCH_2.map((path) => [path, [BLOG_END_OF_ARTICLE]])),
+  ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, [BLOG_END_OF_ARTICLE]])),
 };
 
 // data-full-width-responsive per page. Every blog unit is 'false', like the pilot: the ad stays
@@ -82,7 +84,7 @@ const FULL_WIDTH = {
   [BLOG_PILOT]: 'false',
   'gear/index.html': 'true',
   'stocking-advisor.html': 'true',
-  ...Object.fromEntries(BLOG_BATCH_2.map((path) => [path, 'false'])),
+  ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, 'false'])),
 };
 
 // House-ad slots on the converted pages that stay house ads in this phase.
@@ -90,18 +92,16 @@ const KEPT_HOUSE_ADS = {
   [BLOG_PILOT]: [],
   'gear/index.html': ['ad-gear-top'],
   'stocking-advisor.html': ['ad-stocking-top', 'ad-stocking-mid'],
-  ...Object.fromEntries(BLOG_BATCH_2.map((path) => [path, []])),
+  ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, []])),
 };
 
 // Every house-ad slot still on the site. Converting or removing one must update this list.
 const REMAINING_HOUSE_ADS = {
   'about.html': ['ad-about-books', 'ad-about-beginners', 'ad-about-footer-top'],
   'assistant.html': ['ad-assistant-mid', 'ad-assistant-bottom'],
-  'best-houseplants-for-aquariums/index.html': ['ad-best-houseplants-for-aquariums-rotator'],
   'community-tanks.html': ['ad-community-tanks-store'],
   'cycling-coach/index.html': ['ad-cycling-top', 'ad-cycling-bottom'],
   'gear/index.html': ['ad-gear-top'],
-  'growing-houseplants-in-aquarium/index.html': ['ad-growing-houseplants-in-aquarium-rotator'],
   'media.html': ['ad-media-feature-your-tank', 'ad-media-faq-top'],
   'neocaridina-shrimp-diet-biofilm-guide/index.html': ['ad-neocaridina-diet-products-rotator'],
   'podcast/index.html': ['ad-podcast-top', 'ad-podcast-bottom'],
@@ -227,7 +227,7 @@ test('google-ads.css never caps or clips ad height and only collapses unfilled u
 test('every converted blog article carries the pilot consent stack and loader verbatim', () => {
   const pilotStack = consentStack(read(BLOG_PILOT));
   assert.match(pilotStack, LOADER);
-  for (const path of BLOG_BATCH_2) {
+  for (const path of CONVERTED_BLOGS) {
     assert.equal(consentStack(read(path)), pilotStack, path);
   }
 });
@@ -241,11 +241,14 @@ test('remaining house-ad slots are exactly the expected inventory', () => {
   assert.deepEqual(found, REMAINING_HOUSE_ADS);
 });
 
-test('held-back blog articles keep their house ads and have no Google unit', () => {
-  for (const path of HELD_BACK_BLOGS) {
+test('houseplant articles replaced their rotators and keep .blog-body inside the column', () => {
+  for (const path of BLOG_HOUSEPLANTS) {
     const html = read(path);
-    assert.equal(houseAdIds(html).length, 1, path);
-    assert.ok(!html.includes('adsbygoogle'), path);
+    assert.deepEqual(houseAdIds(html), [], path);
+    assert.ok(!/data-ttg-ad-rotator|ttg-ad-banner-link|ad-[a-z-]+-rotator"/.test(html), `${path} keeps no rotator markup`);
+    // Without an explicit width the column-flex .blog-body shrink-wraps to the 760px comparison
+    // table and overflows the viewport between about 641px and 830px, cropping the ad.
+    assert.match(html, /\.blog-body \{ box-sizing: border-box; width: 100%; \}/, `${path} keeps the .blog-body width fix`);
   }
 });
 

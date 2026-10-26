@@ -10,6 +10,8 @@ ads of any kind. `tests/unit/ad-placements.test.mjs` enforces all of this.
 |---|---|---|---|---|
 | `/blogs/aquarium-heater-safety-temperature-controllers.html` (pilot) | `ad-snail-welfare-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | 37 further blog articles (batch 2) | each article's single house-ad slot, same position | TTG_Blog_EndOfArticle | `5598495275` | `false` |
+| `/best-houseplants-for-aquariums/` | `ad-best-houseplants-for-aquariums-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
+| `/growing-houseplants-in-aquarium/` | `ad-growing-houseplants-in-aquarium-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | `/gear/` | `ad-gear-bundle` (bottom) | TTG_Gear_Bottom | `1762971638` | `true` |
 | `/stocking-advisor.html` | `ad-stocking-bottom` (bottom) | TTG_StockingAdvisor_Bottom | `9758352395` | `true` |
 
@@ -19,6 +21,14 @@ not be used.
 **Blog batch 2.** The authoritative list of converted articles is `BLOG_BATCH_2` in
 `tests/unit/ad-placements.test.mjs`. Every converted article's consent stack, including the loader,
 is byte-identical to the pilot's.
+
+**Houseplant articles.** `best-houseplants-for-aquariums` and `growing-houseplants-in-aquarium`
+(`BLOG_HOUSEPLANTS` in the same test) were held back from batch 2 because their `.blog-body` was
+wider than the viewport between about 641px and 830px. `.blog-body` is a column-flex item of the
+article with `margin: auto`, so it shrink-wraps to its min-content width, and the 760px comparison
+table inside `.table-scroll-container` made that 804px. Each page's own inline style now gives
+`.blog-body` `width: 100%` (scoped to the page's body class), so it fills the column and the table
+scrolls inside its container. Keep that rule: the test checks it is present.
 
 **Blog standard: `data-full-width-responsive="false"` on every blog unit.** Blog ads stay responsive
 (`data-ad-format="auto"`) but are sized to the article's own content column, exactly like the
@@ -30,9 +40,6 @@ viewport.
 **Still house ads** (exact inventory: `REMAINING_HOUSE_ADS` in the same test):
 
 - `neocaridina-shrimp-diet-biofilm-guide`: its products slot needs a separate affiliate-advertising decision.
-- `best-houseplants-for-aquariums` and `growing-houseplants-in-aquarium`: between about 650px and
-  810px wide their `.blog-body` is wider than the viewport, so the ad container overflows the screen
-  and a responsive creative would be cropped or pushed off-screen. Convert them once that layout is fixed.
 - All tool, hub and utility pages (about, assistant, community-tanks, cycling-coach, gear top,
   media, podcast, project-tank-000, snail recommender, stocking top and mid, university).
 
@@ -60,7 +67,7 @@ viewport.
 3. The page must load the AdSense loader exactly once, as the last entry of the "TTG consent stack"
    (after the Consent Mode v2 defaults, Funding Choices, GTM and `consent-mode.js`), exactly as on
    the pilot. Never add a second loader and never add inline `adsbygoogle.push()` calls.
-4. Add the page and slot ID to `MANUAL_UNITS` (blog articles: `BLOG_BATCH_2`) and update
+4. Add the page and slot ID to `MANUAL_UNITS` (blog articles: `BLOG_BATCH_2` or `BLOG_HOUSEPLANTS`) and update
    `REMAINING_HOUSE_ADS` in `tests/unit/ad-placements.test.mjs`.
 
 ## How it behaves
