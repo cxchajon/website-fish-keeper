@@ -1,0 +1,69 @@
+/* ============================================================
+   Manual Google AdSense units (.ttg-gad)
+   ============================================================
+   Linked only on pages that carry a converted manual Display unit.
+   Scoped to .ttg-gad so none of the legacy .ttg-ad-slot / house-ad
+   rules apply to live Google ads: the blog max-height cap and
+   overflow clipping, the 250px ins reservation, the empty-slot QA
+   overlays and the rotator image sizing.
+
+   Unfilled units are collapsed with Google's documented
+   data-ad-status="unfilled" attribute; filled ads are never hidden,
+   resized or restyled.
+   ============================================================ */
+
+.ttg-gad {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 970px;
+  max-height: none;
+  margin: clamp(2.5rem, 6vw, 3.5rem) auto;
+  padding: 0;
+  overflow: visible;
+  clear: both;
+  text-align: center;
+}
+
+/* Small "Advertisement" label, shown only once Google reports a fill. */
+.ttg-gad__label {
+  display: none;
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.ttg-gad:has(ins.adsbygoogle[data-ad-status="filled"]) .ttg-gad__label {
+  display: block;
+}
+
+.ttg-gad ins.adsbygoogle {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: none;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+/* Google-supported handling for units with no ad to show. */
+.ttg-gad ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+
+.ttg-gad:has(ins.adsbygoogle[data-ad-status="unfilled"]) {
+  display: none;
+}
+
+/* Visitor declined advertising on /cookie-settings.html (consent-mode.js sets
+   data-ad-consent="denied"); js/google-ads.js makes no ad request in that state. */
+html[data-ad-consent="denied"] .ttg-gad {
+  display: none;
+}

@@ -414,7 +414,12 @@ test.describe('Consent and AdSense behavior audit — EU', { tag: '@consent-eu' 
         await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
         await waitForDOMContentLoaded(page);
         await runViewportChecks(page);
-        await waitForAdsLibrary(page);
+        if (pagePath === '/index.html') {
+          // The homepage is intentionally ad-free: the CMP and Consent Mode run there, AdSense does not.
+          await expect(page.locator('script[src*="adsbygoogle"]')).toHaveCount(0);
+        } else {
+          await waitForAdsLibrary(page);
+        }
         await verifyStylesheet(page, pagePath);
         await captureState(page, flow.id, pagePath, 'loaded', testInfo);
 
@@ -504,7 +509,9 @@ test.describe('Consent and AdSense behavior audit — EU', { tag: '@consent-eu' 
           expect.soft(storageKeys.length, 'LocalStorage should record consent state').toBeGreaterThan(0);
         }
 
-        if (flow.action === 'accept') {
+        if (pagePath === '/index.html') {
+          expect.soft(adsVisible, 'The homepage never renders ads').toBeFalsy();
+        } else if (flow.action === 'accept') {
           expect.soft(adsVisible, 'Ads should render after acceptance').toBeTruthy();
         }
 
