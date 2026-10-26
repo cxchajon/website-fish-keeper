@@ -99,6 +99,19 @@
   <link rel="stylesheet" href="/css/app.bundle.css?v=2026-10-23-add-while-busy">
   <link rel="stylesheet" href="/css/author-byline.css?v=2026-09-05">
   <link rel="stylesheet" href="/css/google-ads.css?v=2026-10-26">
+  <style>
+  /* TTG_StockingAdvisor_Mid: Google's "exact size per screen width" responsive code.
+     Google supports these sizing rules only inline on the page, not in an external stylesheet.
+     Breakpoints fit the measured .wrap content width (viewport minus 36px). Below 360px no
+     320px creative fits, so the unit is hidden and js/google-ads.js does not request it. */
+  #ad-stocking-mid .ttg_stocking_mid { display: block; width: 320px; height: 100px; }
+  @media (min-width: 520px) { #ad-stocking-mid .ttg_stocking_mid { width: 468px; height: 60px; } }
+  @media (min-width: 800px) { #ad-stocking-mid .ttg_stocking_mid { width: 728px; height: 90px; } }
+  @media (max-width: 359px) {
+    #ad-stocking-mid,
+    #ad-stocking-mid .ttg_stocking_mid { display: none; }
+  }
+  </style>
 
 <script defer src="/js/nav.js?v=1.1.0"></script>
   <script type="application/ld+json">
@@ -788,23 +801,13 @@
         </p>
       </section>
 
-      <!-- MID AD SLOT: House Ad Only -->
-      <div class="ttg-ad-slot ttg-house-ad-slot"
-           id="ad-stocking-mid"
-           data-ad-position="mid"
-           data-ttg-ad-rotator="true"
-           data-ttg-ad-manifest="/assets/ads/manifest.json"
-           data-ttg-ad-interval="10000"
-           aria-label="Advertisement">
-        <a class="ttg-ad-banner-link"
-           href="https://thetankguide.com/books/coloring-book-vol-1/"
-           rel="noopener">
-              <img class="ttg-ad-img"
-                   src="/assets/img/ads/Coloring-books.JPG"
-               alt="Aquarium Coloring Book for kids — Available on Amazon"
-               loading="lazy">
-        </a>
-      </div>
+      <!-- MID AD SLOT: AdSense manual unit TTG_StockingAdvisor_Mid (compact, exact size per screen width) -->
+      <aside class="ttg-gad" id="ad-stocking-mid" aria-label="Advertisement">
+        <p class="ttg-gad__label" aria-hidden="true">Advertisement</p>
+        <ins class="adsbygoogle ttg_stocking_mid"
+             data-ad-client="ca-pub-9905718149811880"
+             data-ad-slot="5996977454"></ins>
+      </aside>
 
       <section class="panel" aria-labelledby="educational-title">
         <h2 id="educational-title">Aquarium Bioload &amp; The Nitrogen Cycle</h2>
@@ -1152,7 +1155,7 @@
     })();
   </script>
 
-  <script src="/js/google-ads.js?v=1.0.0" defer></script>
+  <script src="/js/google-ads.js?v=1.1.0" defer></script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
