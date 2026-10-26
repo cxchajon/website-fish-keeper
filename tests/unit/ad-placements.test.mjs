@@ -3,6 +3,7 @@
 // - Auto ads stay off in code: no page-level/Auto ads snippet, no units in shared nav/footer includes.
 // - Manual units exist only where they were reviewed, with the dashboard slot IDs below.
 // - Converted pages load the AdSense loader once and request each unit once (js/google-ads.js).
+// - Every interactive tool still shows a rotating FishKeepingLifeCo house ad first.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
@@ -73,25 +74,49 @@ const EXCLUDED_BLOG = 'neocaridina-shrimp-diet-biofilm-guide/index.html';
 const MANUAL_UNITS = {
   [BLOG_PILOT]: [BLOG_END_OF_ARTICLE],
   'gear/index.html': ['1762971638'], // TTG_Gear_Bottom
-  'stocking-advisor.html': ['9758352395'], // TTG_StockingAdvisor_Bottom
+  'stocking-advisor.html': ['5996977454', '9758352395'], // TTG_StockingAdvisor_Mid, TTG_StockingAdvisor_Bottom
+  'cycling-coach/index.html': ['2094490843'], // TTG_CyclingCoach_Bottom
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, [BLOG_END_OF_ARTICLE]])),
 };
 
-// data-full-width-responsive per page. Every blog unit is 'false', like the pilot: the ad stays
-// responsive inside the article column instead of expanding to the viewport edges. The tool pages'
-// containers already span the viewport.
+// data-full-width-responsive per page for its flexible (data-ad-format="auto") units. Every blog
+// unit is 'false', like the pilot: the ad stays responsive inside the article column instead of
+// expanding to the viewport edges. The tool pages' bottom containers already span the viewport.
 const FULL_WIDTH = {
   [BLOG_PILOT]: 'false',
   'gear/index.html': 'true',
   'stocking-advisor.html': 'true',
+  'cycling-coach/index.html': 'true',
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, 'false'])),
 };
+
+// Compact middle units use Google's "exact size per screen width" responsive code instead of
+// data-ad-format="auto": a size class on the <ins>, sized only by inline rules on the page
+// (Google does not support those rules in external stylesheets) and hidden where no size fits.
+const COMPACT_UNITS = {
+  'stocking-advisor.html': [
+    {
+      id: 'ad-stocking-mid',
+      slot: '5996977454', // TTG_StockingAdvisor_Mid
+      sizeClass: 'ttg_stocking_mid',
+      // [media query or null for the base rule, width, height]
+      sizes: [
+        [null, 320, 100],
+        ['(min-width: 520px)', 468, 60],
+        ['(min-width: 800px)', 728, 90],
+      ],
+      hiddenBelow: '(max-width: 359px)',
+    },
+  ],
+};
+const compactSlots = (path) => (COMPACT_UNITS[path] || []).map((unit) => unit.slot);
 
 // House-ad slots on the converted pages that stay house ads in this phase.
 const KEPT_HOUSE_ADS = {
   [BLOG_PILOT]: [],
   'gear/index.html': ['ad-gear-top'],
-  'stocking-advisor.html': ['ad-stocking-top', 'ad-stocking-mid'],
+  'stocking-advisor.html': ['ad-stocking-top'],
+  'cycling-coach/index.html': ['ad-cycling-top'],
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, []])),
 };
 
@@ -100,12 +125,12 @@ const REMAINING_HOUSE_ADS = {
   'about.html': ['ad-about-books', 'ad-about-beginners', 'ad-about-footer-top'],
   'assistant.html': ['ad-assistant-mid', 'ad-assistant-bottom'],
   'community-tanks.html': ['ad-community-tanks-store'],
-  'cycling-coach/index.html': ['ad-cycling-top', 'ad-cycling-bottom'],
+  'cycling-coach/index.html': ['ad-cycling-top'],
   'gear/index.html': ['ad-gear-top'],
   'media.html': ['ad-media-feature-your-tank', 'ad-media-faq-top'],
   'neocaridina-shrimp-diet-biofilm-guide/index.html': ['ad-neocaridina-diet-products-rotator'],
   'podcast/index.html': ['ad-podcast-top', 'ad-podcast-bottom'],
-  'stocking-advisor.html': ['ad-stocking-top', 'ad-stocking-mid'],
+  'stocking-advisor.html': ['ad-stocking-top'],
   'tanks/project-tank-000.html': ['ad-project-tank-000-bottom'],
   'tools/snail-stock-recommender.html': ['ad-snail-recommender-bottom'],
   'university/index.html': ['ad-university-waterchem-top', 'ad-university-waterchem-bottom'],
@@ -186,14 +211,26 @@ for (const [path, slots] of Object.entries(MANUAL_UNITS)) {
     assert.ok(html.indexOf('/assets/js/consent-mode.js') < loaderAt, 'loader stays after the consent stack');
     assert.ok(html.indexOf("gtag('consent', 'default'") < loaderAt, 'Consent Mode defaults precede the loader');
 
-    const units = [...html.matchAll(/<aside class="ttg-gad" id="[^"]+" aria-label="Advertisement">\s*<p class="ttg-gad__label" aria-hidden="true">Advertisement<\/p>\s*<ins class="adsbygoogle"([^>]*)><\/ins>\s*<\/aside>/g)];
+    const units = [...html.matchAll(/<aside class="ttg-gad" id="([^"]+)" aria-label="Advertisement">\s*<p class="ttg-gad__label" aria-hidden="true">Advertisement<\/p>\s*<ins class="adsbygoogle( [a-z0-9_]+)?"([^>]*)><\/ins>\s*<\/aside>/g)];
     assert.equal(units.length, slots.length, 'each unit sits in a .ttg-gad container');
-    for (const [, attrs] of units) {
+    const compact = COMPACT_UNITS[path] || [];
+    for (const [, id, sizeClass, attrs] of units) {
       assert.match(attrs, new RegExp(`data-ad-client="${PUBLISHER}"`));
-      assert.match(attrs, /data-ad-format="auto"/);
-      assert.match(attrs, new RegExp(`data-full-width-responsive="${FULL_WIDTH[path]}"`));
+      const spec = compact.find((unit) => unit.id === id);
+      if (spec) {
+        // Compact units: fixed per-width sizes from the page's inline rules, never the flexible format.
+        assert.equal(sizeClass, ` ${spec.sizeClass}`, `${id} carries its size class`);
+        assert.match(attrs, new RegExp(`data-ad-slot="${spec.slot}"`), `${id} uses its own unit`);
+        assert.ok(!/data-ad-format|data-full-width-responsive|style=/.test(attrs), `${id} is not a flexible unit`);
+      } else {
+        assert.equal(sizeClass, undefined, `${id} is a flexible unit without a size class`);
+        assert.ok(!compactSlots(path).some((slot) => attrs.includes(`"${slot}"`)), `${id} does not reuse a compact unit`);
+        assert.match(attrs, /data-ad-format="auto"/);
+        assert.match(attrs, new RegExp(`data-full-width-responsive="${FULL_WIDTH[path]}"`));
+      }
     }
-    assert.equal((html.match(/<ins class="adsbygoogle"/g) || []).length, slots.length, 'no stray <ins> units');
+    assert.equal(units.filter(([, id]) => compact.some((unit) => unit.id === id)).length, compact.length, 'every compact unit is present');
+    assert.equal((html.match(/<ins class="adsbygoogle[ "]/g) || []).length, slots.length, 'no stray <ins> units');
 
     // Units are requested only by js/google-ads.js — no inline push() loops on the page.
     assert.equal((html.match(/\/js\/google-ads\.js\?v=[^"]+"/g) || []).length, 1, 'initializer linked once');
@@ -214,6 +251,38 @@ test('google-ads.js requests each unit at most once and honours the first-party 
   assert.match(js, /data-adsbygoogle-status/);
   assert.match(js, /data-ad-consent'\) === 'denied'/);
   assert.ok(!/setInterval|setTimeout/.test(js), 'no refresh or retry timers');
+  // A unit hidden at the current width is not requested (Google cannot size it), and each push
+  // names its unit so a bare push() cannot fill the hidden one in its place.
+  assert.match(js, /getClientRects\(\)\.length > 0 && ins\.offsetWidth > 0/);
+  assert.match(js, /\.push\(\{ element: ins \}\)/);
+  assert.ok(!/\.push\(\{\}\)/.test(js), 'no bare push()');
+});
+
+for (const [path, units] of Object.entries(COMPACT_UNITS)) {
+  test(`${path}: compact units are sized only by inline exact-size rules`, () => {
+    const html = read(path);
+    const style = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
+    for (const unit of units) {
+      const scope = `#${unit.id} .${unit.sizeClass}`;
+      for (const [media, width, height] of unit.sizes) {
+        const rule = `${scope} { ${media ? '' : 'display: block; '}width: ${width}px; height: ${height}px; }`;
+        assert.ok(style.includes(media ? `@media ${media} { ${rule} }` : rule), `${unit.id}: ${media || 'base'} ${width}x${height}`);
+      }
+      assert.match(style, new RegExp(`@media ${unit.hiddenBelow.replace(/[()]/g, '\\$&')} \\{\\s*#${unit.id},\\s*#${unit.id} \\.${unit.sizeClass} \\{ display: none; \\}`), `${unit.id} hidden below the smallest size`);
+      // The shared stylesheet must not size or crop compact units.
+      assert.ok(!read('css/google-ads.css').includes(unit.sizeClass));
+    }
+  });
+}
+
+test('interactive tools show a FishKeepingLifeCo rotating house ad before any Google unit', () => {
+  const containers = /<(?:div|aside)\b[^>]*\b(ttg-house-ad-slot|ttg-gad)\b[^>]*>/g;
+  for (const path of ['stocking-advisor.html', 'gear/index.html', 'cycling-coach/index.html', 'tools/snail-stock-recommender.html']) {
+    const html = read(path);
+    const [first] = [...html.matchAll(containers)];
+    assert.ok(first && first[1] === 'ttg-house-ad-slot', `${path}: first ad is a house ad`);
+    assert.match(first[0], /data-ttg-ad-rotator="true"/, `${path}: first ad rotates`);
+  }
 });
 
 test('google-ads.css never caps or clips ad height and only collapses unfilled units', () => {

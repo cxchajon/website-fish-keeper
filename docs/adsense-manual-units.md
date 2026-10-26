@@ -2,7 +2,9 @@
 
 The Tank Guide runs a hybrid model: existing house-ad slots are converted one-for-one to manual
 Google Display units. Auto ads stay **off**, no new positions are added, and the homepage carries no
-ads of any kind. `tests/unit/ad-placements.test.mjs` enforces all of this.
+ads of any kind. On every interactive tool the first ad stays a rotating FishKeepingLifeCo house ad;
+middle positions use compact Google units and bottom positions flexible ones.
+`tests/unit/ad-placements.test.mjs` enforces all of this.
 
 ## Units in use
 
@@ -13,7 +15,9 @@ ads of any kind. `tests/unit/ad-placements.test.mjs` enforces all of this.
 | `/best-houseplants-for-aquariums/` | `ad-best-houseplants-for-aquariums-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | `/growing-houseplants-in-aquarium/` | `ad-growing-houseplants-in-aquarium-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | `/gear/` | `ad-gear-bundle` (bottom) | TTG_Gear_Bottom | `1762971638` | `true` |
+| `/stocking-advisor.html` | `ad-stocking-mid` (middle, between the explainer and the bioload panel) | TTG_StockingAdvisor_Mid | `5996977454` | compact, see below |
 | `/stocking-advisor.html` | `ad-stocking-bottom` (bottom) | TTG_StockingAdvisor_Bottom | `9758352395` | `true` |
+| `/cycling-coach/` | `ad-cycling-bottom` (bottom, after the byline, above the footer) | TTG_CyclingCoach_Bottom | `2094490843` | `true` |
 
 Publisher: `ca-pub-9905718149811880`. The legacy Stocking bottom unit `8979116676` is retired and must
 not be used.
@@ -34,14 +38,38 @@ scrolls inside its container. Keep that rule: the test checks it is present.
 (`data-ad-format="auto"`) but are sized to the article's own content column, exactly like the
 verified pilot, instead of expanding to the viewport edges on phones. On some articles a
 viewport-wide ad would also be cropped, because `.blog-body` (and on two, `body`) clips overflow.
-The tool pages (Gear, Stocking Advisor) keep `true` because their containers already span the
+The flexible tool-page units (Gear, Stocking Advisor and Cycling Coach bottoms) keep `true` because their containers already span the
 viewport.
+
+**Compact middle units (Stocking Advisor).** `ad-stocking-mid` uses Google's documented "exact size
+per screen width" responsive code instead of `data-ad-format="auto"`: the `<ins>` carries the size
+class `ttg_stocking_mid` and no `data-ad-format`, `data-full-width-responsive` or inline style, and the
+sizes are set by an inline `<style>` in the page's `<head>` (Google does not support those rules in
+external stylesheets, so they are not in `css/google-ads.css`). The rules are scoped with the
+container ID so the shared `.ttg-gad ins.adsbygoogle { width: 100% }` rule cannot override them.
+
+| Viewport | Creative | Available width (`.wrap` content, viewport − 36px) |
+|---|---|---|
+| below 360px | none: the unit and its container are `display: none`, so it is not requested | 284px at 320 |
+| 360–519px | 320×100 | 339–483px |
+| 520–799px | 468×60 | 484–763px (Google's sample uses 500px; at 500 only 464px is available) |
+| 800px and wider | 728×90 | 764px, up to 970px |
+
+The size is fixed when the ad is requested. If the viewport later crosses a breakpoint (for example a
+phone rotated after the ad filled), Google keeps the original creative; the unit is not refreshed.
+`COMPACT_UNITS` in the test pins these rules.
+
+**Tool pages: FishKeepingLifeCo first.** Every interactive tool's first ad is its rotating house ad
+(`ad-stocking-top`, `ad-gear-top`, `ad-cycling-top`, `ad-snail-recommender-bottom`); the test checks
+this. The Snail Recommender's only slot therefore stays a house ad. The Cycling Coach top banner has
+a known layout shift (no reserved height while its image loads); it is left for the house-ad
+modernization phase.
 
 **Still house ads** (exact inventory: `REMAINING_HOUSE_ADS` in the same test):
 
 - `neocaridina-shrimp-diet-biofilm-guide`: its products slot needs a separate affiliate-advertising decision.
-- All tool, hub and utility pages (about, assistant, community-tanks, cycling-coach, gear top,
-  media, podcast, project-tank-000, snail recommender, stocking top and mid, university).
+- All tool, hub and utility pages (about, assistant, community-tanks, cycling-coach top, gear top,
+  media, podcast, project-tank-000, snail recommender, stocking top, university).
 
 ## Converting a slot
 
@@ -61,19 +89,23 @@ viewport.
 
    Blog articles always use `data-full-width-responsive="false"`. Elsewhere, use `"false"` when any
    ancestor clips overflow on mobile. Do not convert a slot whose container is wider than the
-   viewport at any width; a creative there would be cropped.
+   viewport at any width; a creative there would be cropped. For a compact middle unit, use the
+   exact-size pattern above instead and check every breakpoint against the measured available width.
 2. Link `/css/google-ads.css?v=…` after the page's other stylesheets and
    `<script src="/js/google-ads.js?v=…" defer>` before `footer-loader.js`.
 3. The page must load the AdSense loader exactly once, as the last entry of the "TTG consent stack"
    (after the Consent Mode v2 defaults, Funding Choices, GTM and `consent-mode.js`), exactly as on
    the pilot. Never add a second loader and never add inline `adsbygoogle.push()` calls.
-4. Add the page and slot ID to `MANUAL_UNITS` (blog articles: `BLOG_BATCH_2` or `BLOG_HOUSEPLANTS`) and update
-   `REMAINING_HOUSE_ADS` in `tests/unit/ad-placements.test.mjs`.
+4. Add the page and slot ID to `MANUAL_UNITS` (blog articles: `BLOG_BATCH_2` or `BLOG_HOUSEPLANTS`; compact
+   units also `COMPACT_UNITS`) and update `REMAINING_HOUSE_ADS` in `tests/unit/ad-placements.test.mjs`.
 
 ## How it behaves
 
 - **`js/google-ads.js`** pushes once per `.ttg-gad ins.adsbygoogle`, skips units Google already
-  processed (`data-adsbygoogle-status`), has no timers and never creates units. When the visitor
+  processed (`data-adsbygoogle-status`), has no timers and never creates units. Each push names its
+  unit (`push({ element: ins })`): a bare `push({})` fills the first unfilled `<ins>` on the page, which
+  could be a unit hidden at the current width. A unit that is not rendered (`display: none` or zero
+  width) is not requested; it is requested once if a later resize makes it visible. When the visitor
   declined advertising on `/cookie-settings.html` (`<html data-ad-consent="denied">`, set by
   `consent-mode.js`), it makes no ad request. Consent Mode v2 and Google's CMP govern everything else.
 - **`css/google-ads.css`** is standalone (not part of the immutable `app.bundle.css` /
