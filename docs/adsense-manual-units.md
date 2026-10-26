@@ -8,19 +8,24 @@ ads of any kind. `tests/unit/ad-placements.test.mjs` enforces all of this.
 
 | Page | Replaced house-ad slot | Unit name | Slot ID | Full-width responsive |
 |---|---|---|---|---|
-| `/blogs/aquarium-heater-safety-temperature-controllers.html` (pilot) | `ad-snail-welfare-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` — `.blog-body` clips overflow, so a viewport-wide ad would be cropped on phones |
-| 37 further blog articles (batch 2) | each article's single house-ad slot, same position | TTG_Blog_EndOfArticle | `5598495275` | per article, see below |
+| `/blogs/aquarium-heater-safety-temperature-controllers.html` (pilot) | `ad-snail-welfare-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
+| 37 further blog articles (batch 2) | each article's single house-ad slot, same position | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | `/gear/` | `ad-gear-bundle` (bottom) | TTG_Gear_Bottom | `1762971638` | `true` |
 | `/stocking-advisor.html` | `ad-stocking-bottom` (bottom) | TTG_StockingAdvisor_Bottom | `9758352395` | `true` |
 
 Publisher: `ca-pub-9905718149811880`. The legacy Stocking bottom unit `8979116676` is retired and must
 not be used.
 
-**Blog batch 2.** The authoritative list of converted articles, with each one's
-`data-full-width-responsive` value, is `BLOG_BATCH_2` in `tests/unit/ad-placements.test.mjs`.
-Full-width responsive is `false` on the 8 articles where `.blog-body` (and on two, `body`) clips
-overflow on phones, and `true` on the 29 where nothing clips. Every converted article's consent
-stack, including the loader, is byte-identical to the pilot's.
+**Blog batch 2.** The authoritative list of converted articles is `BLOG_BATCH_2` in
+`tests/unit/ad-placements.test.mjs`. Every converted article's consent stack, including the loader,
+is byte-identical to the pilot's.
+
+**Blog standard: `data-full-width-responsive="false"` on every blog unit.** Blog ads stay responsive
+(`data-ad-format="auto"`) but are sized to the article's own content column, exactly like the
+verified pilot, instead of expanding to the viewport edges on phones. On some articles a
+viewport-wide ad would also be cropped, because `.blog-body` (and on two, `body`) clips overflow.
+The tool pages (Gear, Stocking Advisor) keep `true` because their containers already span the
+viewport.
 
 **Still house ads** (exact inventory: `REMAINING_HOUSE_ADS` in the same test):
 
@@ -47,9 +52,9 @@ stack, including the loader, is byte-identical to the pilot's.
    </aside>
    ```
 
-   Use `data-full-width-responsive="false"` when any ancestor clips overflow on mobile. Do not
-   convert a slot whose container is wider than the viewport at any width; a creative there would be
-   cropped.
+   Blog articles always use `data-full-width-responsive="false"`. Elsewhere, use `"false"` when any
+   ancestor clips overflow on mobile. Do not convert a slot whose container is wider than the
+   viewport at any width; a creative there would be cropped.
 2. Link `/css/google-ads.css?v=…` after the page's other stylesheets and
    `<script src="/js/google-ads.js?v=…" defer>` before `footer-loader.js`.
 3. The page must load the AdSense loader exactly once, as the last entry of the "TTG consent stack"
