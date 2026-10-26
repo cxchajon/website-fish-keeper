@@ -8,13 +8,33 @@ ads of any kind. `tests/unit/ad-placements.test.mjs` enforces all of this.
 
 | Page | Replaced house-ad slot | Unit name | Slot ID | Full-width responsive |
 |---|---|---|---|---|
-| `/blogs/aquarium-heater-safety-temperature-controllers.html` | `ad-snail-welfare-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` — `.blog-body` clips overflow, so a viewport-wide ad would be cropped on phones |
+| `/blogs/aquarium-heater-safety-temperature-controllers.html` (pilot) | `ad-snail-welfare-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
+| 37 further blog articles (batch 2) | each article's single house-ad slot, same position | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | `/gear/` | `ad-gear-bundle` (bottom) | TTG_Gear_Bottom | `1762971638` | `true` |
 | `/stocking-advisor.html` | `ad-stocking-bottom` (bottom) | TTG_StockingAdvisor_Bottom | `9758352395` | `true` |
 
 Publisher: `ca-pub-9905718149811880`. The legacy Stocking bottom unit `8979116676` is retired and must
-not be used. Every other house-ad slot (including `ad-gear-top`, `ad-stocking-top`,
-`ad-stocking-mid`) is still a house ad.
+not be used.
+
+**Blog batch 2.** The authoritative list of converted articles is `BLOG_BATCH_2` in
+`tests/unit/ad-placements.test.mjs`. Every converted article's consent stack, including the loader,
+is byte-identical to the pilot's.
+
+**Blog standard: `data-full-width-responsive="false"` on every blog unit.** Blog ads stay responsive
+(`data-ad-format="auto"`) but are sized to the article's own content column, exactly like the
+verified pilot, instead of expanding to the viewport edges on phones. On some articles a
+viewport-wide ad would also be cropped, because `.blog-body` (and on two, `body`) clips overflow.
+The tool pages (Gear, Stocking Advisor) keep `true` because their containers already span the
+viewport.
+
+**Still house ads** (exact inventory: `REMAINING_HOUSE_ADS` in the same test):
+
+- `neocaridina-shrimp-diet-biofilm-guide`: its products slot needs a separate affiliate-advertising decision.
+- `best-houseplants-for-aquariums` and `growing-houseplants-in-aquarium`: between about 650px and
+  810px wide their `.blog-body` is wider than the viewport, so the ad container overflows the screen
+  and a responsive creative would be cropped or pushed off-screen. Convert them once that layout is fixed.
+- All tool, hub and utility pages (about, assistant, community-tanks, cycling-coach, gear top,
+  media, podcast, project-tank-000, snail recommender, stocking top and mid, university).
 
 ## Converting a slot
 
@@ -32,13 +52,16 @@ not be used. Every other house-ad slot (including `ad-gear-top`, `ad-stocking-to
    </aside>
    ```
 
-   Use `data-full-width-responsive="false"` when any ancestor clips overflow on mobile.
+   Blog articles always use `data-full-width-responsive="false"`. Elsewhere, use `"false"` when any
+   ancestor clips overflow on mobile. Do not convert a slot whose container is wider than the
+   viewport at any width; a creative there would be cropped.
 2. Link `/css/google-ads.css?v=…` after the page's other stylesheets and
    `<script src="/js/google-ads.js?v=…" defer>` before `footer-loader.js`.
-3. The page must already load the AdSense loader exactly once inside the "TTG consent stack"
-   (after the Consent Mode v2 defaults, Funding Choices and GTM). Never add a second loader and
-   never add inline `adsbygoogle.push()` calls.
-4. Add the page and slot ID to `MANUAL_UNITS` in `tests/unit/ad-placements.test.mjs`.
+3. The page must load the AdSense loader exactly once, as the last entry of the "TTG consent stack"
+   (after the Consent Mode v2 defaults, Funding Choices, GTM and `consent-mode.js`), exactly as on
+   the pilot. Never add a second loader and never add inline `adsbygoogle.push()` calls.
+4. Add the page and slot ID to `MANUAL_UNITS` (blog articles: `BLOG_BATCH_2`) and update
+   `REMAINING_HOUSE_ADS` in `tests/unit/ad-placements.test.mjs`.
 
 ## How it behaves
 
@@ -56,15 +79,18 @@ not be used. Every other house-ad slot (including `ad-gear-top`, `ad-stocking-to
 ## Content-Security-Policy
 
 The production CSP is set in Cloudflare, not in this repository (`hardening/_headers` is a reference
-copy only). The new files are same-origin and need no CSP change. Live manual Display ads need the
-Google ad origins in the relevant directives — at minimum `script-src`
+copy only). As recorded by the Security Headers Verify workflow, it is currently
+`object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self' https://formspree.io; upgrade-insecure-requests`.
+It has no `script-src`, `frame-src`, `connect-src` or `img-src` directives, so it does not restrict
+AdSense scripts, ad iframes or beacons, and the new files are same-origin. No change is needed.
+
+If those fetch directives are ever added, Google ad serving needs at least `script-src`
 `https://pagead2.googlesyndication.com` and `https://*.adtrafficquality.google`; `frame-src`
 `https://googleads.g.doubleclick.net`, `https://tpc.googlesyndication.com` and
 `https://*.adtrafficquality.google`; `img-src https:`; and `connect-src`
 `https://*.googlesyndication.com` and `https://*.adtrafficquality.google`. Google serves creatives from
-further rotating hosts, so after deploying run the Security Headers Verify workflow
-(`tests/live/csp-console.live.ts`, with `/gear/` and the blog pilot added to its `PAGES` if needed) and
-add only origins that are reported as violations. Do not loosen unrelated directives.
+further rotating hosts, so verify with `tests/live/csp-console.live.ts` and add only origins that
+are reported as violations.
 
 ## Outside the repository
 
