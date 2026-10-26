@@ -41,6 +41,13 @@ const ACTION_SETS = {
     'Do not add fish yet',
     'Keep nitrates under 40 ppm with a large water change before stocking',
   ],
+  fishinCycled: [
+    'These readings suggest the biofilter is currently processing livestock waste',
+    'Do not dose ammonia while fish, shrimp, snails, or other livestock are present',
+    'Continue testing ammonia and nitrite daily for at least a week and after any change in feeding or stocking',
+    'Feed lightly and do not add new livestock until readings remain stable',
+    'Use dechlorinated water for routine water changes and act promptly if ammonia or nitrite become detectable',
+  ],
   fishinProgress: [
     'Test ammonia and nitrite daily',
     'Feed lightly — don’t overfeed during cycling',
@@ -337,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (isZero(ammonia) && isZero(nitrite) && nitrate > 0) {
         status = 'Cycled (likely)';
         symbol = '🟢';
-        actionKey = 'fishlessCycled';
+        actionKey = methodValue === 'fish-in' ? 'fishinCycled' : 'fishlessCycled';
         showActions = true;
       } else if (methodValue === 'fishless') {
         if (isZero(nitrite) && isZero(nitrate)) {
