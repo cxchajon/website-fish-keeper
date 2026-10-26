@@ -6,6 +6,8 @@ static-qa-*.*
 playwright-report/
 test-results/
 tmp/
+# Private research is preserved in the approved archive, never in this public repository.
+research/
 # Wrangler local secrets and state; never commit
 .dev.vars*
 .wrangler/

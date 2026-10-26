@@ -60,6 +60,10 @@ jobs:
         if: ${{ steps.install-deps.outputs.installed == 'true' }}
         run: npm run guard:live
 
+      - name: Guard private research archive
+        if: ${{ steps.install-deps.outputs.installed == 'true' }}
+        run: npm run guard:private-research
+
       - name: Run test suite
         if: ${{ steps.install-deps.outputs.installed == 'true' }}
         run: npm test -- --project=chromium --workers=4
