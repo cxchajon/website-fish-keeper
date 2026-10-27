@@ -5,10 +5,11 @@
 // - Converted pages load the AdSense loader once and request each unit once (js/google-ads.js).
 // - Every interactive tool still shows a rotating FishKeepingLifeCo house ad first.
 // - Google units carry only Google's permitted label wording, "Advertisements".
+// - The approved end state stays fixed: 51 Google units (41 blog), 11 house ads, retired ad scripts gone.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -435,4 +436,78 @@ test('About page and the interactive tools keep their FishKeepingLifeCo house ad
   assert.deepEqual(houseAdIds(read('about.html')), ['ad-about-books', 'ad-about-beginners', 'ad-about-footer-top']);
   assert.deepEqual(adSlots(read('about.html')), [], 'no Google units on the About page');
   assert.ok(!read('about.html').includes('ttg-gad'));
+});
+
+// Phase B3 cleanup: the approved end state of the manual rollout.
+test('approved inventory: 51 Google units, 41 on TTG_Blog_EndOfArticle, 11 house ads', () => {
+  let units = 0;
+  let blogUnits = 0;
+  let houseAds = 0;
+  for (const path of HTML_FILES) {
+    const html = read(path);
+    const slots = adSlots(html);
+    units += slots.length;
+    blogUnits += slots.filter((slot) => slot === BLOG_END_OF_ARTICLE).length;
+    houseAds += houseAdIds(html).length;
+  }
+  assert.equal(units, 51, 'manual Google units site-wide');
+  assert.equal(blogUnits, 41, 'TTG_Blog_EndOfArticle units site-wide');
+  assert.equal(houseAds, 11, 'FishKeepingLifeCo house ads site-wide');
+});
+
+// These pages carry the consent stack's AdSense loader but no Google unit. With Auto ads off in the
+// AdSense dashboard the loader shows nothing on them; whether to remove it is an owner decision.
+const LOADER_ONLY_PAGES = [
+  'about.html',
+  'blogs/index.html',
+  'community-tanks.html',
+  'submit-your-tank.html',
+  'tools/snail-stock-recommender.html',
+];
+
+test('the AdSense loader appears only on pages with approved units or the known loader-only pages', () => {
+  const withLoader = HTML_FILES.filter((path) => (read(path).match(LOADER) || []).length > 0).sort();
+  assert.deepEqual(withLoader, [...Object.keys(MANUAL_UNITS), ...LOADER_ONLY_PAGES].sort());
+  for (const path of LOADER_ONLY_PAGES) {
+    const html = read(path);
+    assert.equal((html.match(LOADER) || []).length, 1, `${path}: one loader`);
+    assert.deepEqual(adSlots(html), [], `${path}: no Google units`);
+    assert.ok(!/google-ads\.(js|css)/.test(html), `${path}: no Google unit assets`);
+  }
+});
+
+test('every remaining house ad rotates the shared manifest every 10 seconds', () => {
+  const manifest = JSON.parse(read('assets/ads/manifest.json'));
+  assert.ok(manifest.length >= 2, 'the shared manifest has banners to rotate');
+  for (const entry of manifest) {
+    assert.ok(existsSync(ROOT + entry.src.slice(1)), `${entry.src} exists`);
+  }
+  for (const [path, ids] of Object.entries(REMAINING_HOUSE_ADS)) {
+    const html = read(path);
+    for (const id of ids) {
+      const tag = html.match(new RegExp(`<div\\b[^>]*\\bid="${id}"[^>]*>`));
+      assert.ok(tag, `${path}: ${id} present`);
+      assert.match(tag[0], /data-ttg-ad-rotator="true"/, `${path}: ${id} rotates`);
+      assert.match(tag[0], /data-ttg-ad-manifest="\/assets\/ads\/manifest\.json"/, `${path}: ${id} manifest`);
+      assert.match(tag[0], /data-ttg-ad-interval="10000"/, `${path}: ${id} interval`);
+    }
+    assert.ok((html.match(/ad-rotator\.js/g) || []).length <= 1, `${path}: rotator linked at most once`);
+  }
+  // Pages without their own <script> tag get the rotator from js/nav.js, which skips it when present.
+  const nav = read('js/nav.js');
+  assert.match(nav, /AD_ROTATOR_SRC = '\/assets\/js\/ad-rotator\.js/);
+  assert.match(nav, /hasAdRotatorScript\(\)/);
+});
+
+test('retired ad tracking and house-ad scripts stay removed', () => {
+  for (const path of ['js/ad-slot-view-tracking.js', 'dist/js/ad-slot-view-tracking.min.js', 'assets/js/house-ads.js']) {
+    assert.ok(!existsSync(ROOT + path), `${path} is retired`);
+  }
+  for (const path of [...HTML_FILES, 'js/nav.js', 'scripts/build-prod.mjs']) {
+    const text = read(path);
+    assert.ok(!/ad-slot-view-tracking|house-ads\.js|data-house-ad=/.test(text), `${path} references a retired ad script`);
+  }
+  // The Phase B2 affiliate manifest is kept for a separate owner decision but no page uses it.
+  assert.ok(existsSync(ROOT + 'assets/ads/neocaridina-shrimp-diet-products.json'));
+  for (const path of HTML_FILES) assert.ok(!read(path).includes('neocaridina-shrimp-diet-products.json'), path);
 });

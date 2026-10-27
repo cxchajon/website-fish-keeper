@@ -1,5 +1,9 @@
 # Consent & AdSense Audit Report
 
-_This report will be populated automatically when `tests/consent-ads.spec.ts` is executed._
+_This file is a placeholder. `tests/consent-ads.spec.ts` writes its report to Playwright's output directory (`test-results/consent-ads-report.md` by default), never to this tracked file._
 
-Run `npx playwright test tests/consent-ads.spec.ts --project=chromium` to generate the latest audit summary.
+The report is produced by the EU flows, which need Google's EEA/UK consent message (see the spec):
+
+`TTG_BASE_URL=https://thetankguide.com npm run test:consent:eu`
+
+The US flows (`npm run test:consent:us`) run in the PR suite and produce no report.

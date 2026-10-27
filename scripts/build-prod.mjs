@@ -10,8 +10,7 @@ const CSS_TARGETS = [
 ];
 
 const JS_TARGETS = [
-  { input: 'js/nav.js', output: 'dist/js/nav.min.js' },
-  { input: 'js/ad-slot-view-tracking.js', output: 'dist/js/ad-slot-view-tracking.min.js' }
+  { input: 'js/nav.js', output: 'dist/js/nav.min.js' }
 ];
 
 function minifyCSS(source) {

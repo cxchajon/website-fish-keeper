@@ -99,7 +99,7 @@ function isAdRequest(url: string) {
 }
 
 async function checkPlaceholderVisibility(page: Page) {
-  const handles = await page.locator('.ttg-adunit, #ad-top-1, #ad-bottom-1').elementHandles();
+  const handles = await page.locator('.ttg-gad').elementHandles();
   let visible = false;
   for (const handle of handles) {
     const box = await handle.boundingBox();
@@ -150,7 +150,7 @@ async function assertNoOverflow(page: Page) {
 
 async function checkNoOverlap(page: Page) {
   const overlap = await page.evaluate(() => {
-    const units = Array.from(document.querySelectorAll('.ttg-adunit')) as HTMLElement[];
+    const units = Array.from(document.querySelectorAll('.ttg-gad')) as HTMLElement[];
     return units.some((unit) => {
       const rect = unit.getBoundingClientRect();
       return rect.left < 0 || rect.right > window.innerWidth || rect.top < 0;
@@ -299,13 +299,38 @@ async function readConsentState(page: Page) {
   });
 }
 
+// What js/google-ads.js did with the page's manual units: how many it requested and how many are shown.
+async function readGoogleUnits(page: Page) {
+  return page.evaluate(() => {
+    const units = Array.from(document.querySelectorAll('.ttg-gad')) as HTMLElement[];
+    return {
+      total: units.length,
+      requested: document.querySelectorAll('.ttg-gad ins.adsbygoogle[data-ttg-gad="requested"]').length,
+      pushes: ((window as any).adsbygoogle || []).length,
+      visible: units.filter((unit) => window.getComputedStyle(unit).display !== 'none').length,
+    };
+  });
+}
+
 async function expectConsentAcrossPages(page: Page, adConsent: 'granted' | 'denied') {
+  let unitsSeen = 0;
   for (const pagePath of PAGES) {
-    await page.goto(pagePath, { waitUntil: 'domcontentloaded' });
+    await page.goto(pagePath, { waitUntil: 'load' });
     await expect
       .poll(() => readConsentState(page), { message: `${pagePath} keeps the saved choice` })
       .toMatchObject({ adConsent, adsDisabled: adConsent === 'denied' });
+
+    const units = await readGoogleUnits(page);
+    unitsSeen += units.total;
+    if (adConsent === 'denied') {
+      // An opted-out visitor triggers no Google ad request, and the containers stay hidden.
+      expect(units, `${pagePath}: no ad requests after opting out`).toMatchObject({ requested: 0, pushes: 0, visible: 0 });
+    } else if (units.total) {
+      expect(units.requested, `${pagePath}: rendered units are requested`).toBeGreaterThan(0);
+      expect(units.pushes, `${pagePath}: one push per requested unit`).toBe(units.requested);
+    }
   }
+  expect(unitsSeen, 'the audited pages carry manual units').toBeGreaterThan(0);
 }
 
 test.describe('Consent and AdSense behavior audit — US', { tag: '@consent-us' }, () => {
