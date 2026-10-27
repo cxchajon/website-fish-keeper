@@ -1,5 +1,6 @@
 // Guards the manual Google AdSense rollout (hybrid house ads + manual Display units).
 // - The homepage stays ad-free: no AdSense loader, no Google ad units, no house-ad containers.
+// - The About page is reserved for FishKeepingLifeCo promotions: house ads only, no AdSense loader or Google units.
 // - Auto ads stay off in code: no page-level/Auto ads snippet, no units in shared nav/footer includes.
 // - Manual units exist only where they were reviewed, with the dashboard slot IDs below.
 // - Converted pages load the AdSense loader once and request each unit once (js/google-ads.js).
@@ -438,6 +439,24 @@ test('About page and the interactive tools keep their FishKeepingLifeCo house ad
   assert.ok(!read('about.html').includes('ttg-gad'));
 });
 
+// Owner decision: About is permanently reserved for FishKeepingLifeCo promotions, so it carries no
+// Google ad code at all. Without the loader, Auto ads could not place ads there even if re-enabled.
+test('About page has no AdSense loader or Google ad code but keeps the consent stack', () => {
+  const html = read('about.html');
+  assert.equal((html.match(LOADER) || []).length, 0, 'AdSense loader must not be on the About page');
+  assert.ok(!/pagead2\.googlesyndication\.com/.test(html), 'no AdSense script of any kind');
+  assert.ok(!/<ins\b[^>]*adsbygoogle/.test(html), 'no Google ad units');
+  assert.ok(!/data-ad-client|data-ad-slot|google-ads\.(js|css)|adsbygoogle\s*=|adsbygoogle\)\.push/.test(html), 'no unit config or pushes');
+  const stack = consentStack(html);
+  assert.match(stack, /gtag\('consent', 'default'/);
+  assert.ok(stack.indexOf("gtag('consent', 'default'") < stack.indexOf('fundingchoicesmessages'), 'Consent Mode defaults stay first');
+  assert.match(stack, /fundingchoicesmessages\.google\.com\/i\/pub-9905718149811880/);
+  assert.match(stack, /googlefcPresent/);
+  assert.match(stack, /GTM-KTRVCMQN/);
+  assert.match(stack, /\/assets\/js\/consent-mode\.js/);
+  assert.match(html, /googletagmanager\.com\/ns\.html\?id=GTM-KTRVCMQN/, 'GTM noscript fallback');
+});
+
 // Phase B3 cleanup: the approved end state of the manual rollout.
 test('approved inventory: 51 Google units, 41 on TTG_Blog_EndOfArticle, 11 house ads', () => {
   let units = 0;
@@ -457,8 +476,8 @@ test('approved inventory: 51 Google units, 41 on TTG_Blog_EndOfArticle, 11 house
 
 // These pages carry the consent stack's AdSense loader but no Google unit. With Auto ads off in the
 // AdSense dashboard the loader shows nothing on them; whether to remove it is an owner decision.
+// about.html left this list when its loader was removed (owner decision: house ads only).
 const LOADER_ONLY_PAGES = [
-  'about.html',
   'blogs/index.html',
   'community-tanks.html',
   'submit-your-tank.html',
