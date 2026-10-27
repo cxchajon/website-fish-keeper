@@ -66,6 +66,16 @@ introduction; the placement is below both the content and house banner, so it do
 navigation link or interrupt gallery use. Re-review the placement if the page is reduced to a
 non-content landing screen.
 
+`tests/adsense-phase-b4.spec.ts` measures each B4 page only after its own stylesheets apply.
+`/blogs/` loads `blogs-bundle.min.css` asynchronously, and until it applies the card thumbnails
+render at natural size: the page is 2760px wide at every width, on `main` and on the B4 branch alike.
+The test also compares each width against the same page with the unit removed, so overflow that
+predates B4 isn't blamed on the unit. Measured on `/blogs/` in Chromium, styled, with `main` and B4
+identical: none from 320px to 810px or at 1440px. At 1024px it is 1177px (the site navigation
+`nav.site-links` reaches 1177px), and at 1280px it is 1287px (the last `li.nav__item`). This is the
+known site-wide navigation overflow, left for a separate fix. The unit stays centered in the content
+column at every width (17px each side at 320px).
+
 **Blog batch 2.** The authoritative list of converted articles is `BLOG_BATCH_2` in
 `tests/unit/ad-placements.test.mjs`. Every converted article's consent stack, including the loader,
 is byte-identical to the pilot's.
