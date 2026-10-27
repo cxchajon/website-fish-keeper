@@ -8,13 +8,13 @@ middle positions use compact Google units and bottom positions flexible ones.
 
 ## Current inventory
 
-The manual rollout is complete. The test pins these totals:
+The manual rollout includes the approved Phase B4 bottom placements. The test pins these totals:
 
 | Item | Count |
 |---|---|
-| Manual Google Display units (`data-ad-slot`) | **51** on 49 pages |
+| Manual Google Display units (`data-ad-slot`) | **55** on 53 pages |
 | Blog articles carrying TTG_Blog_EndOfArticle (`5598495275`) | **41** (one unit each) |
-| Other Google units (tools, hubs, content pages) | 10 on 8 pages |
+| Other Google units (tools, hubs, content pages) | 14 on 12 pages |
 | FishKeepingLifeCo house ads (`.ttg-house-ad-slot`) | **11** on 9 pages |
 | Homepage ads of any kind | 0 (no loader) |
 | Google ad code on the About page | 0 (no loader; 3 house ads) |
@@ -40,6 +40,10 @@ Google Auto ads are off in the AdSense dashboard and no page carries an Auto ads
 | `/podcast/` | `ad-podcast-bottom` (after the FAQ, above the footer) | TTG_Podcast_Bottom | `3569730759` | `true` |
 | `/tanks/project-tank-000.html` | `ad-project-tank-000-bottom` (end of article, before "Submit Your Tank") | project-tank-000 | `6308794025` | `false` |
 | `/university/` | `ad-university-waterchem-bottom` (after the research citations, before the FAQ) | TTG_University_Bottom | `8925377095` | `false` |
+| `/blogs/` | `ad-blog-index-bottom` (after the Blog Index FAQ, before the footer) | TTG_Blog_Index_Bottom | `2584786291` | `false` |
+| `/community-tanks.html` | `ad-community-tanks-bottom` (after the FishKeepingLifeCo banner) | TTG_Community_Tanks_Bottom | `7026806218` | `true` |
+| `/submit-your-tank.html` | `ad-submit-your-tank-bottom` (after the FAQ, outside the form) | TTG_Submit_Your_Tank_Bottom | `5713724546` | `false` |
+| `/tools/snail-stock-recommender.html` | `ad-snail-recommender-google-bottom` (below the FishKeepingLifeCo banner) | TTG_Snail_Recommender_Bottom | `9397606658` | `true` |
 
 Publisher: `ca-pub-9905718149811880`. The legacy Stocking bottom unit `8979116676` is retired and must
 not be used. The University hub uses TTG_University_Bottom `8925377095`, not the historical University
@@ -52,6 +56,15 @@ Project Tank #000 no longer loads `/assets/js/ad-rotator.js` itself: its bottom 
 rotator. Project Tank and University keep `data-full-width-responsive="false"` so the ad stays in the
 article or content column (the University shell clips overflow). Media's FAQ unit keeps the page's
 existing `.media-page #ad-media-faq-top` spacing rule (2rem margins).
+
+**Phase B4 (four bottom placements).** The Blog Index unit follows its FAQ and stays inside the
+blog content column. Community Tanks and the Snail Stocking Recommender retain their rotating
+FishKeepingLifeCo banners; each Google unit follows that banner with the shared flexible spacing.
+The Submit Your Tank unit follows the FAQ outside the submission form, controls and payment flow.
+The Community Tanks gallery currently has one detailed feature card and a substantive page
+introduction; the placement is below both the content and house banner, so it does not resemble a
+navigation link or interrupt gallery use. Re-review the placement if the page is reduced to a
+non-content landing screen.
 
 **Blog batch 2.** The authoritative list of converted articles is `BLOG_BATCH_2` in
 `tests/unit/ad-placements.test.mjs`. Every converted article's consent stack, including the loader,

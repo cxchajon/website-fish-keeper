@@ -29,6 +29,10 @@ const PAGES = [
   '/cycling-coach/',
   '/media.html',
   '/gear/',
+  '/blogs/',
+  '/community-tanks.html',
+  '/submit-your-tank.html',
+  '/tools/snail-stock-recommender.html',
   '/contact-feedback.html',
 ];
 
