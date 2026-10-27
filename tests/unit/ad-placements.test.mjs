@@ -6,7 +6,7 @@
 // - Converted pages load the AdSense loader once and request each unit once (js/google-ads.js).
 // - Every interactive tool still shows a rotating FishKeepingLifeCo house ad first.
 // - Google units carry only Google's permitted label wording, "Advertisements".
-// - The approved end state stays fixed: 51 Google units (41 blog), 11 house ads, retired ad scripts gone.
+// - The approved end state stays fixed: 55 Google units (41 blog), 11 house ads, retired ad scripts gone.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
@@ -88,6 +88,11 @@ const MANUAL_UNITS = {
   'podcast/index.html': ['3569730759'], // TTG_Podcast_Bottom
   'tanks/project-tank-000.html': ['6308794025'], // project-tank-000
   'university/index.html': ['8925377095'], // TTG_University_Bottom (not the historical 4602491969)
+  // Phase B4: four approved bottom placements.
+  'blogs/index.html': ['2584786291'], // TTG_Blog_Index_Bottom
+  'community-tanks.html': ['7026806218'], // TTG_Community_Tanks_Bottom
+  'submit-your-tank.html': ['5713724546'], // TTG_Submit_Your_Tank_Bottom
+  'tools/snail-stock-recommender.html': ['9397606658'], // TTG_Snail_Recommender_Bottom
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, [BLOG_END_OF_ARTICLE]])),
 };
 
@@ -104,6 +109,10 @@ const FULL_WIDTH = {
   // Kept inside the article / content column: the University shell clips overflow.
   'tanks/project-tank-000.html': 'false',
   'university/index.html': 'false',
+  'blogs/index.html': 'false',
+  'community-tanks.html': 'true',
+  'submit-your-tank.html': 'false',
+  'tools/snail-stock-recommender.html': 'true',
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, 'false'])),
 };
 
@@ -162,6 +171,12 @@ const PHASE_B1_CONVERSIONS = {
   'university/index.html': ['ad-university-waterchem-bottom'],
 };
 const PHASE_B1_PAGES = Object.keys(PHASE_B1_CONVERSIONS);
+const PHASE_B4_PAGES = [
+  'blogs/index.html',
+  'community-tanks.html',
+  'submit-your-tank.html',
+  'tools/snail-stock-recommender.html',
+];
 const compactSlots = (path) => (COMPACT_UNITS[path] || []).map((unit) => unit.slot);
 
 // House-ad slots on the converted pages that stay house ads in this phase.
@@ -175,6 +190,10 @@ const KEPT_HOUSE_ADS = {
   'podcast/index.html': ['ad-podcast-top'],
   'tanks/project-tank-000.html': [],
   'university/index.html': ['ad-university-waterchem-top'],
+  'blogs/index.html': [],
+  'community-tanks.html': ['ad-community-tanks-store'],
+  'submit-your-tank.html': [],
+  'tools/snail-stock-recommender.html': ['ad-snail-recommender-bottom'],
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, []])),
 };
 
@@ -348,11 +367,11 @@ test('google-ads.css never caps or clips ad height and only collapses unfilled u
   assert.ok(!/data-ad-status="filled"\][^{]*\{[^}]*display:\s*none/.test(css), 'filled ads are never hidden');
 });
 
-test('every converted blog article and hub page carries the pilot consent stack and loader verbatim', () => {
+test('every approved Google-ad page carries the pilot consent stack and loader verbatim', () => {
   const pilotStack = consentStack(read(BLOG_PILOT));
   assert.match(pilotStack, LOADER);
   // The podcast page gained its loader in Phase B1; its stack must now match the pilot exactly.
-  for (const path of [...CONVERTED_BLOGS, ...PHASE_B1_PAGES]) {
+  for (const path of [...CONVERTED_BLOGS, ...PHASE_B1_PAGES, ...PHASE_B4_PAGES]) {
     assert.equal(consentStack(read(path)), pilotStack, path);
   }
 });
@@ -458,7 +477,7 @@ test('About page has no AdSense loader or Google ad code but keeps the consent s
 });
 
 // Phase B3 cleanup: the approved end state of the manual rollout.
-test('approved inventory: 51 Google units, 41 on TTG_Blog_EndOfArticle, 11 house ads', () => {
+test('approved inventory: 55 Google units, 41 on TTG_Blog_EndOfArticle, 11 house ads', () => {
   let units = 0;
   let blogUnits = 0;
   let houseAds = 0;
@@ -469,30 +488,14 @@ test('approved inventory: 51 Google units, 41 on TTG_Blog_EndOfArticle, 11 house
     blogUnits += slots.filter((slot) => slot === BLOG_END_OF_ARTICLE).length;
     houseAds += houseAdIds(html).length;
   }
-  assert.equal(units, 51, 'manual Google units site-wide');
+  assert.equal(units, 55, 'manual Google units site-wide');
   assert.equal(blogUnits, 41, 'TTG_Blog_EndOfArticle units site-wide');
   assert.equal(houseAds, 11, 'FishKeepingLifeCo house ads site-wide');
 });
 
-// These pages carry the consent stack's AdSense loader but no Google unit. With Auto ads off in the
-// AdSense dashboard the loader shows nothing on them; whether to remove it is an owner decision.
-// about.html left this list when its loader was removed (owner decision: house ads only).
-const LOADER_ONLY_PAGES = [
-  'blogs/index.html',
-  'community-tanks.html',
-  'submit-your-tank.html',
-  'tools/snail-stock-recommender.html',
-];
-
-test('the AdSense loader appears only on pages with approved units or the known loader-only pages', () => {
+test('the AdSense loader appears only on pages with approved units', () => {
   const withLoader = HTML_FILES.filter((path) => (read(path).match(LOADER) || []).length > 0).sort();
-  assert.deepEqual(withLoader, [...Object.keys(MANUAL_UNITS), ...LOADER_ONLY_PAGES].sort());
-  for (const path of LOADER_ONLY_PAGES) {
-    const html = read(path);
-    assert.equal((html.match(LOADER) || []).length, 1, `${path}: one loader`);
-    assert.deepEqual(adSlots(html), [], `${path}: no Google units`);
-    assert.ok(!/google-ads\.(js|css)/.test(html), `${path}: no Google unit assets`);
-  }
+  assert.deepEqual(withLoader, Object.keys(MANUAL_UNITS).sort());
 });
 
 test('every remaining house ad rotates the shared manifest every 10 seconds', () => {
