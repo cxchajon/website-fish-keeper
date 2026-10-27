@@ -14,6 +14,7 @@ middle positions use compact Google units and bottom positions flexible ones.
 | 37 further blog articles (batch 2) | each article's single house-ad slot, same position | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | `/best-houseplants-for-aquariums/` | `ad-best-houseplants-for-aquariums-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | `/growing-houseplants-in-aquarium/` | `ad-growing-houseplants-in-aquarium-rotator` (end of article) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
+| `/neocaridina-shrimp-diet-biofilm-guide/` | `ad-neocaridina-diet-products-rotator` (after the FAQ, before the byline) | TTG_Blog_EndOfArticle | `5598495275` | `false` |
 | `/gear/` | `ad-gear-bundle` (bottom) | TTG_Gear_Bottom | `1762971638` | `true` |
 | `/stocking-advisor.html` | `ad-stocking-mid` (middle, between the explainer and the bioload panel) | TTG_StockingAdvisor_Mid | `5996977454` | compact, see below |
 | `/stocking-advisor.html` | `ad-stocking-bottom` (bottom) | TTG_StockingAdvisor_Bottom | `9758352395` | `true` |
@@ -40,6 +41,14 @@ existing `.media-page #ad-media-faq-top` spacing rule (2rem margins).
 **Blog batch 2.** The authoritative list of converted articles is `BLOG_BATCH_2` in
 `tests/unit/ad-placements.test.mjs`. Every converted article's consent stack, including the loader,
 is byte-identical to the pilot's.
+
+**Neocaridina shrimp diet article (Phase B2).** Its rotator cycled four Amazon shrimp-food
+affiliate links, all shown with the Daily Tank Journal image. The owner approved replacing it with
+TTG_Blog_EndOfArticle in the same position (`BLOG_NEOCARIDINA_DIET` in the test), with the pilot's
+consent stack and loader. Only the banner was removed: the article's five in-text Amazon affiliate
+links, recommendations and the site footer's affiliate disclosure are unchanged, and the test pins
+those links. `/assets/ads/neocaridina-shrimp-diet-products.json` is no longer referenced by any page;
+it is kept until the house-ad cleanup phase. With this article, 41 blog articles carry the shared unit.
 
 **Houseplant articles.** `best-houseplants-for-aquariums` and `growing-houseplants-in-aquarium`
 (`BLOG_HOUSEPLANTS` in the same test) were held back from batch 2 because their `.blog-body` was
@@ -87,7 +96,6 @@ modernization phase.
 
 **Still house ads** (exact inventory: `REMAINING_HOUSE_ADS` in the same test):
 
-- `neocaridina-shrimp-diet-biofilm-guide`: its products slot needs a separate affiliate-advertising decision.
 - Interactive tools' first ads (cycling-coach top, gear top, snail recommender, stocking top).
 - About (books, beginners, footer-top: footer-top awaits a separate owner decision), community-tanks,
   media Feature Your Tank (next to the submission buttons), podcast top and university top.

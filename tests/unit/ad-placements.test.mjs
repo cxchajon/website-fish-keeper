@@ -69,10 +69,10 @@ const BLOG_BATCH_2 = [
 // 641px and 830px wide. With that layout fixed, each article's one house-ad slot became
 // TTG_Blog_EndOfArticle in the same position, configured exactly like the pilot.
 const BLOG_HOUSEPLANTS = ['best-houseplants-for-aquariums/index.html', 'growing-houseplants-in-aquarium/index.html'];
-const CONVERTED_BLOGS = [...BLOG_BATCH_2, ...BLOG_HOUSEPLANTS];
-
-// Excluded from the blog batch: its products slot needs a separate affiliate-advertising decision.
-const EXCLUDED_BLOG = 'neocaridina-shrimp-diet-biofilm-guide/index.html';
+// Phase B2 (owner-approved): the shrimp-diet article's affiliate-product rotator became
+// TTG_Blog_EndOfArticle in the same position. Its in-article affiliate links stay.
+const BLOG_NEOCARIDINA_DIET = 'neocaridina-shrimp-diet-biofilm-guide/index.html';
+const CONVERTED_BLOGS = [...BLOG_BATCH_2, ...BLOG_HOUSEPLANTS, BLOG_NEOCARIDINA_DIET];
 
 // page -> data-ad-slot values that page may carry. Adding a unit anywhere else must update this list.
 const MANUAL_UNITS = {
@@ -183,7 +183,6 @@ const REMAINING_HOUSE_ADS = {
   'cycling-coach/index.html': ['ad-cycling-top'],
   'gear/index.html': ['ad-gear-top'],
   'media.html': ['ad-media-feature-your-tank'],
-  'neocaridina-shrimp-diet-biofilm-guide/index.html': ['ad-neocaridina-diet-products-rotator'],
   'podcast/index.html': ['ad-podcast-top'],
   'stocking-advisor.html': ['ad-stocking-top'],
   'tools/snail-stock-recommender.html': ['ad-snail-recommender-bottom'],
@@ -386,7 +385,8 @@ test('Phase B1 converted exactly six house-ad positions, in place, to Google uni
   }
   assert.equal(converted, 6);
   const remaining = Object.values(REMAINING_HOUSE_ADS).reduce((sum, ids) => sum + ids.length, 0);
-  assert.equal(remaining, 12, 'the house-ad inventory went from 18 to 12');
+  // Phase B1 took the inventory from 18 to 12; Phase B2 converted the Neocaridina rotator (11).
+  assert.equal(remaining, 11, 'remaining house-ad inventory');
   // The historical University Water Chemistry unit must not be used in place of TTG_University_Bottom.
   assert.ok(!read('university/index.html').includes('4602491969'));
   // Project Tank's only rotator was its bottom slot, so the page no longer loads the rotator itself.
@@ -413,8 +413,26 @@ test('houseplant articles replaced their rotators and keep .blog-body inside the
   }
 });
 
-test('excluded blog article keeps its house ad and has no Google unit', () => {
-  const html = read(EXCLUDED_BLOG);
-  assert.deepEqual(houseAdIds(html), ['ad-neocaridina-diet-products-rotator']);
-  assert.ok(!html.includes('adsbygoogle'));
+test('every blog article with a Google unit uses TTG_Blog_EndOfArticle (41 articles)', () => {
+  const blogs = [BLOG_PILOT, ...CONVERTED_BLOGS];
+  assert.equal(new Set(blogs).size, 41);
+  for (const path of blogs) assert.deepEqual(adSlots(read(path)), [BLOG_END_OF_ARTICLE], path);
+});
+
+test('Neocaridina diet article: rotator replaced in place, affiliate content kept', () => {
+  const html = read(BLOG_NEOCARIDINA_DIET);
+  assert.deepEqual(houseAdIds(html), []);
+  assert.ok(!/data-ttg-ad-rotator|neocaridina-shrimp-diet-products\.json|ad-neocaridina-diet-products-rotator"/.test(html), 'no rotator left');
+  // Same position: after the FAQ, before the author byline.
+  const unit = html.indexOf('<aside class="ttg-gad" id="ad-blog-end-of-article"');
+  assert.ok(html.lastIndexOf('u-faq-item', unit) > -1 && unit < html.indexOf('class="ttg-author-byline"'));
+  // The article's own Amazon affiliate links (all in the text) are unchanged; only the banner's went.
+  const affiliate = [...html.matchAll(/https:\/\/www\.amazon\.com\/dp\/([A-Z0-9]+)[^"]*tag=fishkeepingli-20/g)].map((m) => m[1]);
+  assert.deepEqual(affiliate, ['B00KB9LPYK', 'B00L0UBFUI', 'B001XRR26E', 'B00U7Q9HKG', 'B0FXFFH16X']);
+});
+
+test('About page and the interactive tools keep their FishKeepingLifeCo house ads only', () => {
+  assert.deepEqual(houseAdIds(read('about.html')), ['ad-about-books', 'ad-about-beginners', 'ad-about-footer-top']);
+  assert.deepEqual(adSlots(read('about.html')), [], 'no Google units on the About page');
+  assert.ok(!read('about.html').includes('ttg-gad'));
 });
