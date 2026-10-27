@@ -80,6 +80,12 @@ const MANUAL_UNITS = {
   'gear/index.html': ['1762971638'], // TTG_Gear_Bottom
   'stocking-advisor.html': ['5996977454', '9758352395'], // TTG_StockingAdvisor_Mid, TTG_StockingAdvisor_Bottom
   'cycling-coach/index.html': ['2094490843'], // TTG_CyclingCoach_Bottom
+  // Phase B1: content and hub pages.
+  'assistant.html': ['8930237876', '9864045598'], // TTG_Assistant_Mid, TTG_Assistant_Bottom
+  'media.html': ['6497764235'], // TTG_MediaProto_FAQ_Top
+  'podcast/index.html': ['3569730759'], // TTG_Podcast_Bottom
+  'tanks/project-tank-000.html': ['6308794025'], // project-tank-000
+  'university/index.html': ['8925377095'], // TTG_University_Bottom (not the historical 4602491969)
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, [BLOG_END_OF_ARTICLE]])),
 };
 
@@ -91,6 +97,11 @@ const FULL_WIDTH = {
   'gear/index.html': 'true',
   'stocking-advisor.html': 'true',
   'cycling-coach/index.html': 'true',
+  'assistant.html': 'true',
+  'podcast/index.html': 'true',
+  // Kept inside the article / content column: the University shell clips overflow.
+  'tanks/project-tank-000.html': 'false',
+  'university/index.html': 'false',
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, 'false'])),
 };
 
@@ -112,7 +123,43 @@ const COMPACT_UNITS = {
       hiddenBelow: '(max-width: 359px)',
     },
   ],
+  // Same sizes and breakpoints: both content columns are at least 320px wide from a 360px viewport.
+  'assistant.html': [
+    {
+      id: 'ad-assistant-mid',
+      slot: '8930237876', // TTG_Assistant_Mid
+      sizeClass: 'ttg_assistant_mid',
+      sizes: [
+        [null, 320, 100],
+        ['(min-width: 520px)', 468, 60],
+        ['(min-width: 800px)', 728, 90],
+      ],
+      hiddenBelow: '(max-width: 359px)',
+    },
+  ],
+  'media.html': [
+    {
+      id: 'ad-media-faq-top',
+      slot: '6497764235', // TTG_MediaProto_FAQ_Top
+      sizeClass: 'ttg_media_faq_top',
+      sizes: [
+        [null, 320, 100],
+        ['(min-width: 520px)', 468, 60],
+        ['(min-width: 800px)', 728, 90],
+      ],
+      hiddenBelow: '(max-width: 359px)',
+    },
+  ],
 };
+// Phase B1 converted exactly these six house-ad positions on content and hub pages.
+const PHASE_B1_CONVERSIONS = {
+  'assistant.html': ['ad-assistant-mid', 'ad-assistant-bottom'],
+  'media.html': ['ad-media-faq-top'],
+  'podcast/index.html': ['ad-podcast-bottom'],
+  'tanks/project-tank-000.html': ['ad-project-tank-000-bottom'],
+  'university/index.html': ['ad-university-waterchem-bottom'],
+};
+const PHASE_B1_PAGES = Object.keys(PHASE_B1_CONVERSIONS);
 const compactSlots = (path) => (COMPACT_UNITS[path] || []).map((unit) => unit.slot);
 
 // House-ad slots on the converted pages that stay house ads in this phase.
@@ -121,23 +168,26 @@ const KEPT_HOUSE_ADS = {
   'gear/index.html': ['ad-gear-top'],
   'stocking-advisor.html': ['ad-stocking-top'],
   'cycling-coach/index.html': ['ad-cycling-top'],
+  'assistant.html': [],
+  'media.html': ['ad-media-feature-your-tank'],
+  'podcast/index.html': ['ad-podcast-top'],
+  'tanks/project-tank-000.html': [],
+  'university/index.html': ['ad-university-waterchem-top'],
   ...Object.fromEntries(CONVERTED_BLOGS.map((path) => [path, []])),
 };
 
 // Every house-ad slot still on the site. Converting or removing one must update this list.
 const REMAINING_HOUSE_ADS = {
   'about.html': ['ad-about-books', 'ad-about-beginners', 'ad-about-footer-top'],
-  'assistant.html': ['ad-assistant-mid', 'ad-assistant-bottom'],
   'community-tanks.html': ['ad-community-tanks-store'],
   'cycling-coach/index.html': ['ad-cycling-top'],
   'gear/index.html': ['ad-gear-top'],
-  'media.html': ['ad-media-feature-your-tank', 'ad-media-faq-top'],
+  'media.html': ['ad-media-feature-your-tank'],
   'neocaridina-shrimp-diet-biofilm-guide/index.html': ['ad-neocaridina-diet-products-rotator'],
-  'podcast/index.html': ['ad-podcast-top', 'ad-podcast-bottom'],
+  'podcast/index.html': ['ad-podcast-top'],
   'stocking-advisor.html': ['ad-stocking-top'],
-  'tanks/project-tank-000.html': ['ad-project-tank-000-bottom'],
   'tools/snail-stock-recommender.html': ['ad-snail-recommender-bottom'],
-  'university/index.html': ['ad-university-waterchem-top', 'ad-university-waterchem-bottom'],
+  'university/index.html': ['ad-university-waterchem-top'],
 };
 
 const HTML_FILES = execSync('git ls-files "*.html"', { cwd: ROOT, encoding: 'utf8' })
@@ -297,10 +347,11 @@ test('google-ads.css never caps or clips ad height and only collapses unfilled u
   assert.ok(!/data-ad-status="filled"\][^{]*\{[^}]*display:\s*none/.test(css), 'filled ads are never hidden');
 });
 
-test('every converted blog article carries the pilot consent stack and loader verbatim', () => {
+test('every converted blog article and hub page carries the pilot consent stack and loader verbatim', () => {
   const pilotStack = consentStack(read(BLOG_PILOT));
   assert.match(pilotStack, LOADER);
-  for (const path of CONVERTED_BLOGS) {
+  // The podcast page gained its loader in Phase B1; its stack must now match the pilot exactly.
+  for (const path of [...CONVERTED_BLOGS, ...PHASE_B1_PAGES]) {
     assert.equal(consentStack(read(path)), pilotStack, path);
   }
 });
@@ -322,6 +373,24 @@ test('every Google unit is labelled "Advertisements"; house ads keep their own m
   }
   const expected = Object.values(MANUAL_UNITS).reduce((sum, slots) => sum + slots.length, 0);
   assert.equal(labelled, expected, 'every approved unit, and only those, is labelled');
+});
+
+test('Phase B1 converted exactly six house-ad positions, in place, to Google units', () => {
+  let converted = 0;
+  for (const [path, ids] of Object.entries(PHASE_B1_CONVERSIONS)) {
+    const html = read(path);
+    const gads = [...html.matchAll(/<aside class="ttg-gad" id="([^"]+)"/g)].map((m) => m[1]);
+    assert.deepEqual(gads, ids, `${path}: Google units keep the original position IDs`);
+    for (const id of ids) assert.ok(!houseAdIds(html).includes(id), `${path}: ${id} is no longer a house ad`);
+    converted += ids.length;
+  }
+  assert.equal(converted, 6);
+  const remaining = Object.values(REMAINING_HOUSE_ADS).reduce((sum, ids) => sum + ids.length, 0);
+  assert.equal(remaining, 12, 'the house-ad inventory went from 18 to 12');
+  // The historical University Water Chemistry unit must not be used in place of TTG_University_Bottom.
+  assert.ok(!read('university/index.html').includes('4602491969'));
+  // Project Tank's only rotator was its bottom slot, so the page no longer loads the rotator itself.
+  assert.ok(!read('tanks/project-tank-000.html').includes('ad-rotator.js'));
 });
 
 test('remaining house-ad slots are exactly the expected inventory', () => {

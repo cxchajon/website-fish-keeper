@@ -18,9 +18,24 @@ middle positions use compact Google units and bottom positions flexible ones.
 | `/stocking-advisor.html` | `ad-stocking-mid` (middle, between the explainer and the bioload panel) | TTG_StockingAdvisor_Mid | `5996977454` | compact, see below |
 | `/stocking-advisor.html` | `ad-stocking-bottom` (bottom) | TTG_StockingAdvisor_Bottom | `9758352395` | `true` |
 | `/cycling-coach/` | `ad-cycling-bottom` (bottom, after the byline, above the footer) | TTG_CyclingCoach_Bottom | `2094490843` | `true` |
+| `/assistant.html` | `ad-assistant-mid` (after the intro, before "How it works") | TTG_Assistant_Mid | `8930237876` | compact, see below |
+| `/assistant.html` | `ad-assistant-bottom` (after the FAQ, before "About FishKeepingLifeCo") | TTG_Assistant_Bottom | `9864045598` | `true` |
+| `/media.html` | `ad-media-faq-top` (after the storefront, before the FAQ) | TTG_MediaProto_FAQ_Top | `6497764235` | compact, see below |
+| `/podcast/` | `ad-podcast-bottom` (after the FAQ, above the footer) | TTG_Podcast_Bottom | `3569730759` | `true` |
+| `/tanks/project-tank-000.html` | `ad-project-tank-000-bottom` (end of article, before "Submit Your Tank") | project-tank-000 | `6308794025` | `false` |
+| `/university/` | `ad-university-waterchem-bottom` (after the research citations, before the FAQ) | TTG_University_Bottom | `8925377095` | `false` |
 
 Publisher: `ca-pub-9905718149811880`. The legacy Stocking bottom unit `8979116676` is retired and must
-not be used.
+not be used. The University hub uses TTG_University_Bottom `8925377095`, not the historical University
+Water Chemistry Bottom unit `4602491969`.
+
+**Phase B1 (content and hub pages).** Six house-ad positions on five pages became Google units in
+place (`PHASE_B1_CONVERSIONS` in the test). The podcast page had no AdSense loader; it now carries the
+pilot's loader as the last entry of its consent stack, so its stack is byte-identical to the pilot's.
+Project Tank #000 no longer loads `/assets/js/ad-rotator.js` itself: its bottom slot was its only
+rotator. Project Tank and University keep `data-full-width-responsive="false"` so the ad stays in the
+article or content column (the University shell clips overflow). Media's FAQ unit keeps the page's
+existing `.media-page #ad-media-faq-top` spacing rule (2rem margins).
 
 **Blog batch 2.** The authoritative list of converted articles is `BLOG_BATCH_2` in
 `tests/unit/ad-placements.test.mjs`. Every converted article's consent stack, including the loader,
@@ -38,22 +53,27 @@ scrolls inside its container. Keep that rule: the test checks it is present.
 (`data-ad-format="auto"`) but are sized to the article's own content column, exactly like the
 verified pilot, instead of expanding to the viewport edges on phones. On some articles a
 viewport-wide ad would also be cropped, because `.blog-body` (and on two, `body`) clips overflow.
-The flexible tool-page units (Gear, Stocking Advisor and Cycling Coach bottoms) keep `true` because their containers already span the
-viewport.
+The flexible tool-page units (Gear, Stocking Advisor and Cycling Coach bottoms), Podcast bottom and
+Assistant bottom keep `true` because their containers already span the viewport (Assistant's within
+its 40px page padding).
 
-**Compact middle units (Stocking Advisor).** `ad-stocking-mid` uses Google's documented "exact size
-per screen width" responsive code instead of `data-ad-format="auto"`: the `<ins>` carries the size
-class `ttg_stocking_mid` and no `data-ad-format`, `data-full-width-responsive` or inline style, and the
+**Compact middle units (Stocking Advisor, Assistant, Media).** `ad-stocking-mid`, `ad-assistant-mid`
+and `ad-media-faq-top` use Google's documented "exact size
+per screen width" responsive code instead of `data-ad-format="auto"`: each `<ins>` carries a size
+class (`ttg_stocking_mid`, `ttg_assistant_mid`, `ttg_media_faq_top`) and no `data-ad-format`, `data-full-width-responsive` or inline style, and the
 sizes are set by an inline `<style>` in the page's `<head>` (Google does not support those rules in
 external stylesheets, so they are not in `css/google-ads.css`). The rules are scoped with the
 container ID so the shared `.ttg-gad ins.adsbygoogle { width: 100% }` rule cannot override them.
 
-| Viewport | Creative | Available width (`.wrap` content, viewport − 36px) |
-|---|---|---|
-| below 360px | none: the unit and its container are `display: none`, so it is not requested | 284px at 320 |
-| 360–519px | 320×100 | 339–483px |
-| 520–799px | 468×60 | 484–763px (Google's sample uses 500px; at 500 only 464px is available) |
-| 800px and wider | 728×90 | 764px, up to 970px |
+All three use the same breakpoints. Measured available width: Stocking Advisor and Media content
+columns are the viewport − 36px, Assistant's is the viewport − 40px (up to 970px).
+
+| Viewport | Creative | Available width (Stocking / Media) | Available width (Assistant) |
+|---|---|---|---|
+| below 360px | none: the unit and its container are `display: none`, so it is not requested | 284px at 320 | 280px at 320 |
+| 360–519px | 320×100 | 339–483px | 335–479px |
+| 520–799px | 468×60 | 484–763px (Google's sample uses 500px; at 500 only 464px is available) | 480–759px |
+| 800px and wider | 728×90 | 764px, up to 970px | 760px, up to 970px |
 
 The size is fixed when the ad is requested. If the viewport later crosses a breakpoint (for example a
 phone rotated after the ad filled), Google keeps the original creative; the unit is not refreshed.
@@ -68,8 +88,9 @@ modernization phase.
 **Still house ads** (exact inventory: `REMAINING_HOUSE_ADS` in the same test):
 
 - `neocaridina-shrimp-diet-biofilm-guide`: its products slot needs a separate affiliate-advertising decision.
-- All tool, hub and utility pages (about, assistant, community-tanks, cycling-coach top, gear top,
-  media, podcast, project-tank-000, snail recommender, stocking top, university).
+- Interactive tools' first ads (cycling-coach top, gear top, snail recommender, stocking top).
+- About (books, beginners, footer-top: footer-top awaits a separate owner decision), community-tanks,
+  media Feature Your Tank (next to the submission buttons), podcast top and university top.
 
 ## Converting a slot
 
