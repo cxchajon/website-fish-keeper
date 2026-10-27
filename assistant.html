@@ -93,6 +93,20 @@
         media="print"
         onload="this.media='all'">
   <link rel="stylesheet" href="/css/app.bundle.css?v=2026-09-03-desktop-2">
+  <link rel="stylesheet" href="/css/google-ads.css?v=2026-10-26">
+  <style>
+  /* TTG_Assistant_Mid: Google's "exact size per screen width" responsive code.
+     Google supports these sizing rules only inline on the page, not in an external stylesheet.
+     Breakpoints fit the measured #assistant-main content width (viewport minus 40px). Below
+     360px no 320px creative fits, so the unit is hidden and js/google-ads.js does not request it. */
+  #ad-assistant-mid .ttg_assistant_mid { display: block; width: 320px; height: 100px; }
+  @media (min-width: 520px) { #ad-assistant-mid .ttg_assistant_mid { width: 468px; height: 60px; } }
+  @media (min-width: 800px) { #ad-assistant-mid .ttg_assistant_mid { width: 728px; height: 90px; } }
+  @media (max-width: 359px) {
+    #ad-assistant-mid,
+    #ad-assistant-mid .ttg_assistant_mid { display: none; }
+  }
+  </style>
   <script defer src="/js/nav.js?v=1.1.0"></script>
 
   <!-- Cloudflare Web Analytics -->
@@ -412,18 +426,13 @@
       </div>
     </section>
 
-    <!-- Display Ad: TTG_Assistant_Mid — Slot 8930237876 -->
-    <div class="ttg-ad-slot ttg-house-ad-slot"
-         id="ad-assistant-mid"
-         data-ad-label="TTG_Assistant_Mid • Slot 8930237876"
-         data-ttg-ad-rotator="true"
-         data-ttg-ad-manifest="/assets/ads/manifest.json"
-         data-ttg-ad-interval="10000"
-         aria-label="Advertisement">
-      <a class="ttg-ad-banner-link" href="/store/">
-        <img src="/assets/img/ads/Daily-tank-journal-ad.PNG" alt="Daily Tank Journal promotion" loading="lazy">
-      </a>
-    </div>
+    <!-- MID AD SLOT: AdSense manual unit TTG_Assistant_Mid (compact, exact size per screen width) -->
+    <aside class="ttg-gad" id="ad-assistant-mid" aria-label="Advertisements">
+      <p class="ttg-gad__label" aria-hidden="true">Advertisements</p>
+      <ins class="adsbygoogle ttg_assistant_mid"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="8930237876"></ins>
+    </aside>
 
     <section class="assistant-section" aria-labelledby="assistant-how">
       <h2 id="assistant-how">How it works</h2>
@@ -584,18 +593,16 @@
       </div>
     </section>
 
-    <!-- Display Ad: TTG_Assistant_Bottom — Slot 9864045598 -->
-    <div class="ttg-ad-slot ttg-house-ad-slot"
-         id="ad-assistant-bottom"
-         data-ad-label="TTG_Assistant_Bottom • Slot 9864045598"
-         data-ttg-ad-rotator="true"
-         data-ttg-ad-manifest="/assets/ads/manifest.json"
-         data-ttg-ad-interval="10000"
-         aria-label="Advertisement">
-      <a class="ttg-ad-banner-link" href="/store/">
-        <img src="/assets/img/ads/Daily-tank-journal-ad.PNG" alt="Daily Tank Journal promotion" loading="lazy">
-      </a>
-    </div>
+    <!-- BOTTOM AD SLOT: AdSense manual unit TTG_Assistant_Bottom -->
+    <aside class="ttg-gad" id="ad-assistant-bottom" aria-label="Advertisements">
+      <p class="ttg-gad__label" aria-hidden="true">Advertisements</p>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="9864045598"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </aside>
 
     <section class="assistant-section" aria-labelledby="assistant-about">
       <h2 id="assistant-about">About FishKeepingLifeCo &amp; The Tank Guide</h2>
@@ -615,6 +622,7 @@
     </section>
   </main>
 
+  <script src="/js/google-ads.js?v=1.1.0" defer></script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>

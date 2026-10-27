@@ -100,6 +100,20 @@
   <link rel="stylesheet" href="css/style.css?v=2026-09-03-desktop-2" />
   <link rel="stylesheet" href="/assets/css/utilities.css?v=2025-11-07" />
   <link rel="stylesheet" href="/assets/css/media.css" />
+  <link rel="stylesheet" href="/css/google-ads.css?v=2026-10-26" />
+  <style>
+  /* TTG_MediaProto_FAQ_Top: Google's "exact size per screen width" responsive code.
+     Google supports these sizing rules only inline on the page, not in an external stylesheet.
+     Breakpoints fit the measured content width (viewport minus 36px). Below 360px no
+     320px creative fits, so the unit is hidden and js/google-ads.js does not request it. */
+  #ad-media-faq-top .ttg_media_faq_top { display: block; width: 320px; height: 100px; }
+  @media (min-width: 520px) { #ad-media-faq-top .ttg_media_faq_top { width: 468px; height: 60px; } }
+  @media (min-width: 800px) { #ad-media-faq-top .ttg_media_faq_top { width: 728px; height: 90px; } }
+  @media (max-width: 359px) {
+    #ad-media-faq-top,
+    #ad-media-faq-top .ttg_media_faq_top { display: none; }
+  }
+  </style>
   <!-- Media page layout lives in /assets/css/media.css -->
   <style>
     /* Final size: 201px wide (25% larger than previous 161px) */
@@ -398,21 +412,13 @@
       <p>Looking for printable resources and digital extras? Visit our official <a href="https://fishkeepinglifeshop.etsy.com" target="_blank" rel="noopener noreferrer">FishKeepingLifeCo Etsy shop</a>.</p>
     </section>
 
-    <!-- Second Ad Slot: House Ad Only -->
-    <div class="ttg-ad-slot ttg-house-ad-slot"
-         id="ad-media-faq-top"
-         data-ad-position="mid-2"
-         data-ttg-ad-rotator="true"
-         data-ttg-ad-manifest="/assets/ads/manifest.json"
-         data-ttg-ad-interval="10000"
-         aria-label="Advertisement">
-      <a class="ttg-ad-banner-link" href="/store/">
-        <img class="ttg-ad-img"
-             src="/assets/img/ads/Daily-tank-journal-ad.PNG"
-             alt="Daily Tank Journal promotion"
-             loading="lazy">
-      </a>
-    </div>
+    <!-- FAQ AD SLOT: AdSense manual unit TTG_MediaProto_FAQ_Top (compact, exact size per screen width) -->
+    <aside class="ttg-gad" id="ad-media-faq-top" aria-label="Advertisements">
+      <p class="ttg-gad__label" aria-hidden="true">Advertisements</p>
+      <ins class="adsbygoogle ttg_media_faq_top"
+           data-ad-client="ca-pub-9905718149811880"
+           data-ad-slot="6497764235"></ins>
+    </aside>
 
     <section class="section faq-section" id="media-faq" aria-labelledby="media-faq-title">
       <div class="wrap">
@@ -587,6 +593,7 @@
   }, { passive: true });
 </script>
 
+  <script src="/js/google-ads.js?v=1.1.0" defer></script>
   <script src="/js/footer-loader.js?v=1.5.2" defer></script>
   <section class="legal-links" aria-label="Site legal links">
     <a href="/privacy-legal.html">Privacy Policy</a>
