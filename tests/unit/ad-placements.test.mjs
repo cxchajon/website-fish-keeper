@@ -4,6 +4,7 @@
 // - Manual units exist only where they were reviewed, with the dashboard slot IDs below.
 // - Converted pages load the AdSense loader once and request each unit once (js/google-ads.js).
 // - Every interactive tool still shows a rotating FishKeepingLifeCo house ad first.
+// - Google units carry only Google's permitted label wording, "Advertisements".
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
@@ -15,6 +16,9 @@ const read = (path) => readFileSync(ROOT + path, 'utf8');
 const PUBLISHER = 'ca-pub-9905718149811880';
 const LOADER = /<script[^>]+src="https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js[^"]*"/g;
 const RETIRED_SLOTS = ['8979116676'];
+// Google permits only "Advertisements" or "Sponsored Links" as publisher labels on its ads
+// (AdSense ad placement policies, https://support.google.com/adsense/answer/1346295).
+const GOOGLE_AD_LABEL = 'Advertisements';
 
 const BLOG_PILOT = 'blogs/aquarium-heater-safety-temperature-controllers.html';
 const BLOG_END_OF_ARTICLE = '5598495275'; // TTG_Blog_EndOfArticle
@@ -211,7 +215,7 @@ for (const [path, slots] of Object.entries(MANUAL_UNITS)) {
     assert.ok(html.indexOf('/assets/js/consent-mode.js') < loaderAt, 'loader stays after the consent stack');
     assert.ok(html.indexOf("gtag('consent', 'default'") < loaderAt, 'Consent Mode defaults precede the loader');
 
-    const units = [...html.matchAll(/<aside class="ttg-gad" id="([^"]+)" aria-label="Advertisement">\s*<p class="ttg-gad__label" aria-hidden="true">Advertisement<\/p>\s*<ins class="adsbygoogle( [a-z0-9_]+)?"([^>]*)><\/ins>\s*<\/aside>/g)];
+    const units = [...html.matchAll(new RegExp(String.raw`<aside class="ttg-gad" id="([^"]+)" aria-label="${GOOGLE_AD_LABEL}">\s*<p class="ttg-gad__label" aria-hidden="true">${GOOGLE_AD_LABEL}<\/p>\s*<ins class="adsbygoogle( [a-z0-9_]+)?"([^>]*)><\/ins>\s*<\/aside>`, 'g'))];
     assert.equal(units.length, slots.length, 'each unit sits in a .ttg-gad container');
     const compact = COMPACT_UNITS[path] || [];
     for (const [, id, sizeClass, attrs] of units) {
@@ -299,6 +303,25 @@ test('every converted blog article carries the pilot consent stack and loader ve
   for (const path of CONVERTED_BLOGS) {
     assert.equal(consentStack(read(path)), pilotStack, path);
   }
+});
+
+test('every Google unit is labelled "Advertisements"; house ads keep their own markup', () => {
+  let labelled = 0;
+  for (const path of HTML_FILES) {
+    const html = read(path);
+    const containers = [...html.matchAll(/<aside class="ttg-gad"[^>]*>/g)].map((m) => m[0]);
+    const labels = [...html.matchAll(/<p class="ttg-gad__label"[^>]*>([^<]*)<\/p>/g)].map((m) => m[1]);
+    assert.equal(labels.length, containers.length, `${path}: one visible label per Google unit`);
+    for (const tag of containers) assert.match(tag, new RegExp(`aria-label="${GOOGLE_AD_LABEL}"`), `${path}: accessible name`);
+    for (const text of labels) assert.equal(text, GOOGLE_AD_LABEL, `${path}: visible label wording`);
+    // The label belongs to Google units only; FishKeepingLifeCo house ads never carry it.
+    for (const m of html.matchAll(/<div\b[^>]*\bttg-house-ad-slot\b[\s\S]*?<\/div>/g)) {
+      assert.ok(!m[0].includes('ttg-gad__label'), `${path}: house ad without a Google label`);
+    }
+    labelled += labels.length;
+  }
+  const expected = Object.values(MANUAL_UNITS).reduce((sum, slots) => sum + slots.length, 0);
+  assert.equal(labelled, expected, 'every approved unit, and only those, is labelled');
 });
 
 test('remaining house-ad slots are exactly the expected inventory', () => {

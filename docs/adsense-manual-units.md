@@ -76,8 +76,8 @@ modernization phase.
 1. Replace the house-ad `<div class="ttg-ad-slot ttg-house-ad-slot" …>` with:
 
    ```html
-   <aside class="ttg-gad" id="ad-…" aria-label="Advertisement">
-     <p class="ttg-gad__label" aria-hidden="true">Advertisement</p>
+   <aside class="ttg-gad" id="ad-…" aria-label="Advertisements">
+     <p class="ttg-gad__label" aria-hidden="true">Advertisements</p>
      <ins class="adsbygoogle"
           style="display:block"
           data-ad-client="ca-pub-9905718149811880"
@@ -99,6 +99,16 @@ modernization phase.
 4. Add the page and slot ID to `MANUAL_UNITS` (blog articles: `BLOG_BATCH_2` or `BLOG_HOUSEPLANTS`; compact
    units also `COMPACT_UNITS`) and update `REMAINING_HOUSE_ADS` in `tests/unit/ad-placements.test.mjs`.
 
+## Label wording
+
+Google's [AdSense ad placement policies](https://support.google.com/adsense/answer/1346295) allow
+publishers to label Google ads only as "Advertisements" or "Sponsored Links". Every manual unit uses
+**"Advertisements"**, both as the visible `.ttg-gad__label` text (shown in capitals by CSS) and as the
+`<aside>`'s `aria-label`, so screen readers announce the same name once (the visible label is
+`aria-hidden`). Future units must use "Advertisements", or another label Google explicitly permits
+after an owner decision; `GOOGLE_AD_LABEL` in `tests/unit/ad-placements.test.mjs` enforces the wording.
+FishKeepingLifeCo house ads are not Google ads and keep their own markup.
+
 ## How it behaves
 
 - **`js/google-ads.js`** pushes once per `.ttg-gad ins.adsbygoogle`, skips units Google already
@@ -113,7 +123,7 @@ modernization phase.
   use `.ttg-ad-slot`, so the blog `max-height: 320px; overflow: hidden` cap, the 250px `ins`
   reservation, the empty-slot QA overlays (`data-ad-label`) and the house-ad rotator never touch a
   Google unit. Units Google reports as `data-ad-status="unfilled"` collapse; filled ads are never
-  hidden or restyled. The "Advertisement" label appears only once an ad fills.
+  hidden or restyled. The "Advertisements" label appears only once an ad fills.
 
 ## Content-Security-Policy
 
