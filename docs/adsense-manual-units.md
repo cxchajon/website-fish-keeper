@@ -17,7 +17,7 @@ The manual rollout is complete. The test pins these totals:
 | Other Google units (tools, hubs, content pages) | 10 on 8 pages |
 | FishKeepingLifeCo house ads (`.ttg-house-ad-slot`) | **11** on 9 pages |
 | Homepage ads of any kind | 0 (no loader) |
-| Google units on the About page | 0 (3 house ads) |
+| Google ad code on the About page | 0 (no loader; 3 house ads) |
 
 Google Auto ads are off in the AdSense dashboard and no page carries an Auto ads snippet.
 
@@ -113,8 +113,25 @@ modernization phase.
 **Still house ads** (exact inventory: `REMAINING_HOUSE_ADS` in the same test):
 
 - Interactive tools' first ads (cycling-coach top, gear top, snail recommender, stocking top).
-- About (books, beginners, footer-top: footer-top awaits a separate owner decision), community-tanks,
-  media Feature Your Tank (next to the submission buttons), podcast top and university top.
+- About (books, beginners, footer-top), community-tanks, media Feature Your Tank (next to the
+  submission buttons), podcast top and university top.
+
+## About page: FishKeepingLifeCo only
+
+Owner decision: the About page is permanently reserved for FishKeepingLifeCo promotional content.
+It carries no Google advertising of any kind: no AdSense loader, no Google units, no
+`google-ads.js`/`google-ads.css`. Its three rotating house ads (`ad-about-books`,
+`ad-about-beginners`, `ad-about-footer-top`) use the shared rotator at 10 seconds like every other
+house ad.
+
+The consent stack now matches the homepage's: Consent Mode v2 defaults first, then Funding
+Choices, GTM and `consent-mode.js`. The AdSense loader played no part in consent (Funding Choices
+sends the consent updates), so removing it changed nothing there.
+
+Without the loader, Auto ads can't place ads on About even if they're turned back on in the dashboard.
+The one remaining path is GTM: a GTM tag that loads `adsbygoogle.js` would bring it back. The
+container isn't in this repository, so check it in GTM (see "Outside the repository").
+`tests/unit/ad-placements.test.mjs` fails if any Google ad code is added to `about.html`.
 
 ## House-ad infrastructure
 
@@ -133,19 +150,17 @@ The 11 remaining house ads all use the same pieces. Keep them while any house ad
 
 ## AdSense loader without units
 
-These five pages carry the consent stack's AdSense loader but no Google unit:
+These four pages carry the consent stack's AdSense loader but no Google unit:
 
-- `about.html`
 - `blogs/index.html`
 - `community-tanks.html`
 - `submit-your-tank.html`
 - `tools/snail-stock-recommender.html`
 
 With Auto ads off in the dashboard, the loader on these pages shows no ads. The loader is left in
-place for now: removing it changes the consent stack on five pages and needs an owner decision.
+place for now: removing it changes the consent stack on these pages and needs an owner decision.
 `LOADER_ONLY_PAGES` in the test lists these pages, so any loader added elsewhere fails the test.
-On About in particular, this loader is the only Google ad code. If Auto ads were ever turned back on,
-About would get Google ads unless the loader is removed first.
+`about.html` was on this list until its loader was removed (see "About page: FishKeepingLifeCo only").
 
 ## Phase B3 cleanup (retired code)
 
@@ -246,7 +261,8 @@ These cannot be verified from code and must be checked in Google's dashboards:
 
 - AdSense → Ads → By site: Auto ads **off** for thetankguide.com (including anchor/vignette/side-rail
   overlays and "Optimize existing ad units").
-- GTM container `GTM-KTRVCMQN`: no tag loads AdSense or injects ad units (especially on the homepage).
+- GTM container `GTM-KTRVCMQN`: no tag loads AdSense or injects ad units (especially on the homepage
+  and the About page, which carry no AdSense loader of their own).
 - AdSense → Privacy & messaging: the EEA/UK/CH GDPR message and US state-regulation message are
   published for the site.
 - `ads.txt` is served at `https://thetankguide.com/ads.txt` with
