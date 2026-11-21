@@ -1,0 +1,20 @@
+name: Origin TLS verification
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '17 8 * * *'
+permissions:
+  contents: read
+jobs:
+  origin-tls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test target selection
+        run: python3 -m unittest discover -s tests/monitoring -v
+      - name: Validate configured GitHub Pages origin certificates
+        env:
+          CF_DNS_READ_TOKEN: ${{ secrets.CF_DNS_READ_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+        run: python3 scripts/monitoring/origin_tls.py
